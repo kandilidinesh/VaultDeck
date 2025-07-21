@@ -3,10 +3,7 @@ import '../constants/app_constants.dart';
 import 'dart:ui';
 
 class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final VoidCallback? onThemeToggle;
-  final bool? isDarkMode;
-
-  const VaultDeckAppBar({super.key, this.onThemeToggle, this.isDarkMode});
+  const VaultDeckAppBar({super.key});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -82,33 +79,6 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ],
       ),
-      actions: (onThemeToggle != null)
-          ? [
-              Container(
-                margin: const EdgeInsets.only(right: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: IconButton(
-                  icon: AnimatedSwitcher(
-                    duration: AppConstants.defaultAnimationDuration,
-                    child: Icon(
-                      (isDarkMode ?? false)
-                          ? Icons.light_mode_rounded
-                          : Icons.dark_mode_rounded,
-                      key: ValueKey(isDarkMode ?? false),
-                      color: Colors.white,
-                    ),
-                  ),
-                  onPressed: onThemeToggle,
-                  tooltip: (isDarkMode ?? false)
-                      ? 'Switch to light mode'
-                      : 'Switch to dark mode',
-                ),
-              ),
-            ]
-          : [],
     );
   }
 }

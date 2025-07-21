@@ -57,6 +57,9 @@ class _MyAppState extends State<MyApp> {
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: Colors.indigoAccent,
         ),
+        splashFactory: NoSplash.splashFactory,
+        highlightColor: Colors.transparent,
+        splashColor: Colors.transparent,
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
@@ -80,6 +83,9 @@ class _MyAppState extends State<MyApp> {
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: Colors.indigo,
         ),
+        splashFactory: NoSplash.splashFactory,
+        highlightColor: Colors.transparent,
+        splashColor: Colors.transparent,
       ),
       home: MainNav(
         title: AppConstants.appName,
