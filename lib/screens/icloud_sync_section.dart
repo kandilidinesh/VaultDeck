@@ -37,9 +37,8 @@ class _ICloudSyncSectionState extends State<ICloudSyncSection> {
 
   @override
   Widget build(BuildContext context) {
-    final tileBg = Theme.of(context).brightness == Brightness.dark
-        ? Colors.white.withOpacity(0.04)
-        : Colors.white;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final tileBg = isDark ? const Color(0xFF23262F) : Colors.white;
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(

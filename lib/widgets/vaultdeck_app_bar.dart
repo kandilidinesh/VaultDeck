@@ -21,9 +21,7 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
 
     return AppBar(
       elevation: 0,
-      backgroundColor: isDark
-          ? Colors.grey[900]
-          : const Color(0xFF1A237E), // Deep indigo
+      backgroundColor: Colors.transparent,
       foregroundColor: Colors.white,
       title: Row(
         children: [
@@ -107,23 +105,7 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ]
           : [],
-      flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: isDark
-                ? [
-                    Colors.grey[900]!,
-                    Colors.grey[800]!,
-                  ]
-                : [
-                    const Color(0xFF1A237E),
-                    const Color(0xFF3F51B5),
-                  ],
-          ),
-        ),
-      ),
+      // No flexibleSpace for transparency
     );
   }
 }

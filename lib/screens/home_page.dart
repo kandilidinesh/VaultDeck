@@ -51,8 +51,9 @@ class _HomePageState extends State<HomePage> {
         })
         .where((e) => e != null)
         .toList();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: isDark ? const Color(0xFF181A20) : Colors.transparent,
       appBar: VaultDeckAppBar(),
       body: cards.isEmpty
           ? Center(
@@ -62,26 +63,20 @@ class _HomePageState extends State<HomePage> {
                   Icon(
                     Icons.account_balance_wallet_outlined,
                     size: 64,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withOpacity(0.3),
+                    color: isDark ? Colors.grey.shade800 : Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'Your vault is empty',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withOpacity(0.6),
+                      color: isDark ? Colors.grey.shade400 : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Add your first card to get started',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withOpacity(0.5),
+                      color: isDark ? Colors.grey.shade500 : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                     ),
                   ),
                 ],
@@ -114,22 +109,16 @@ class _HomePageState extends State<HomePage> {
           tooltip: 'Add Card to Vault',
           icon: Icon(
             Icons.add_card_rounded,
-            color: Theme.of(context).brightness == Brightness.dark
-                ? Colors.white
-                : Colors.white,
+            color: Colors.white,
           ),
           label: Text(
             'Add Card',
-            style: TextStyle(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white
-                  : Colors.white,
+            style: const TextStyle(
+              color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),
-          backgroundColor: Theme.of(context).brightness == Brightness.dark
-              ? Colors.indigo.shade700
-              : Theme.of(context).colorScheme.primary,
+          backgroundColor: isDark ? const Color(0xFF3A3F4A) : Theme.of(context).colorScheme.primary,
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -137,6 +126,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildCardTile(CardModel card) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardIcons = {
       'Visa': Icons.credit_card,
       'Mastercard': Icons.credit_card,
@@ -145,17 +135,17 @@ class _HomePageState extends State<HomePage> {
       'Other': Icons.credit_card,
     };
     final cardColors = {
-      'Visa': Colors.blue.shade700,
-      'Mastercard': Colors.orange.shade700,
-      'American Express': Colors.green.shade700,
-      'Discover': Colors.purple.shade700,
-      'Other': Colors.grey.shade700,
+      'Visa': isDark ? const Color(0xFF2D3140) : Colors.blue.shade700,
+      'Mastercard': isDark ? const Color(0xFF3A3F4A) : Colors.orange.shade700,
+      'American Express': isDark ? const Color(0xFF23262F) : Colors.green.shade700,
+      'Discover': isDark ? const Color(0xFF181A20) : Colors.purple.shade700,
+      'Other': isDark ? const Color(0xFF23262F) : Colors.grey.shade700,
     };
     return Card(
       elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: cardColors[card.cardType] ?? Colors.grey.shade700,
+      color: cardColors[card.cardType] ?? (isDark ? const Color(0xFF23262F) : Colors.grey.shade700),
       child: ListTile(
         leading: Icon(cardIcons[card.cardType], color: Colors.white, size: 32),
         title: Text(
