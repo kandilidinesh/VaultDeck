@@ -8,13 +8,9 @@ class HomePage extends StatefulWidget {
   const HomePage({
     super.key,
     required this.title,
-    required this.toggleTheme,
-    required this.isDarkMode,
   });
 
   final String title;
-  final VoidCallback toggleTheme;
-  final bool isDarkMode;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -116,10 +112,7 @@ class _HomePageState extends State<HomePage> {
         .where((e) => e != null)
         .toList();
     return Scaffold(
-      appBar: VaultDeckAppBar(
-        onThemeToggle: widget.toggleTheme,
-        isDarkMode: widget.isDarkMode,
-      ),
+      appBar: VaultDeckAppBar(),
       body: cards.isEmpty
           ? Center(
               child: Column(

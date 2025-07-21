@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import '../constants/app_constants.dart';
 
 class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final VoidCallback onThemeToggle;
-  final bool isDarkMode;
+  final VoidCallback? onThemeToggle;
+  final bool? isDarkMode;
 
   const VaultDeckAppBar({
     super.key,
-    required this.onThemeToggle,
-    required this.isDarkMode,
+    this.onThemeToggle,
+    this.isDarkMode,
   });
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +31,10 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.indigo.shade400, Colors.indigo.shade600],
+                colors: [
+                  Colors.indigo.shade400,
+                  Colors.indigo.shade600,
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -74,43 +80,50 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ],
       ),
-      actions: [
-        Container(
-          margin: const EdgeInsets.only(right: 8),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: IconButton(
-            icon: AnimatedSwitcher(
-              duration: AppConstants.defaultAnimationDuration,
-              child: Icon(
-                isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-                key: ValueKey(isDarkMode),
-                color: Colors.white,
+      actions: (onThemeToggle != null)
+          ? [
+              Container(
+                margin: const EdgeInsets.only(right: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: IconButton(
+                  icon: AnimatedSwitcher(
+                    duration: AppConstants.defaultAnimationDuration,
+                    child: Icon(
+                      (isDarkMode ?? false)
+                          ? Icons.light_mode_rounded
+                          : Icons.dark_mode_rounded,
+                      key: ValueKey(isDarkMode ?? false),
+                      color: Colors.white,
+                    ),
+                  ),
+                  onPressed: onThemeToggle,
+                  tooltip: (isDarkMode ?? false)
+                      ? 'Switch to light mode'
+                      : 'Switch to dark mode',
+                ),
               ),
-            ),
-            onPressed: onThemeToggle,
-            tooltip: isDarkMode
-                ? 'Switch to light mode'
-                : 'Switch to dark mode',
-          ),
-        ),
-      ],
+            ]
+          : [],
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: isDark
-                ? [Colors.grey[900]!, Colors.grey[800]!]
-                : [const Color(0xFF1A237E), const Color(0xFF3F51B5)],
+                ? [
+                    Colors.grey[900]!,
+                    Colors.grey[800]!,
+                  ]
+                : [
+                    const Color(0xFF1A237E),
+                    const Color(0xFF3F51B5),
+                  ],
           ),
         ),
       ),
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
