@@ -5,10 +5,7 @@ import '../services/card_storage.dart';
 import '../widgets/vaultdeck_app_bar.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({
-    super.key,
-    required this.title,
-  });
+  const HomePage({super.key, required this.title});
 
   final String title;
 
@@ -112,6 +109,7 @@ class _HomePageState extends State<HomePage> {
         .where((e) => e != null)
         .toList();
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: VaultDeckAppBar(),
       body: cards.isEmpty
           ? Center(
@@ -166,28 +164,32 @@ class _HomePageState extends State<HomePage> {
                 );
               },
             ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showAddCardDialog,
-        tooltip: 'Add Card to Vault',
-        icon: Icon(
-          Icons.add_card_rounded,
-          color: Theme.of(context).brightness == Brightness.dark
-              ? Colors.white
-              : Colors.white,
-        ),
-        label: Text(
-          'Add Card',
-          style: TextStyle(
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 100.0),
+        child: FloatingActionButton.extended(
+          onPressed: _showAddCardDialog,
+          tooltip: 'Add Card to Vault',
+          icon: Icon(
+            Icons.add_card_rounded,
             color: Theme.of(context).brightness == Brightness.dark
                 ? Colors.white
                 : Colors.white,
-            fontWeight: FontWeight.bold,
           ),
+          label: Text(
+            'Add Card',
+            style: TextStyle(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          backgroundColor: Theme.of(context).brightness == Brightness.dark
+              ? Colors.indigo.shade700
+              : Theme.of(context).colorScheme.primary,
         ),
-        backgroundColor: Theme.of(context).brightness == Brightness.dark
-            ? Colors.indigo.shade700
-            : Theme.of(context).colorScheme.primary,
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
