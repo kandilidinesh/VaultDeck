@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import '../models/card_model.dart';
 import '../services/card_storage.dart';
 import '../widgets/vaultdeck_app_bar.dart';
+import '../widgets/card_detail_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../widgets/add_card_dialog.dart';
 
@@ -123,17 +124,10 @@ class _HomePageState extends State<HomePage> {
             ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 100.0),
-        child: FloatingActionButton.extended(
+        child: FloatingActionButton(
           onPressed: _showAddCardDialog,
           tooltip: 'Add Card to Vault',
-          icon: Icon(Icons.add_card_rounded, color: Colors.white),
-          label: Text(
-            'Add Card',
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          child: Icon(Icons.add_card_rounded, color: Colors.white),
           backgroundColor: isDark
               ? const Color(0xFF3A3F4A)
               : Theme.of(context).colorScheme.primary,
@@ -191,6 +185,61 @@ class _HomePageState extends State<HomePage> {
         borderRadius: BorderRadius.circular(16),
         highlightColor: Colors.transparent,
         splashColor: Colors.transparent,
+        onTap: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) {
+              return AnimatedPadding(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: DraggableScrollableSheet(
+                  initialChildSize: 0.45,
+                  minChildSize: 0.35,
+                  maxChildSize: 0.7,
+                  expand: false,
+                  builder: (_, controller) => Container(
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF181A20) : Colors.white,
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(32),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.15),
+                          blurRadius: 24,
+                          offset: Offset(0, -8),
+                        ),
+                      ],
+                    ),
+                    child: SingleChildScrollView(
+                      controller: controller,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 32.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // 3D Card View
+                            CardDetailView(
+                              card: card,
+                              cardLogoAsset: _getCardLogoAsset(detectedType),
+                            ),
+                            const SizedBox(height: 24),
+                            // Additional details or actions can go here
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
         child: ListTile(
           leading: SizedBox(
             width: 40,
