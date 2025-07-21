@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import '../models/card_model.dart';
 import '../services/card_storage.dart';
@@ -399,9 +400,46 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
-          trailing: Icon(
-            Icons.arrow_forward_ios,
-            color: isDark ? Colors.white : Colors.black38,
+          trailing: IconButton(
+            icon: Icon(
+              Icons.copy,
+              color: isDark ? Colors.white70 : Colors.black54,
+            ),
+            tooltip: 'Copy card number',
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: card.cardNumber));
+              final snackBar = SnackBar(
+                elevation: 8,
+                behavior: SnackBarBehavior.floating,
+                backgroundColor: isDark
+                    ? const Color(0xFF23262F)
+                    : Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                content: Row(
+                  children: [
+                    Icon(
+                      Icons.check_circle_rounded,
+                      color: isDark ? Colors.greenAccent : Colors.green,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      'Card number copied',
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black87,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ],
+                ),
+                duration: const Duration(seconds: 1),
+              );
+              ScaffoldMessenger.of(context).clearSnackBars();
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            },
           ),
         ),
       ),
