@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'models/card_model.dart';
-import 'screens/home_page.dart';
+import 'screens/main_nav.dart';
 import 'constants/app_constants.dart';
 
 void main() async {
@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp> {
           backgroundColor: Colors.indigo,
         ),
       ),
-      home: HomePage(
+      home: MainNav(
         title: AppConstants.appName,
         toggleTheme: toggleTheme,
         isDarkMode: _themeMode == ThemeMode.dark,
