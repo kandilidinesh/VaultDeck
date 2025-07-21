@@ -52,12 +52,22 @@ class _AddCardDialogState extends State<AddCardDialog> {
   final _holderController = TextEditingController();
   final _numberController = TextEditingController();
   final _expiryController = TextEditingController();
+  final _cvvController = TextEditingController();
+  final _pinController = TextEditingController();
+  final _nicknameController = TextEditingController();
+  final _bankNameController = TextEditingController();
+  final _notesController = TextEditingController();
 
   @override
   void dispose() {
     _holderController.dispose();
     _numberController.dispose();
     _expiryController.dispose();
+    _cvvController.dispose();
+    _pinController.dispose();
+    _nicknameController.dispose();
+    _bankNameController.dispose();
+    _notesController.dispose();
     super.dispose();
   }
 
@@ -85,6 +95,11 @@ class _AddCardDialogState extends State<AddCardDialog> {
           cardNumber: _numberController.text.trim(),
           expiryDate: _expiryController.text.trim(),
           cardType: cardType,
+          cvv: _cvvController.text.trim(),
+          pin: _pinController.text.trim(),
+          nickname: _nicknameController.text.trim(),
+          bankName: _bankNameController.text.trim(),
+          notes: _notesController.text.trim(),
         ),
       );
 
@@ -129,6 +144,46 @@ class _AddCardDialogState extends State<AddCardDialog> {
                   ],
                 ),
                 const SizedBox(height: 8),
+                TextFormField(
+                  controller: _nicknameController,
+                  decoration: InputDecoration(
+                    labelText: 'Card Nickname/Label',
+                    hintText: 'e.g. My Travel Card',
+                    prefixIcon: const Icon(Icons.label),
+                    filled: true,
+                    fillColor: theme.colorScheme.surfaceVariant,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                  ),
+                  validator: (value) {
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _bankNameController,
+                  decoration: InputDecoration(
+                    labelText: 'Bank Name',
+                    hintText: 'e.g. HDFC Bank',
+                    prefixIcon: const Icon(Icons.account_balance),
+                    filled: true,
+                    fillColor: theme.colorScheme.surfaceVariant,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                  ),
+                  validator: (value) {
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _holderController,
                   decoration: InputDecoration(
@@ -232,7 +287,87 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _cvvController,
+                  decoration: InputDecoration(
+                    labelText: 'CVV',
+                    hintText: '3 or 4 digits',
+                    prefixIcon: const Icon(Icons.lock_outline),
+                    filled: true,
+                    fillColor: theme.colorScheme.surfaceVariant,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                  ),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(4),
+                  ],
+                  validator: (value) {
+                    if (value?.trim().isEmpty ?? true) {
+                      return 'Please enter CVV';
+                    }
+                    if (!(value!.length == 3 || value.length == 4)) {
+                      return 'CVV must be 3 or 4 digits';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _pinController,
+                  decoration: InputDecoration(
+                    labelText: 'PIN (optional)',
+                    hintText: 'ATM PIN',
+                    prefixIcon: const Icon(Icons.password),
+                    filled: true,
+                    fillColor: theme.colorScheme.surfaceVariant,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                  ),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(6),
+                  ],
+                  validator: (value) {
+                    if (value != null && value.isNotEmpty && value.length < 4) {
+                      return 'PIN must be at least 4 digits';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _notesController,
+                  decoration: InputDecoration(
+                    labelText: 'Notes',
+                    hintText: 'Any custom info',
+                    prefixIcon: const Icon(Icons.note_alt_outlined),
+                    filled: true,
+                    fillColor: theme.colorScheme.surfaceVariant,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                  ),
+                  maxLines: 2,
+                  validator: (value) {
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 24),
               ],
             ),
           ),
