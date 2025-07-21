@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> {
                 16,
                 MediaQuery.of(context).padding.top + kToolbarHeight + 16,
                 16,
-                16,
+                MediaQuery.of(context).padding.bottom + 16,
               ),
               itemCount: cards.length,
               itemBuilder: (context, idx) {
@@ -146,13 +146,11 @@ class _HomePageState extends State<HomePage> {
   Widget _buildCardTile(CardModel card) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColors = {
-      'Visa': isDark ? const Color(0xFF2D3140) : Colors.blue.shade700,
-      'Mastercard': isDark ? const Color(0xFF3A3F4A) : Colors.orange.shade700,
-      'American Express': isDark
-          ? const Color(0xFF23262F)
-          : Colors.green.shade700,
-      'Discover': isDark ? const Color(0xFF181A20) : Colors.purple.shade700,
-      'Other': isDark ? const Color(0xFF23262F) : Colors.grey.shade700,
+      'Visa': isDark ? const Color(0xFF2D3140) : const Color(0xFFBBDEFB), // Slightly darker blue
+      'Mastercard': isDark ? const Color(0xFF3A3F4A) : const Color(0xFFFFE0B2), // Slightly darker orange
+      'American Express': isDark ? const Color(0xFF23262F) : const Color(0xFFB2EBF2), // Slightly darker teal
+      'Discover': isDark ? const Color(0xFF181A20) : const Color(0xFFD1C4E9), // Slightly darker purple
+      'Other': isDark ? const Color(0xFF23262F) : const Color(0xFFE0E0E0), // Slightly darker gray
     };
     final detectedType = _detectCardType(card.cardNumber);
     String _getCardLogoAsset(String type) {
@@ -198,8 +196,8 @@ class _HomePageState extends State<HomePage> {
           ),
           title: Text(
             card.cardHolderName,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black87,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -208,16 +206,16 @@ class _HomePageState extends State<HomePage> {
             children: [
               Text(
                 card.cardNumber,
-                style: const TextStyle(color: Colors.white70),
+                style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
               ),
               Text(
                 'Exp: ${card.expiryDate}',
-                style: const TextStyle(color: Colors.white70),
+                style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
               ),
-              Text(detectedType, style: const TextStyle(color: Colors.white70)),
+              Text(detectedType, style: TextStyle(color: isDark ? Colors.white70 : Colors.black54)),
             ],
           ),
-          trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white),
+          trailing: Icon(Icons.arrow_forward_ios, color: isDark ? Colors.white : Colors.black38),
         ),
       ),
     );
