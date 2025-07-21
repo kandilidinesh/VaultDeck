@@ -37,6 +37,21 @@ class _HomePageState extends State<HomePage> {
     return 'Other';
   }
 
+  IconData _getCardIcon(String type) {
+    switch (type) {
+      case 'Visa':
+        return Icons.credit_card;
+      case 'Mastercard':
+        return Icons.credit_card;
+      case 'American Express':
+        return Icons.credit_card;
+      case 'Discover':
+        return Icons.credit_card;
+      default:
+        return Icons.credit_card;
+    }
+  }
+
   void _deleteCard(int key) async {
     await CardStorage.deleteCard(key);
     setState(() {});
@@ -144,13 +159,6 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildCardTile(CardModel card) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardIcons = {
-      'Visa': Icons.credit_card,
-      'Mastercard': Icons.credit_card,
-      'American Express': Icons.credit_card,
-      'Discover': Icons.credit_card,
-      'Other': Icons.credit_card,
-    };
     final cardColors = {
       'Visa': isDark ? const Color(0xFF2D3140) : Colors.blue.shade700,
       'Mastercard': isDark ? const Color(0xFF3A3F4A) : Colors.orange.shade700,
@@ -160,6 +168,8 @@ class _HomePageState extends State<HomePage> {
       'Discover': isDark ? const Color(0xFF181A20) : Colors.purple.shade700,
       'Other': isDark ? const Color(0xFF23262F) : Colors.grey.shade700,
     };
+    final detectedType = _detectCardType(card.cardNumber);
+    final cardIcon = _getCardIcon(detectedType);
     return Card(
       elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -172,11 +182,7 @@ class _HomePageState extends State<HomePage> {
         highlightColor: Colors.transparent,
         splashColor: Colors.transparent,
         child: ListTile(
-          leading: Icon(
-            cardIcons[card.cardType],
-            color: Colors.white,
-            size: 32,
-          ),
+          leading: Icon(cardIcon, color: Colors.white, size: 32),
           title: Text(
             card.cardHolderName,
             style: const TextStyle(
@@ -195,10 +201,7 @@ class _HomePageState extends State<HomePage> {
                 'Exp: ${card.expiryDate}',
                 style: const TextStyle(color: Colors.white70),
               ),
-              Text(
-                card.cardType,
-                style: const TextStyle(color: Colors.white70),
-              ),
+              Text(detectedType, style: const TextStyle(color: Colors.white70)),
             ],
           ),
           trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white),
