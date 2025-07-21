@@ -174,6 +174,11 @@ class _HomePageState extends State<HomePage> {
       }
     }
 
+    // Mask card number except last 4 digits
+    String maskedNumber = card.cardNumber.length >= 4
+        ? '•••• •••• •••• ${card.cardNumber.substring(card.cardNumber.length - 4)}'
+        : card.cardNumber;
+
     return Card(
       elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -223,13 +228,11 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            // 3D Card View
                             CardDetailView(
                               card: card,
                               cardLogoAsset: _getCardLogoAsset(detectedType),
                             ),
                             const SizedBox(height: 24),
-                            // Additional details or actions can go here
                           ],
                         ),
                       ),
@@ -254,7 +257,9 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           title: Text(
-            card.cardHolderName,
+            card.nickname?.isNotEmpty == true
+                ? card.nickname!
+                : card.cardHolderName,
             style: TextStyle(
               color: isDark ? Colors.white : Colors.black87,
               fontWeight: FontWeight.bold,
@@ -263,20 +268,24 @@ class _HomePageState extends State<HomePage> {
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (card.bankName?.isNotEmpty == true)
+                Text(
+                  card.bankName!,
+                  style: TextStyle(
+                    color: isDark ? Colors.white70 : Colors.black54,
+                  ),
+                ),
               Text(
-                card.cardNumber,
+                maskedNumber,
                 style: TextStyle(
-                  color: isDark ? Colors.white70 : Colors.black54,
+                  color: isDark ? Colors.white : Colors.black87,
+                  fontFeatures: [FontFeature.tabularFigures()],
+                  letterSpacing: 1.2,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
               Text(
                 'Exp: ${card.expiryDate}',
-                style: TextStyle(
-                  color: isDark ? Colors.white70 : Colors.black54,
-                ),
-              ),
-              Text(
-                detectedType,
                 style: TextStyle(
                   color: isDark ? Colors.white70 : Colors.black54,
                 ),

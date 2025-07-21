@@ -147,8 +147,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                 TextFormField(
                   controller: _nicknameController,
                   decoration: InputDecoration(
-                    labelText: 'Card Nickname/Label',
-                    hintText: 'e.g. My Travel Card',
+                    labelText: 'Card Nickname',
                     prefixIcon: const Icon(Icons.label),
                     filled: true,
                     fillColor: theme.colorScheme.surfaceVariant,
@@ -168,7 +167,6 @@ class _AddCardDialogState extends State<AddCardDialog> {
                   controller: _bankNameController,
                   decoration: InputDecoration(
                     labelText: 'Bank Name',
-                    hintText: 'e.g. HDFC Bank',
                     prefixIcon: const Icon(Icons.account_balance),
                     filled: true,
                     fillColor: theme.colorScheme.surfaceVariant,
@@ -288,70 +286,87 @@ class _AddCardDialogState extends State<AddCardDialog> {
                   },
                 ),
                 const SizedBox(height: 16),
-                TextFormField(
-                  controller: _cvvController,
-                  decoration: InputDecoration(
-                    labelText: 'CVV',
-                    hintText: '3 or 4 digits',
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    filled: true,
-                    fillColor: theme.colorScheme.surfaceVariant,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide.none,
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _cvvController,
+                        decoration: InputDecoration(
+                          labelText: 'CVV',
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          filled: true,
+                          fillColor: theme.colorScheme.surfaceVariant,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.fromLTRB(
+                            20,
+                            22,
+                            16,
+                            12,
+                          ),
+                          floatingLabelBehavior: FloatingLabelBehavior.never,
+                        ),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(4),
+                        ],
+                        validator: (value) {
+                          if (value?.trim().isEmpty ?? true) {
+                            return 'Please enter CVV';
+                          }
+                          if (!(value!.length == 3 || value.length == 4)) {
+                            return 'CVV must be 3 or 4 digits';
+                          }
+                          return null;
+                        },
+                      ),
                     ),
-                    contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
-                    floatingLabelBehavior: FloatingLabelBehavior.never,
-                  ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(4),
-                  ],
-                  validator: (value) {
-                    if (value?.trim().isEmpty ?? true) {
-                      return 'Please enter CVV';
-                    }
-                    if (!(value!.length == 3 || value.length == 4)) {
-                      return 'CVV must be 3 or 4 digits';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _pinController,
-                  decoration: InputDecoration(
-                    labelText: 'PIN (optional)',
-                    hintText: 'ATM PIN',
-                    prefixIcon: const Icon(Icons.password),
-                    filled: true,
-                    fillColor: theme.colorScheme.surfaceVariant,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide.none,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _pinController,
+                        decoration: InputDecoration(
+                          labelText: 'PIN',
+                          prefixIcon: const Icon(Icons.password),
+                          filled: true,
+                          fillColor: theme.colorScheme.surfaceVariant,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.fromLTRB(
+                            20,
+                            22,
+                            16,
+                            12,
+                          ),
+                          floatingLabelBehavior: FloatingLabelBehavior.never,
+                        ),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(6),
+                        ],
+                        validator: (value) {
+                          if (value != null &&
+                              value.isNotEmpty &&
+                              value.length < 4) {
+                            return 'PIN must be at least 4 digits';
+                          }
+                          return null;
+                        },
+                      ),
                     ),
-                    contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
-                    floatingLabelBehavior: FloatingLabelBehavior.never,
-                  ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(6),
                   ],
-                  validator: (value) {
-                    if (value != null && value.isNotEmpty && value.length < 4) {
-                      return 'PIN must be at least 4 digits';
-                    }
-                    return null;
-                  },
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _notesController,
                   decoration: InputDecoration(
                     labelText: 'Notes',
-                    hintText: 'Any custom info',
                     prefixIcon: const Icon(Icons.note_alt_outlined),
                     filled: true,
                     fillColor: theme.colorScheme.surfaceVariant,
