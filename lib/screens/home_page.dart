@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
                         ? Colors.grey.shade800
                         : Theme.of(
                             context,
-                          ).colorScheme.onSurface.withOpacity(0.3),
+                          ).colorScheme.onSurface.withValues(alpha: 0.3),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -81,7 +81,7 @@ class _HomePageState extends State<HomePage> {
                           ? Colors.grey.shade400
                           : Theme.of(
                               context,
-                            ).colorScheme.onSurface.withOpacity(0.6),
+                            ).colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
                           ? Colors.grey.shade500
                           : Theme.of(
                               context,
-                            ).colorScheme.onSurface.withOpacity(0.5),
+                            ).colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
                 ],
@@ -123,7 +123,7 @@ class _HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.only(right: 32),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.12),
+                        color: Colors.red.withValues(alpha: 0.12),
                         shape: BoxShape.circle,
                       ),
                       padding: const EdgeInsets.all(10),
@@ -173,9 +173,8 @@ class _HomePageState extends State<HomePage> {
                                 'Are you sure you want to delete this card? This action cannot be undone.',
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface.withOpacity(0.85),
+                                  color: Theme.of(context).colorScheme.onSurface
+                                      .withValues(alpha: 0.85),
                                 ),
                               ),
                               const SizedBox(height: 28),
@@ -201,8 +200,8 @@ class _HomePageState extends State<HomePage> {
                                     onPressed: () =>
                                         Navigator.of(ctx).pop(true),
                                     style: TextButton.styleFrom(
-                                      backgroundColor: Colors.red.withOpacity(
-                                        0.08,
+                                      backgroundColor: Colors.red.withValues(
+                                        alpha: 0.08,
                                       ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(8),
@@ -235,10 +234,10 @@ class _HomePageState extends State<HomePage> {
         child: FloatingActionButton(
           onPressed: _showAddCardDialog,
           tooltip: 'Add Card to Vault',
-          child: Icon(Icons.add_card_rounded, color: Colors.white),
           backgroundColor: isDark
               ? const Color(0xFF3A3F4A)
               : Theme.of(context).colorScheme.primary,
+          child: Icon(Icons.add_card_rounded, color: Colors.white),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -248,7 +247,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildCardTile(CardModel card) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final detectedType = _detectCardType(card.cardNumber);
-    String _getCardLogoAsset(String type) {
+    String getCardLogoAsset(String type) {
       switch (type) {
         case 'Visa':
           return 'assets/card_logos/visa.svg';
@@ -304,7 +303,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.15),
+                          color: Colors.black.withValues(alpha: 0.15),
                           blurRadius: 24,
                           offset: Offset(0, -8),
                         ),
@@ -319,7 +318,7 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             CardDetailView(
                               card: card,
-                              cardLogoAsset: _getCardLogoAsset(detectedType),
+                              cardLogoAsset: getCardLogoAsset(detectedType),
                             ),
                             const SizedBox(height: 24),
                           ],
@@ -339,7 +338,7 @@ class _HomePageState extends State<HomePage> {
             child: Padding(
               padding: const EdgeInsets.all(2.0),
               child: SvgPicture.asset(
-                _getCardLogoAsset(detectedType),
+                getCardLogoAsset(detectedType),
                 width: 36,
                 height: 24,
               ),

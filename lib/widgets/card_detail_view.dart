@@ -100,7 +100,7 @@ class CardDetailView extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.25),
+                  color: Colors.black.withValues(alpha: 0.25),
                   blurRadius: 24,
                   offset: Offset(0, 12),
                 ),
@@ -203,7 +203,9 @@ class CardDetailView extends StatelessWidget {
                   right: 20,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(isDark ? 0.08 : 0.18),
+                      color: Colors.white.withValues(
+                        alpha: isDark ? 0.08 : 0.18,
+                      ),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     padding: const EdgeInsets.symmetric(
@@ -246,7 +248,7 @@ class CardDetailView extends StatelessWidget {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.10),
+                      color: Colors.black.withValues(alpha: 0.10),
                       blurRadius: 8,
                       offset: Offset(0, 4),
                     ),

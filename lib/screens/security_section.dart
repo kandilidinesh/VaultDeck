@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'pin_lock.dart';
 
 class SecuritySection extends StatefulWidget {
-  const SecuritySection({Key? key}) : super(key: key);
+  const SecuritySection({super.key});
 
   @override
   State<SecuritySection> createState() => _SecuritySectionState();

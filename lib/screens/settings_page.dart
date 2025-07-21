@@ -41,15 +41,15 @@ class SettingsPage extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 color: isDark
-                    ? Colors.white.withOpacity(0.08)
-                    : Colors.grey.shade200.withOpacity(0.18),
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.grey.shade200.withValues(alpha: 0.18),
                 borderRadius: const BorderRadius.vertical(
                   bottom: Radius.circular(24),
                 ),
                 border: Border.all(
                   color: isDark
-                      ? Colors.white.withOpacity(0.12)
-                      : Colors.grey.shade300.withOpacity(0.18),
+                      ? Colors.white.withValues(alpha: 0.12)
+                      : Colors.grey.shade300.withValues(alpha: 0.18),
                   width: 0.5,
                 ),
               ),

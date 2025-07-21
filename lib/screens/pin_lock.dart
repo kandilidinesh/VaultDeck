@@ -6,11 +6,11 @@ class PinLockDialog extends StatefulWidget {
   final bool isSetup;
 
   const PinLockDialog({
-    Key? key,
+    super.key,
     this.onPinSet,
     this.onPinVerify,
     this.isSetup = true,
-  }) : super(key: key);
+  });
 
   @override
   State<PinLockDialog> createState() => _PinLockDialogState();
@@ -80,8 +80,8 @@ class _PinLockDialogState extends State<PinLockDialog> {
           onPressed: () => Navigator.pop(context),
         ),
         ElevatedButton(
-          child: Text(widget.isSetup ? 'Set PIN' : 'Verify'),
           onPressed: _handlePin,
+          child: Text(widget.isSetup ? 'Set PIN' : 'Verify'),
         ),
       ],
     );

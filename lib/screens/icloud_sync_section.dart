@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ICloudSyncSection extends StatefulWidget {
-  const ICloudSyncSection({Key? key}) : super(key: key);
+  const ICloudSyncSection({super.key});
 
   @override
   State<ICloudSyncSection> createState() => _ICloudSyncSectionState();

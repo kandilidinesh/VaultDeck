@@ -78,8 +78,9 @@ class _AddCardDialogState extends State<AddCardDialog> {
     if (number.startsWith('6')) return 'Discover';
     if (number.startsWith('60') ||
         number.startsWith('6521') ||
-        number.startsWith('6522'))
+        number.startsWith('6522')) {
       return 'RuPay';
+    }
     return 'Other';
   }
 
@@ -102,7 +103,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
           notes: _notesController.text.trim(),
         ),
       );
-
+      if (!mounted) return;
       widget.onCardAdded();
       Navigator.of(context).pop();
     }
@@ -119,7 +120,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 16,
               offset: const Offset(0, -2),
             ),
@@ -150,7 +151,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     labelText: 'Card Nickname',
                     prefixIcon: const Icon(Icons.label),
                     filled: true,
-                    fillColor: theme.colorScheme.surfaceVariant,
+                    fillColor: theme.colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide.none,
@@ -169,7 +170,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     labelText: 'Bank Name',
                     prefixIcon: const Icon(Icons.account_balance),
                     filled: true,
-                    fillColor: theme.colorScheme.surfaceVariant,
+                    fillColor: theme.colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide.none,
@@ -188,7 +189,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     labelText: 'Card Holder Name',
                     prefixIcon: const Icon(Icons.person),
                     filled: true,
-                    fillColor: theme.colorScheme.surfaceVariant,
+                    fillColor: theme.colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide.none,
@@ -219,7 +220,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                       ),
                     ),
                     filled: true,
-                    fillColor: theme.colorScheme.surfaceVariant,
+                    fillColor: theme.colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide.none,
@@ -260,7 +261,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     hintText: 'MM/YY',
                     prefixIcon: const Icon(CupertinoIcons.calendar),
                     filled: true,
-                    fillColor: theme.colorScheme.surfaceVariant,
+                    fillColor: theme.colorScheme.surfaceContainerHighest,
                     alignLabelWithHint: true,
                     contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
                     border: OutlineInputBorder(
@@ -295,7 +296,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                           labelText: 'CVV',
                           prefixIcon: const Icon(Icons.lock_outline),
                           filled: true,
-                          fillColor: theme.colorScheme.surfaceVariant,
+                          fillColor: theme.colorScheme.surfaceContainerHighest,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14),
                             borderSide: BorderSide.none,
@@ -332,7 +333,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                           labelText: 'PIN',
                           prefixIcon: const Icon(Icons.password),
                           filled: true,
-                          fillColor: theme.colorScheme.surfaceVariant,
+                          fillColor: theme.colorScheme.surfaceContainerHighest,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14),
                             borderSide: BorderSide.none,
@@ -369,7 +370,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     labelText: 'Notes',
                     prefixIcon: const Icon(Icons.note_alt_outlined),
                     filled: true,
-                    fillColor: theme.colorScheme.surfaceVariant,
+                    fillColor: theme.colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide.none,

@@ -60,13 +60,13 @@ class _MainNavState extends State<MainNav> {
                 MediaQuery.of(context).padding.bottom,
             decoration: BoxDecoration(
               color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.black.withOpacity(0.3)
-                  : Colors.white.withOpacity(0.7),
+                  ? Colors.black.withValues(alpha: 0.3)
+                  : Colors.white.withValues(alpha: 0.7),
               border: Border(
                 top: BorderSide(
                   color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white.withOpacity(0.08)
-                      : Colors.black.withOpacity(0.08),
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.black.withValues(alpha: 0.08),
                   width: 1.2,
                 ),
               ),
@@ -94,7 +94,7 @@ class _MainNavState extends State<MainNav> {
     final isSelected = _selectedIndex == index;
     final color = isSelected
         ? Theme.of(context).colorScheme.primary
-        : Theme.of(context).iconTheme.color?.withOpacity(0.5);
+        : Theme.of(context).iconTheme.color?.withValues(alpha: 0.5);
     return GestureDetector(
       onTap: () => _onItemTapped(index),
       behavior: HitTestBehavior.opaque,
