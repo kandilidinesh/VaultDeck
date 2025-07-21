@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import '../models/card_model.dart';
 import '../services/card_storage.dart';
 import '../widgets/vaultdeck_app_bar.dart';
+import '../widgets/add_card_dialog.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -23,67 +24,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showAddCardDialog() {
-    String holder = '';
-    String number = '';
-    String expiry = '';
-    String type = '';
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Add Card'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Card Holder Name',
-                  ),
-                  onChanged: (v) => holder = v,
-                ),
-                TextField(
-                  decoration: const InputDecoration(labelText: 'Card Number'),
-                  keyboardType: TextInputType.number,
-                  onChanged: (v) => number = v,
-                ),
-                TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Expiry Date (MM/YY)',
-                  ),
-                  onChanged: (v) => expiry = v,
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () => Navigator.pop(context),
-            ),
-            ElevatedButton(
-              child: const Text('Add'),
-              onPressed: () async {
-                type = _detectCardType(number);
-                if (holder.isNotEmpty &&
-                    number.isNotEmpty &&
-                    expiry.isNotEmpty) {
-                  await CardStorage.addCard(
-                    CardModel(
-                      cardHolderName: holder,
-                      cardNumber: number,
-                      expiryDate: expiry,
-                      cardType: type,
-                    ),
-                  );
-                  setState(() {});
-                  Navigator.pop(context);
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
+    AddCardDialog.show(context, () {
+      setState(() {});
+    });
   }
 
   String _detectCardType(String number) {
