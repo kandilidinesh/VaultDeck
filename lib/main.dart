@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'models/card_model.dart';
 import 'screens/home_page.dart';
+import 'providers/theme_provider.dart';
+import 'config/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,14 +14,29 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  void toggleTheme() {
+    setState(() {
+      _themeMode = _themeMode == ThemeMode.light
+          ? ThemeMode.dark
+          : ThemeMode.light;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Card Storage',
-      themeMode: ThemeMode.system,
+      themeMode: _themeMode,
       theme: ThemeData(
         brightness: Brightness.light,
         colorScheme: ColorScheme.fromSeed(
@@ -65,7 +83,11 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.indigo,
         ),
       ),
-      home: const HomePage(title: 'Card Storage'),
+      home: HomePage(
+        title: 'Card Storage',
+        toggleTheme: toggleTheme,
+        isDarkMode: _themeMode == ThemeMode.dark,
+      ),
     );
   }
 }

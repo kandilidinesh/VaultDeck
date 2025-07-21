@@ -4,9 +4,16 @@ import '../models/card_model.dart';
 import '../services/card_storage.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.title});
+  const HomePage({
+    super.key,
+    required this.title,
+    required this.toggleTheme,
+    required this.isDarkMode,
+  });
 
   final String title;
+  final VoidCallback toggleTheme;
+  final bool isDarkMode;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -14,7 +21,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late Box<CardModel> cardBox;
-  bool isDarkMode = false;
 
   @override
   void initState() {
@@ -114,12 +120,8 @@ class _HomePageState extends State<HomePage> {
         title: Text(widget.title),
         actions: [
           IconButton(
-            icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode),
-            onPressed: () {
-              setState(() {
-                isDarkMode = !isDarkMode;
-              });
-            },
+            icon: Icon(widget.isDarkMode ? Icons.light_mode : Icons.dark_mode),
+            onPressed: widget.toggleTheme,
           ),
         ],
       ),
