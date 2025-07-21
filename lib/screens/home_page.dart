@@ -176,9 +176,24 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showAddCardDialog,
         tooltip: 'Add Card to Vault',
-        icon: const Icon(Icons.add_card_rounded),
-        label: const Text('Add Card'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        icon: Icon(
+          Icons.add_card_rounded,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white
+              : Colors.white,
+        ),
+        label: Text(
+          'Add Card',
+          style: TextStyle(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.indigo.shade700
+            : Theme.of(context).colorScheme.primary,
       ),
     );
   }
