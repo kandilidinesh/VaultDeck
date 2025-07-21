@@ -1,7 +1,25 @@
 import 'package:flutter/material.dart';
 import '../models/card_model.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CardTile extends StatelessWidget {
+  String _getCardLogoAsset(String type) {
+    switch (type) {
+      case 'Visa':
+        return 'assets/card_logos/visa.svg';
+      case 'Mastercard':
+        return 'assets/card_logos/mastercard.svg';
+      case 'American Express':
+        return 'assets/card_logos/amex.svg';
+      case 'Discover':
+        return 'assets/card_logos/discover.svg';
+      case 'RuPay':
+        return 'assets/card_logos/rupay.svg';
+      default:
+        return 'assets/card_logos/generic.svg';
+    }
+  }
+
   final CardModel card;
   final VoidCallback? onTap;
 
@@ -15,10 +33,17 @@ class CardTile extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       color: _getCardColor(card.cardType),
       child: ListTile(
-        leading: Icon(
-          _getCardIcon(card.cardType),
-          color: Colors.white,
-          size: 32,
+        leading: SizedBox(
+          width: 40,
+          height: 28,
+          child: Padding(
+            padding: const EdgeInsets.all(2.0),
+            child: SvgPicture.asset(
+              _getCardLogoAsset(card.cardType),
+              width: 36,
+              height: 24,
+            ),
+          ),
         ),
         title: Text(
           card.cardHolderName,
@@ -45,17 +70,6 @@ class CardTile extends StatelessWidget {
         onTap: onTap,
       ),
     );
-  }
-
-  IconData _getCardIcon(String cardType) {
-    const cardIcons = {
-      'Visa': Icons.credit_card,
-      'Mastercard': Icons.credit_card,
-      'American Express': Icons.credit_card,
-      'Discover': Icons.credit_card,
-      'Other': Icons.credit_card,
-    };
-    return cardIcons[cardType] ?? Icons.credit_card;
   }
 
   Color _getCardColor(String cardType) {

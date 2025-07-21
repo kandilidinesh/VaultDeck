@@ -1,6 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class FavoritesPage extends StatelessWidget {
+  String _getCardLogoAsset(String type) {
+    switch (type) {
+      case 'Visa':
+        return 'assets/card_logos/visa.svg';
+      case 'Mastercard':
+        return 'assets/card_logos/mastercard.svg';
+      case 'American Express':
+        return 'assets/card_logos/amex.svg';
+      case 'Discover':
+        return 'assets/card_logos/discover.svg';
+      case 'RuPay':
+        return 'assets/card_logos/rupay.svg';
+      default:
+        return 'assets/card_logos/generic.svg';
+    }
+  }
+
   // Helper to detect card type from card number
   String _detectCardType(String number) {
     if (number.startsWith('4')) return 'Visa';
@@ -31,20 +49,20 @@ class FavoritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    // Example card number for demo; replace with actual favorite card data
-    final demoCardNumber = '4111111111111111';
-    final cardType = _detectCardType(demoCardNumber);
-    final cardIcon = _getCardIcon(cardType);
     return Container(
       color: isDark ? const Color(0xFF181A20) : Colors.white,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(cardIcon, size: 64, color: Colors.amber),
+            SvgPicture.asset(
+              'assets/card_logos/generic.svg',
+              width: 64,
+              height: 40,
+            ),
             const SizedBox(height: 16),
             Text(
-              cardType,
+              'Your Cards',
               style: TextStyle(
                 fontSize: 20,
                 color: isDark ? Colors.white : Colors.black,

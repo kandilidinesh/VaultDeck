@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import '../models/card_model.dart';
 import '../services/card_storage.dart';
 import '../widgets/vaultdeck_app_bar.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../widgets/add_card_dialog.dart';
 
 class HomePage extends StatefulWidget {
@@ -35,21 +36,6 @@ class _HomePageState extends State<HomePage> {
     if (number.startsWith('3')) return 'American Express';
     if (number.startsWith('6')) return 'Discover';
     return 'Other';
-  }
-
-  IconData _getCardIcon(String type) {
-    switch (type) {
-      case 'Visa':
-        return Icons.credit_card;
-      case 'Mastercard':
-        return Icons.credit_card;
-      case 'American Express':
-        return Icons.credit_card;
-      case 'Discover':
-        return Icons.credit_card;
-      default:
-        return Icons.credit_card;
-    }
   }
 
   void _deleteCard(int key) async {
@@ -169,7 +155,23 @@ class _HomePageState extends State<HomePage> {
       'Other': isDark ? const Color(0xFF23262F) : Colors.grey.shade700,
     };
     final detectedType = _detectCardType(card.cardNumber);
-    final cardIcon = _getCardIcon(detectedType);
+    String _getCardLogoAsset(String type) {
+      switch (type) {
+        case 'Visa':
+          return 'assets/card_logos/visa.svg';
+        case 'Mastercard':
+          return 'assets/card_logos/mastercard.svg';
+        case 'American Express':
+          return 'assets/card_logos/amex.svg';
+        case 'Discover':
+          return 'assets/card_logos/discover.svg';
+        case 'RuPay':
+          return 'assets/card_logos/rupay.svg';
+        default:
+          return 'assets/card_logos/generic.svg';
+      }
+    }
+
     return Card(
       elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -182,7 +184,18 @@ class _HomePageState extends State<HomePage> {
         highlightColor: Colors.transparent,
         splashColor: Colors.transparent,
         child: ListTile(
-          leading: Icon(cardIcon, color: Colors.white, size: 32),
+          leading: SizedBox(
+            width: 40,
+            height: 28,
+            child: Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: SvgPicture.asset(
+                _getCardLogoAsset(detectedType),
+                width: 36,
+                height: 24,
+              ),
+            ),
+          ),
           title: Text(
             card.cardHolderName,
             style: const TextStyle(
