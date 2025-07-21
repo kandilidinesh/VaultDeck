@@ -5,11 +5,7 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onThemeToggle;
   final bool? isDarkMode;
 
-  const VaultDeckAppBar({
-    super.key,
-    this.onThemeToggle,
-    this.isDarkMode,
-  });
+  const VaultDeckAppBar({super.key, this.onThemeToggle, this.isDarkMode});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -29,10 +25,7 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Colors.indigo.shade400,
-                  Colors.indigo.shade600,
-                ],
+                colors: [Colors.indigo.shade400, Colors.indigo.shade600],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),

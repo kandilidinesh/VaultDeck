@@ -14,9 +14,18 @@ class FavoritesPage extends StatelessWidget {
           children: [
             Icon(Icons.star_rounded, size: 64, color: Colors.amber),
             const SizedBox(height: 16),
-            Text('No favorites yet', style: TextStyle(fontSize: 20, color: isDark ? Colors.white : Colors.black)),
+            Text(
+              'No favorites yet',
+              style: TextStyle(
+                fontSize: 20,
+                color: isDark ? Colors.white : Colors.black,
+              ),
+            ),
             const SizedBox(height: 8),
-            Text('Mark cards as favorites to see them here', style: TextStyle(color: isDark ? Colors.white70 : Colors.black54)),
+            Text(
+              'Mark cards as favorites to see them here',
+              style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
+            ),
           ],
         ),
       ),

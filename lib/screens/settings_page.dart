@@ -13,9 +13,16 @@ class SettingsPage extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final tileBg = isDark ? const Color(0xFF23262F) : Colors.white;
     final bgColor = isDark ? const Color(0xFF181A20) : Colors.white;
-    return SafeArea(
-      child: Container(
-        color: bgColor,
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      backgroundColor: bgColor,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text('Settings'),
+        centerTitle: true,
+      ),
+      body: SafeArea(
         child: Column(
           children: [
             Expanded(
@@ -31,15 +38,20 @@ class SettingsPage extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        ListTile(
-                          leading: const Icon(Icons.dark_mode_rounded),
-                          title: const Text('Theme'),
-                          subtitle: const Text('Toggle light/dark mode'),
-                          trailing: Switch(
-                            value: isDarkMode ?? false,
-                            onChanged: (_) {
-                              if (toggleTheme != null) toggleTheme!();
-                            },
+                        InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          highlightColor: Colors.transparent,
+                          splashColor: Colors.transparent,
+                          child: ListTile(
+                            leading: const Icon(Icons.dark_mode_rounded),
+                            title: const Text('Theme'),
+                            subtitle: const Text('Toggle light/dark mode'),
+                            trailing: Switch(
+                              value: isDarkMode ?? false,
+                              onChanged: (_) {
+                                if (toggleTheme != null) toggleTheme!();
+                              },
+                            ),
                           ),
                         ),
                       ],
@@ -57,7 +69,9 @@ class SettingsPage extends StatelessWidget {
               child: Text(
                 'Version 1.0.0',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.5),
                 ),
                 textAlign: TextAlign.center,
               ),
