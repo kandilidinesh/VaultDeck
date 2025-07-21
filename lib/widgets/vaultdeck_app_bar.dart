@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../constants/app_constants.dart';
+import 'dart:ui';
 
 class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onThemeToggle;
@@ -19,6 +20,24 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       backgroundColor: Colors.transparent,
       foregroundColor: Colors.white,
+      flexibleSpace: ClipRRect(
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(isDark ? 0.08 : 0.18),
+              borderRadius: const BorderRadius.vertical(
+                bottom: Radius.circular(24),
+              ),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.12),
+                width: 0.5,
+              ),
+            ),
+          ),
+        ),
+      ),
       title: Row(
         children: [
           Container(
@@ -90,7 +109,6 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ]
           : [],
-      // No flexibleSpace for transparency
     );
   }
 }
