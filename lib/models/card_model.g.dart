@@ -21,13 +21,24 @@ class CardModelAdapter extends TypeAdapter<CardModel> {
       cardNumber: fields[1] as String,
       expiryDate: fields[2] as String,
       cardType: fields[3] as String,
+      cvv: fields[4] as String?,
+      pin: fields[5] as String?,
+      nickname: fields[6] as String?,
+      bankName: fields[7] as String?,
+      notes: fields[8] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, CardModel obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(9)
+      ..writeByte(6)
+      ..write(obj.nickname)
+      ..writeByte(7)
+      ..write(obj.bankName)
+      ..writeByte(8)
+      ..write(obj.notes)
       ..writeByte(0)
       ..write(obj.cardHolderName)
       ..writeByte(1)
@@ -35,7 +46,11 @@ class CardModelAdapter extends TypeAdapter<CardModel> {
       ..writeByte(2)
       ..write(obj.expiryDate)
       ..writeByte(3)
-      ..write(obj.cardType);
+      ..write(obj.cardType)
+      ..writeByte(4)
+      ..write(obj.cvv)
+      ..writeByte(5)
+      ..write(obj.pin);
   }
 
   @override
