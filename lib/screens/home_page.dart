@@ -247,23 +247,6 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildCardTile(CardModel card) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColors = {
-      'Visa': isDark
-          ? const Color(0xFF2D3140)
-          : const Color(0xFFBBDEFB), // Slightly darker blue
-      'Mastercard': isDark
-          ? const Color(0xFF3A3F4A)
-          : const Color(0xFFFFE0B2), // Slightly darker orange
-      'American Express': isDark
-          ? const Color(0xFF23262F)
-          : const Color(0xFFB2EBF2), // Slightly darker teal
-      'Discover': isDark
-          ? const Color(0xFF181A20)
-          : const Color(0xFFD1C4E9), // Slightly darker purple
-      'Other': isDark
-          ? const Color(0xFF23262F)
-          : const Color(0xFFE0E0E0), // Slightly darker gray
-    };
     final detectedType = _detectCardType(card.cardNumber);
     String _getCardLogoAsset(String type) {
       switch (type) {
@@ -291,9 +274,7 @@ class _HomePageState extends State<HomePage> {
       elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color:
-          cardColors[card.cardType] ??
-          (isDark ? const Color(0xFF23262F) : Colors.grey.shade700),
+      color: isDark ? const Color(0xFF23262F) : Colors.white,
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         highlightColor: Colors.transparent,
