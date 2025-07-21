@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:provider/provider.dart';
 import 'models/card_model.dart';
 import 'screens/home_page.dart';
-import 'providers/theme_provider.dart';
-import 'config/app_theme.dart';
+import 'constants/app_constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(CardModelAdapter());
-  await Hive.openBox<CardModel>('cardsBox');
+  await Hive.openBox<CardModel>(AppConstants.cardsBoxKey);
   runApp(const MyApp());
 }
 
@@ -35,7 +33,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Card Storage',
+      title: AppConstants.appName,
       themeMode: _themeMode,
       theme: ThemeData(
         brightness: Brightness.light,
@@ -84,7 +82,7 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       home: HomePage(
-        title: 'Card Storage',
+        title: AppConstants.appName,
         toggleTheme: toggleTheme,
         isDarkMode: _themeMode == ThemeMode.dark,
       ),

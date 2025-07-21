@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import '../models/card_model.dart';
 import '../services/card_storage.dart';
+import '../widgets/vaultdeck_app_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -115,18 +116,43 @@ class _HomePageState extends State<HomePage> {
         .where((e) => e != null)
         .toList();
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-        actions: [
-          IconButton(
-            icon: Icon(widget.isDarkMode ? Icons.light_mode : Icons.dark_mode),
-            onPressed: widget.toggleTheme,
-          ),
-        ],
+      appBar: VaultDeckAppBar(
+        onThemeToggle: widget.toggleTheme,
+        isDarkMode: widget.isDarkMode,
       ),
       body: cards.isEmpty
-          ? const Center(child: Text('No cards added yet'))
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.account_balance_wallet_outlined,
+                    size: 64,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.3),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Your vault is empty',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Add your first card to get started',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.5),
+                    ),
+                  ),
+                ],
+              ),
+            )
           : ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: cards.length,
@@ -147,10 +173,12 @@ class _HomePageState extends State<HomePage> {
                 );
               },
             ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _showAddCardDialog,
-        tooltip: 'Add Card',
-        child: const Icon(Icons.add),
+        tooltip: 'Add Card to Vault',
+        icon: const Icon(Icons.add_card_rounded),
+        label: const Text('Add Card'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
     );
   }
