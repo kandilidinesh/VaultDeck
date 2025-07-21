@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'security_section.dart';
+import 'icloud_sync_section.dart';
 
 class SettingsPage extends StatelessWidget {
   final VoidCallback? toggleTheme;
   final bool? isDarkMode;
 
-  const SettingsPage({
-    super.key,
-    this.toggleTheme,
-    this.isDarkMode,
-  });
+  const SettingsPage({super.key, this.toggleTheme, this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +45,8 @@ class SettingsPage extends StatelessWidget {
                 ),
                 // Security group
                 const SecuritySection(),
+                // iCloud sync group
+                const ICloudSyncSection(),
               ],
             ),
           ),

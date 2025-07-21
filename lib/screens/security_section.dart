@@ -60,7 +60,9 @@ class _SecuritySectionState extends State<SecuritySection> {
           ListTile(
             leading: const Icon(Icons.security_rounded),
             title: const Text('Security'),
-            titleTextStyle: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            titleTextStyle: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const Divider(height: 1),
           SwitchListTile(
@@ -69,7 +71,9 @@ class _SecuritySectionState extends State<SecuritySection> {
             onChanged: _toggleBiometric,
             secondary: const Icon(Icons.fingerprint_rounded),
             tileColor: tileBg,
-            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.zero,
+            ),
           ),
           const Divider(height: 1),
           SwitchListTile(
@@ -78,12 +82,22 @@ class _SecuritySectionState extends State<SecuritySection> {
             onChanged: _togglePin,
             secondary: const Icon(Icons.lock_rounded),
             tileColor: tileBg,
-            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.zero,
+            ),
           ),
           if (_pinEnabled)
             Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 8),
-              child: Text(_pin != null ? 'PIN is set.' : 'PIN not set.', style: Theme.of(context).textTheme.bodySmall),
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 4,
+                bottom: 8,
+              ),
+              child: Text(
+                _pin != null ? 'PIN is set.' : 'PIN not set.',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
             ),
         ],
       ),

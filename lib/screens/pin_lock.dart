@@ -5,7 +5,12 @@ class PinLockDialog extends StatefulWidget {
   final void Function(String pin)? onPinVerify;
   final bool isSetup;
 
-  const PinLockDialog({Key? key, this.onPinSet, this.onPinVerify, this.isSetup = true}) : super(key: key);
+  const PinLockDialog({
+    Key? key,
+    this.onPinSet,
+    this.onPinVerify,
+    this.isSetup = true,
+  }) : super(key: key);
 
   @override
   State<PinLockDialog> createState() => _PinLockDialogState();
