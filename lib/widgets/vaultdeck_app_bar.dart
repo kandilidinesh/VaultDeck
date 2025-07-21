@@ -58,14 +58,6 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
                     color: Colors.white,
                   ),
                 ),
-                Text(
-                  AppConstants.appTagline,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.white.withOpacity(0.8),
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
               ],
             ),
           ),
