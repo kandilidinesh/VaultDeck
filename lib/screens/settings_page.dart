@@ -12,8 +12,12 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final tileBg = isDark ? const Color(0xFF23262F) : const Color(0xFFE0E0E0); // Slightly darker gray for light mode
-    final bgColor = isDark ? const Color(0xFF181A20) : const Color(0xFFF5F5F5); // Slightly darker background for light mode
+    final tileBg = isDark
+        ? const Color(0xFF23262F)
+        : const Color(0xFFE0E0E0); // Slightly darker gray for light mode
+    final bgColor = isDark
+        ? const Color(0xFF181A20)
+        : const Color(0xFFF5F5F5); // Slightly darker background for light mode
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: bgColor,
