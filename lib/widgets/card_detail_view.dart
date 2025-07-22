@@ -44,45 +44,7 @@ class CardDetailView extends StatelessWidget {
                       )
                     : SizedBox(height: 40),
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 24.0, top: 8.0),
-                child: Material(
-                  color: isDark
-                      ? const Color(0xFF23262F)
-                      : Colors.blue.shade100,
-                  borderRadius: BorderRadius.circular(12),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () {
-                      // TODO: Implement edit dialog or navigation
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          title: Text('Edit Card'),
-                          content: Text('Edit functionality coming soon.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(ctx).pop(),
-                              child: Text('Close'),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    child: Tooltip(
-                      message: 'Edit',
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Icon(
-                          Icons.edit,
-                          size: 22,
-                          color: isDark ? Colors.white : Colors.blue.shade900,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              // ...existing code...
             ],
           ),
           Container(
