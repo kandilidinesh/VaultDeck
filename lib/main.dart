@@ -22,12 +22,44 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   ThemeMode _themeMode = ThemeMode.system;
 
-  void toggleTheme() {
+  @override
+  void initState() {
+    super.initState();
+    _loadThemeMode();
+  }
+
+  Future<void> _loadThemeMode() async {
+    final box = await Hive.openBox('settingsBox');
+    final modeStr = box.get('themeMode', defaultValue: 'system');
+    setState(() {
+      switch (modeStr) {
+        case 'light':
+          _themeMode = ThemeMode.light;
+          break;
+        case 'dark':
+          _themeMode = ThemeMode.dark;
+          break;
+        default:
+          _themeMode = ThemeMode.system;
+      }
+    });
+  }
+
+  void toggleTheme() async {
     setState(() {
       _themeMode = _themeMode == ThemeMode.light
           ? ThemeMode.dark
           : ThemeMode.light;
     });
+    final box = await Hive.openBox('settingsBox');
+    box.put(
+      'themeMode',
+      _themeMode == ThemeMode.light
+          ? 'light'
+          : _themeMode == ThemeMode.dark
+          ? 'dark'
+          : 'system',
+    );
   }
 
   @override
