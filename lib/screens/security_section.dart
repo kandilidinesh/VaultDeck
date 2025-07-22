@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:hive/hive.dart';
 import 'pin_lock.dart';
 
 class SecuritySection extends StatefulWidget {
@@ -21,7 +20,6 @@ class SecuritySection extends StatefulWidget {
 class _SecuritySectionState extends State<SecuritySection> {
   bool _biometricEnabled = false;
 
-  String? _pin;
   final LocalAuthentication _localAuth = LocalAuthentication();
   bool _isAuthenticating = false;
   String _authStatus = '';

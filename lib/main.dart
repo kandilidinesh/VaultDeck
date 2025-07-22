@@ -196,7 +196,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 // Simple PIN lock screen widget
 class PinLockScreen extends StatefulWidget {
   final VoidCallback onUnlock;
-  const PinLockScreen({required this.onUnlock});
+  const PinLockScreen({super.key, required this.onUnlock});
 
   @override
   State<PinLockScreen> createState() => _PinLockScreenState();
