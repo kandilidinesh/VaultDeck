@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'models/card_model.dart';
 import 'screens/main_nav.dart';
 import 'constants/app_constants.dart';
+import 'services/pin_lock_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +25,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool _showPinLock = false;
   bool _pinEnabled = false;
   String? _pin;
+  final PinLockService _pinLockService = PinLockService();
 
   @override
   @override
@@ -43,31 +45,27 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future<void> _loadPinState() async {
-    final box = await Hive.openBox('settingsBox');
-    final pinEnabled = box.get('pinEnabled', defaultValue: false);
-    final pin = box.get('pin');
+    final enabled = await _pinLockService.isPinEnabled();
+    final pin = await _pinLockService.getPin();
     setState(() {
-      _pinEnabled = pinEnabled && pin != null && pin.toString().isNotEmpty;
+      _pinEnabled = enabled;
       _pin = pin;
     });
   }
 
-  void setPinEnabled(bool enabled, [String? pin]) async {
-    final box = await Hive.openBox('settingsBox');
+  Future<void> setPinEnabled(bool enabled, [String? pin]) async {
     if (enabled && pin != null && pin.isNotEmpty) {
+      await _pinLockService.setPin(pin);
       setState(() {
         _pinEnabled = true;
         _pin = pin;
       });
-      box.put('pinEnabled', true);
-      box.put('pin', pin);
     } else {
+      await _pinLockService.disablePin();
       setState(() {
         _pinEnabled = false;
         _pin = null;
       });
-      box.put('pinEnabled', false);
-      box.delete('pin');
     }
   }
 
@@ -78,10 +76,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future<void> _checkPinLock() async {
-    final box = await Hive.openBox('settingsBox');
-    final pinEnabled = box.get('pinEnabled', defaultValue: false);
+    final enabled = await _pinLockService.isPinEnabled();
     setState(() {
-      _showPinLock = pinEnabled;
+      _showPinLock = enabled;
     });
   }
 
