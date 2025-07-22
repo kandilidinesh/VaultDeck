@@ -116,7 +116,8 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
       });
     } catch (e) {
       setState(() {
-        _status = 'iCloud sync failed: $e';
+        _status = 'iCloud sync failed';
+        _cloudEnabled = false;
       });
     }
     setState(() {
