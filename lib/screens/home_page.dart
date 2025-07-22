@@ -9,9 +9,22 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../widgets/add_card_dialog.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.title});
-
   final String title;
+  final VoidCallback? toggleTheme;
+  final bool? isDarkMode;
+  final bool pinEnabled;
+  final String? pin;
+  final void Function(bool, [String?]) setPinEnabled;
+
+  const HomePage({
+    super.key,
+    required this.title,
+    this.toggleTheme,
+    this.isDarkMode,
+    required this.pinEnabled,
+    required this.pin,
+    required this.setPinEnabled,
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -58,7 +71,13 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: isDark ? const Color(0xFF181A20) : Colors.transparent,
-      appBar: VaultDeckAppBar(),
+      appBar: VaultDeckAppBar(
+        toggleTheme: widget.toggleTheme,
+        isDarkMode: widget.isDarkMode,
+        pinEnabled: widget.pinEnabled,
+        pin: widget.pin,
+        setPinEnabled: widget.setPinEnabled,
+      ),
       body: cards.isEmpty
           ? Center(
               child: Column(

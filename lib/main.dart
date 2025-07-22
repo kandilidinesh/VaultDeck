@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'models/card_model.dart';
-import 'screens/main_nav.dart';
+import 'screens/home_page.dart';
 import 'constants/app_constants.dart';
 import 'services/pin_lock_service.dart';
 
@@ -22,7 +22,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   ThemeMode _themeMode = ThemeMode.system;
-  bool _showPinLock = false;
   bool _pinEnabled = false;
   String? _pin;
   final PinLockService _pinLockService = PinLockService();
@@ -30,9 +29,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _checkPinLock();
-    }
+    // No pin lock screen, so nothing to do here
   }
 
   @override
@@ -40,7 +37,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.initState();
     _loadThemeMode();
     _loadPinState();
-    _checkPinLock();
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -67,19 +63,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         _pin = null;
       });
     }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  Future<void> _checkPinLock() async {
-    final enabled = await _pinLockService.isPinEnabled();
-    setState(() {
-      _showPinLock = enabled;
-    });
   }
 
   Future<void> _loadThemeMode() async {
@@ -173,22 +156,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         highlightColor: Colors.transparent,
         splashColor: Colors.transparent,
       ),
-      home: _showPinLock
-          ? PinLockScreen(
-              onUnlock: () {
-                setState(() {
-                  _showPinLock = false;
-                });
-              },
-            )
-          : MainNav(
-              title: AppConstants.appName,
-              toggleTheme: toggleTheme,
-              isDarkMode: _themeMode == ThemeMode.dark,
-              pinEnabled: _pinEnabled,
-              pin: _pin,
-              setPinEnabled: setPinEnabled,
-            ),
+      home: HomePage(
+        title: AppConstants.appName,
+        toggleTheme: toggleTheme,
+        isDarkMode: _themeMode == ThemeMode.dark,
+        pinEnabled: _pinEnabled,
+        pin: _pin,
+        setPinEnabled: setPinEnabled,
+      ),
     );
   }
 }
