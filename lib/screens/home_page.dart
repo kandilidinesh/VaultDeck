@@ -248,16 +248,13 @@ class _HomePageState extends State<HomePage> {
                 );
               },
             ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 100.0),
-        child: FloatingActionButton(
-          onPressed: _showAddCardDialog,
-          tooltip: 'Add Card to Vault',
-          backgroundColor: isDark
-              ? const Color(0xFF3A3F4A)
-              : Theme.of(context).colorScheme.primary,
-          child: Icon(Icons.add_card_rounded, color: Colors.white),
-        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddCardDialog,
+        tooltip: 'Add Card to Vault',
+        backgroundColor: isDark
+            ? const Color(0xFF3A3F4A)
+            : Theme.of(context).colorScheme.primary,
+        child: Icon(Icons.add_card_rounded, color: Colors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
