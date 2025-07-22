@@ -19,13 +19,70 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   ThemeMode _themeMode = ThemeMode.system;
+  bool _showPinLock = false;
+  bool _pinEnabled = false;
+  String? _pin;
+
+  @override
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _checkPinLock();
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     _loadThemeMode();
+    _loadPinState();
+    _checkPinLock();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  Future<void> _loadPinState() async {
+    final box = await Hive.openBox('settingsBox');
+    final pinEnabled = box.get('pinEnabled', defaultValue: false);
+    final pin = box.get('pin');
+    setState(() {
+      _pinEnabled = pinEnabled && pin != null && pin.toString().isNotEmpty;
+      _pin = pin;
+    });
+  }
+
+  void setPinEnabled(bool enabled, [String? pin]) async {
+    final box = await Hive.openBox('settingsBox');
+    if (enabled && pin != null && pin.isNotEmpty) {
+      setState(() {
+        _pinEnabled = true;
+        _pin = pin;
+      });
+      box.put('pinEnabled', true);
+      box.put('pin', pin);
+    } else {
+      setState(() {
+        _pinEnabled = false;
+        _pin = null;
+      });
+      box.put('pinEnabled', false);
+      box.delete('pin');
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  Future<void> _checkPinLock() async {
+    final box = await Hive.openBox('settingsBox');
+    final pinEnabled = box.get('pinEnabled', defaultValue: false);
+    setState(() {
+      _showPinLock = pinEnabled;
+    });
   }
 
   Future<void> _loadThemeMode() async {
@@ -119,10 +176,85 @@ class _MyAppState extends State<MyApp> {
         highlightColor: Colors.transparent,
         splashColor: Colors.transparent,
       ),
-      home: MainNav(
-        title: AppConstants.appName,
-        toggleTheme: toggleTheme,
-        isDarkMode: _themeMode == ThemeMode.dark,
+      home: _showPinLock
+          ? PinLockScreen(
+              onUnlock: () {
+                setState(() {
+                  _showPinLock = false;
+                });
+              },
+            )
+          : MainNav(
+              title: AppConstants.appName,
+              toggleTheme: toggleTheme,
+              isDarkMode: _themeMode == ThemeMode.dark,
+              pinEnabled: _pinEnabled,
+              pin: _pin,
+              setPinEnabled: setPinEnabled,
+            ),
+    );
+  }
+}
+
+// Simple PIN lock screen widget
+class PinLockScreen extends StatefulWidget {
+  final VoidCallback onUnlock;
+  const PinLockScreen({required this.onUnlock});
+
+  @override
+  State<PinLockScreen> createState() => _PinLockScreenState();
+}
+
+class _PinLockScreenState extends State<PinLockScreen> {
+  final TextEditingController _pinController = TextEditingController();
+  String? _error;
+
+  Future<void> _checkPin() async {
+    final box = await Hive.openBox('settingsBox');
+    final savedPin = box.get('pin');
+    if (_pinController.text == savedPin) {
+      widget.onUnlock();
+    } else {
+      setState(() {
+        _error = 'Incorrect PIN';
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.lock_rounded, size: 48, color: Colors.white),
+              const SizedBox(height: 24),
+              TextField(
+                controller: _pinController,
+                obscureText: true,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Enter PIN',
+                  errorText: _error,
+                  filled: true,
+                  fillColor: Colors.white10,
+                  labelStyle: const TextStyle(color: Colors.white70),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                style: const TextStyle(color: Colors.white),
+                onSubmitted: (_) => _checkPin(),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(onPressed: _checkPin, child: const Text('Unlock')),
+            ],
+          ),
+        ),
       ),
     );
   }

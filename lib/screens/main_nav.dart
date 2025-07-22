@@ -8,12 +8,18 @@ class MainNav extends StatefulWidget {
   final String title;
   final VoidCallback toggleTheme;
   final bool isDarkMode;
+  final bool pinEnabled;
+  final String? pin;
+  final void Function(bool, [String?]) setPinEnabled;
 
   const MainNav({
     super.key,
     required this.title,
     required this.toggleTheme,
     required this.isDarkMode,
+    required this.pinEnabled,
+    required this.pin,
+    required this.setPinEnabled,
   });
 
   @override
@@ -42,6 +48,9 @@ class _MainNavState extends State<MainNav> {
       SettingsPage(
         toggleTheme: widget.toggleTheme,
         isDarkMode: widget.isDarkMode,
+        pinEnabled: widget.pinEnabled,
+        pin: widget.pin,
+        setPinEnabled: widget.setPinEnabled,
       ),
     ];
     return Scaffold(

@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:hive/hive.dart';
 import 'pin_lock.dart';
 
 class SecuritySection extends StatefulWidget {
-  const SecuritySection({super.key});
+  final bool pinEnabled;
+  final String? pin;
+  final void Function(bool, [String?]) onPinToggle;
+  const SecuritySection({
+    super.key,
+    required this.pinEnabled,
+    required this.pin,
+    required this.onPinToggle,
+  });
 
   @override
   State<SecuritySection> createState() => _SecuritySectionState();
@@ -11,7 +20,7 @@ class SecuritySection extends StatefulWidget {
 
 class _SecuritySectionState extends State<SecuritySection> {
   bool _biometricEnabled = false;
-  bool _pinEnabled = false;
+
   String? _pin;
   final LocalAuthentication _localAuth = LocalAuthentication();
   bool _isAuthenticating = false;
@@ -74,18 +83,16 @@ class _SecuritySectionState extends State<SecuritySection> {
         builder: (ctx) => PinLockDialog(
           isSetup: true,
           onPinSet: (pin) {
-            setState(() {
-              _pin = pin;
-              _pinEnabled = true;
-            });
+            if (pin.toString().isNotEmpty) {
+              widget.onPinToggle(true, pin);
+            } else {
+              widget.onPinToggle(false);
+            }
           },
         ),
       );
     } else {
-      setState(() {
-        _pinEnabled = false;
-        _pin = null;
-      });
+      widget.onPinToggle(false);
     }
   }
 
@@ -159,7 +166,7 @@ class _SecuritySectionState extends State<SecuritySection> {
           const Divider(height: 1),
           SwitchListTile(
             title: const Text('Enable PIN Lock'),
-            value: _pinEnabled,
+            value: widget.pinEnabled,
             onChanged: _togglePin,
             secondary: const Icon(Icons.lock_rounded),
             tileColor: tileBg,
@@ -167,7 +174,7 @@ class _SecuritySectionState extends State<SecuritySection> {
               borderRadius: BorderRadius.zero,
             ),
           ),
-          if (_pinEnabled)
+          if (widget.pinEnabled)
             Padding(
               padding: const EdgeInsets.only(
                 left: 16,
@@ -176,7 +183,7 @@ class _SecuritySectionState extends State<SecuritySection> {
                 bottom: 8,
               ),
               child: Text(
-                _pin != null ? 'PIN is set.' : 'PIN not set.',
+                widget.pin != null ? 'PIN is set.' : 'PIN not set.',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),

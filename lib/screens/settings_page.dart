@@ -6,8 +6,18 @@ import 'dart:ui';
 class SettingsPage extends StatelessWidget {
   final VoidCallback? toggleTheme;
   final bool? isDarkMode;
+  final bool pinEnabled;
+  final String? pin;
+  final void Function(bool, [String?]) setPinEnabled;
 
-  const SettingsPage({super.key, this.toggleTheme, this.isDarkMode});
+  const SettingsPage({
+    super.key,
+    this.toggleTheme,
+    this.isDarkMode,
+    required this.pinEnabled,
+    required this.pin,
+    required this.setPinEnabled,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +117,11 @@ class SettingsPage extends StatelessWidget {
                     ),
                   ),
                   // Security group
-                  const SecuritySection(),
+                  SecuritySection(
+                    pinEnabled: pinEnabled,
+                    pin: pin,
+                    onPinToggle: setPinEnabled,
+                  ),
                   // iCloud sync group
                   const ICloudSyncSection(),
                 ],
