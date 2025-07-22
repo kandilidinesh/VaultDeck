@@ -167,16 +167,16 @@ class _AddCardDialogState extends State<AddCardDialog> {
       child: Container(
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 16,
-              offset: const Offset(0, -2),
+              color: Colors.black.withOpacity(0.12),
+              blurRadius: 32,
+              offset: const Offset(0, -8),
             ),
           ],
         ),
-        padding: const EdgeInsets.fromLTRB(24, 4, 24, 16),
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
@@ -189,12 +189,26 @@ class _AddCardDialogState extends State<AddCardDialog> {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Back'),
+                      child: Text(
+                        'Back',
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
-                    TextButton(onPressed: _addCard, child: const Text('Done')),
+                    TextButton(
+                      onPressed: _addCard,
+                      child: Text(
+                        'Done',
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
+                // Removed 'Card Details' section header for cleaner look
                 TextFormField(
                   controller: _nicknameController,
                   decoration: InputDecoration(
@@ -203,7 +217,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     filled: true,
                     fillColor: theme.colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(20),
                       borderSide: BorderSide.none,
                     ),
                     contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
@@ -213,7 +227,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
                 TextFormField(
                   controller: _bankNameController,
                   decoration: InputDecoration(
@@ -222,7 +236,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     filled: true,
                     fillColor: theme.colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(20),
                       borderSide: BorderSide.none,
                     ),
                     contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
@@ -232,7 +246,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
                 TextFormField(
                   controller: _holderController,
                   decoration: InputDecoration(
@@ -241,7 +255,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     filled: true,
                     fillColor: theme.colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(20),
                       borderSide: BorderSide.none,
                     ),
                     contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
@@ -254,7 +268,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
                 TextFormField(
                   controller: _numberController,
                   decoration: InputDecoration(
@@ -272,7 +286,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     filled: true,
                     fillColor: theme.colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(20),
                       borderSide: BorderSide.none,
                     ),
                     alignLabelWithHint: true,
@@ -303,7 +317,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
                 TextFormField(
                   controller: _expiryController,
                   decoration: InputDecoration(
@@ -313,11 +327,11 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     filled: true,
                     fillColor: theme.colorScheme.surfaceContainerHighest,
                     alignLabelWithHint: true,
-                    contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(20),
                       borderSide: BorderSide.none,
                     ),
+                    contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
                     floatingLabelBehavior: FloatingLabelBehavior.never,
                   ),
                   inputFormatters: [
@@ -336,7 +350,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
                 Row(
                   children: [
                     Expanded(
@@ -348,7 +362,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                           filled: true,
                           fillColor: theme.colorScheme.surfaceContainerHighest,
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(20),
                             borderSide: BorderSide.none,
                           ),
                           contentPadding: const EdgeInsets.fromLTRB(
@@ -375,7 +389,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                         },
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 14),
                     Expanded(
                       child: TextFormField(
                         controller: _pinController,
@@ -385,7 +399,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                           filled: true,
                           fillColor: theme.colorScheme.surfaceContainerHighest,
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(20),
                             borderSide: BorderSide.none,
                           ),
                           contentPadding: const EdgeInsets.fromLTRB(
@@ -413,7 +427,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
                 TextFormField(
                   controller: _notesController,
                   decoration: InputDecoration(
@@ -422,7 +436,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     filled: true,
                     fillColor: theme.colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(20),
                       borderSide: BorderSide.none,
                     ),
                     contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
@@ -433,7 +447,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
               ],
             ),
           ),
