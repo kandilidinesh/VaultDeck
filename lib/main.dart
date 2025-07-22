@@ -25,11 +25,51 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool _pinEnabled = false;
   String? _pin;
   final PinLockService _pinLockService = PinLockService();
+  DateTime? _lastPausedTime;
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+
+  bool _isPinDialogShowing = false;
 
   @override
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    // No pin lock screen, so nothing to do here
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
+      _lastPausedTime = DateTime.now();
+    } else if (state == AppLifecycleState.resumed) {
+      if (_pinEnabled && _lastPausedTime != null) {
+        final timerMinutes = await _pinLockService.getPinLockTimerMinutes();
+        final elapsed = DateTime.now().difference(_lastPausedTime!).inMinutes;
+        if (timerMinutes == 0 || elapsed >= timerMinutes) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted || _isPinDialogShowing) return;
+            final navContext = _navigatorKey.currentState?.context;
+            if (navContext != null) {
+              _isPinDialogShowing = true;
+              Navigator.of(navContext).push(
+                PageRouteBuilder(
+                  opaque: true,
+                  barrierDismissible: false,
+                  pageBuilder: (context, anim1, anim2) {
+                    return PinLockScreen(
+                      onUnlock: () {
+                        if (mounted) {
+                          Navigator.of(context).pop();
+                        }
+                        _lastPausedTime = null;
+                        _isPinDialogShowing = false;
+                      },
+                    );
+                  },
+                  transitionsBuilder: (context, anim1, anim2, child) {
+                    return FadeTransition(opacity: anim1, child: child);
+                  },
+                ),
+              );
+            }
+          });
+        }
+      }
+    }
   }
 
   @override
@@ -102,6 +142,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: _navigatorKey,
       title: AppConstants.appName,
       themeMode: _themeMode,
       theme: ThemeData(
@@ -179,17 +220,25 @@ class PinLockScreen extends StatefulWidget {
 
 class _PinLockScreenState extends State<PinLockScreen> {
   final TextEditingController _pinController = TextEditingController();
+  final FocusNode _pinFocusNode = FocusNode();
   String? _error;
 
   Future<void> _checkPin() async {
     final box = await Hive.openBox('settingsBox');
     final savedPin = box.get('pin');
     if (_pinController.text == savedPin) {
-      widget.onUnlock();
+      if (mounted) {
+        _pinFocusNode.unfocus();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) widget.onUnlock();
+        });
+      }
     } else {
-      setState(() {
-        _error = 'Incorrect PIN';
-      });
+      if (mounted) {
+        setState(() {
+          _error = 'Incorrect PIN';
+        });
+      }
     }
   }
 
@@ -207,6 +256,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
               const SizedBox(height: 24),
               TextField(
                 controller: _pinController,
+                focusNode: _pinFocusNode,
                 obscureText: true,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(

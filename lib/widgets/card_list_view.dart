@@ -22,8 +22,8 @@ class CardListView extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
       itemCount: cards.length,
       itemBuilder: (context, idx) {
-        final key = cards[idx]!['key'] as int;
-        final card = cards[idx]!['card'] as CardModel;
+        final key = cards[idx]['key'] as int;
+        final card = cards[idx]['card'] as CardModel;
         return Dismissible(
           key: Key(key.toString()),
           direction: DismissDirection.horizontal,

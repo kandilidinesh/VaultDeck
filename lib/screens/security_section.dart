@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'pin_lock.dart';
+import '../services/pin_lock_service.dart';
 
 class SecuritySection extends StatefulWidget {
   final bool pinEnabled;
   final String? pin;
   final void Function(bool, [String?]) onPinToggle;
+  final int pinLockTimerMinutes;
+  final void Function(int)? onPinLockTimerChanged;
   const SecuritySection({
     super.key,
     required this.pinEnabled,
     required this.pin,
     required this.onPinToggle,
+    this.pinLockTimerMinutes = 0,
+    this.onPinLockTimerChanged,
   });
 
   @override
@@ -19,6 +24,7 @@ class SecuritySection extends StatefulWidget {
 
 class _SecuritySectionState extends State<SecuritySection> {
   bool _biometricEnabled = false;
+  int _selectedTimer = 0;
 
   final LocalAuthentication _localAuth = LocalAuthentication();
   bool _isAuthenticating = false;
@@ -92,6 +98,12 @@ class _SecuritySectionState extends State<SecuritySection> {
     } else {
       widget.onPinToggle(false);
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedTimer = widget.pinLockTimerMinutes;
   }
 
   @override
@@ -180,9 +192,46 @@ class _SecuritySectionState extends State<SecuritySection> {
                 top: 4,
                 bottom: 8,
               ),
-              child: Text(
-                widget.pin != null ? 'PIN is set.' : 'PIN not set.',
-                style: Theme.of(context).textTheme.bodySmall,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.timer_rounded, size: 18),
+                      const SizedBox(width: 8),
+                      Text(
+                        'PIN Prompt Timer:',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      const SizedBox(width: 8),
+                      DropdownButton<int>(
+                        value: _selectedTimer,
+                        items: const [
+                          DropdownMenuItem(
+                            value: 0,
+                            child: Text('Immediately'),
+                          ),
+                          DropdownMenuItem(value: 1, child: Text('1 min')),
+                          DropdownMenuItem(value: 2, child: Text('2 min')),
+                          DropdownMenuItem(value: 5, child: Text('5 min')),
+                          DropdownMenuItem(value: 10, child: Text('10 min')),
+                        ],
+                        onChanged: (val) async {
+                          if (val != null) {
+                            setState(() => _selectedTimer = val);
+                            // Persist timer value
+                            if (!mounted) return;
+                            final pinLockService = PinLockService();
+                            await pinLockService.setPinLockTimerMinutes(val);
+                            if (widget.onPinLockTimerChanged != null) {
+                              widget.onPinLockTimerChanged!(val);
+                            }
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
         ],
