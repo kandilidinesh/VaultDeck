@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
 
 class CloudSyncSection extends StatefulWidget {
   const CloudSyncSection({super.key});
@@ -15,7 +16,6 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
   bool _cloudEnabled = false;
   bool _syncing = false;
   String _status = 'Not synced';
-  GoogleSignInAccount? _googleUser;
   drive.DriveApi? _driveApi;
 
   void _toggleCloud(bool value) async {
@@ -53,7 +53,6 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
       final authHeaders = await account.authHeaders;
       final client = GoogleAuthClient(authHeaders);
       setState(() {
-        _googleUser = account;
         _driveApi = drive.DriveApi(client);
         _status = 'Signed in as ${account.email}';
       });
@@ -105,11 +104,23 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
       _syncing = true;
       _status = 'Syncing with iCloud...';
     });
-    // TODO: Implement iCloud sync using platform channels
-    await Future.delayed(const Duration(seconds: 2));
+    final platform = MethodChannel('VaultDeck/icloud');
+    try {
+      // Example file content and name
+      final result = await platform.invokeMethod('saveToICloud', {
+        'fileName': 'card_storage_backup.txt',
+        'content': 'hello', // Replace with your actual data
+      });
+      setState(() {
+        _status = result ?? 'iCloud sync complete';
+      });
+    } catch (e) {
+      setState(() {
+        _status = 'iCloud sync failed: $e';
+      });
+    }
     setState(() {
       _syncing = false;
-      _status = 'iCloud sync complete (stub)';
     });
   }
 
@@ -176,7 +187,13 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       ),
                     if (_syncing) const SizedBox(width: 8),
-                    Text(_status, style: Theme.of(context).textTheme.bodySmall),
+                    Expanded(
+                      child: Text(
+                        _status,
+                        style: Theme.of(context).textTheme.bodySmall,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                   ],
                 ),
               ),
