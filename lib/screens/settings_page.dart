@@ -29,10 +29,9 @@ class SettingsPage extends StatelessWidget {
         ? const Color(0xFF181A20)
         : const Color(0xFFF5F5F5); // Slightly darker background for light mode
     return Scaffold(
-      extendBodyBehindAppBar: true,
       backgroundColor: bgColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: isDark ? const Color(0xFF181A20) : Colors.white,
         elevation: 0,
         title: Text(
           'Settings',
@@ -42,30 +41,6 @@ class SettingsPage extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        flexibleSpace: ClipRRect(
-          borderRadius: const BorderRadius.vertical(
-            bottom: Radius.circular(24),
-          ),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-            child: Container(
-              decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.08)
-                    : Colors.grey.shade200.withValues(alpha: 0.18),
-                borderRadius: const BorderRadius.vertical(
-                  bottom: Radius.circular(24),
-                ),
-                border: Border.all(
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.12)
-                      : Colors.grey.shade300.withValues(alpha: 0.18),
-                  width: 0.5,
-                ),
-              ),
-            ),
-          ),
-        ),
       ),
       body: SafeArea(
         child: Column(
