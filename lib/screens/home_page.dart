@@ -271,7 +271,9 @@ class _HomePageState extends State<HomePage> {
                       );
                     } else if (direction == DismissDirection.startToEnd) {
                       // Swipe right to edit
-                      _showAddCardDialog();
+                      AddCardDialog.showEdit(context, () {
+                        setState(() {});
+                      }, card);
                       return false; // Don't actually dismiss
                     }
                     return false;

@@ -8,8 +8,15 @@ import './input_formatters.dart';
 
 class AddCardDialog extends StatefulWidget {
   final VoidCallback onCardAdded;
+  final CardModel? initialCard;
+  final int? cardKey;
 
-  const AddCardDialog({super.key, required this.onCardAdded});
+  const AddCardDialog({
+    super.key,
+    required this.onCardAdded,
+    this.initialCard,
+    this.cardKey,
+  });
 
   @override
   State<AddCardDialog> createState() => _AddCardDialogState();
@@ -23,6 +30,28 @@ class AddCardDialog extends StatefulWidget {
       builder: (ctx) => Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
         child: AddCardDialog(onCardAdded: onCardAdded),
+      ),
+    );
+  }
+
+  static Future<void> showEdit(
+    BuildContext context,
+    VoidCallback onCardAdded,
+    CardModel card,
+  ) {
+    final box = CardStorage.getBox();
+    final key = box.keyAt(box.values.toList().indexOf(card));
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+        child: AddCardDialog(
+          onCardAdded: onCardAdded,
+          initialCard: card,
+          cardKey: key,
+        ),
       ),
     );
   }
@@ -59,6 +88,23 @@ class _AddCardDialogState extends State<AddCardDialog> {
   final _notesController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.initialCard != null) {
+      final card = widget.initialCard!;
+      _holderController.text = card.cardHolderName;
+      _numberController.text = card.cardNumber;
+      _expiryController.text = card.expiryDate;
+      _cvvController.text = card.cvv ?? '';
+      _pinController.text = card.pin ?? '';
+      _nicknameController.text = card.nickname ?? '';
+      _bankNameController.text = card.bankName ?? '';
+      _notesController.text = card.notes ?? '';
+      _liveCardType = card.cardType;
+    }
+  }
+
+  @override
   void dispose() {
     _holderController.dispose();
     _numberController.dispose();
@@ -89,20 +135,24 @@ class _AddCardDialogState extends State<AddCardDialog> {
       final cardType = _detectCardType(
         _numberController.text.replaceAll('-', ''),
       );
-
-      await CardStorage.addCard(
-        CardModel(
-          cardHolderName: _holderController.text.trim(),
-          cardNumber: _numberController.text.trim(),
-          expiryDate: _expiryController.text.trim(),
-          cardType: cardType,
-          cvv: _cvvController.text.trim(),
-          pin: _pinController.text.trim(),
-          nickname: _nicknameController.text.trim(),
-          bankName: _bankNameController.text.trim(),
-          notes: _notesController.text.trim(),
-        ),
+      final newCard = CardModel(
+        cardHolderName: _holderController.text.trim(),
+        cardNumber: _numberController.text.trim(),
+        expiryDate: _expiryController.text.trim(),
+        cardType: cardType,
+        cvv: _cvvController.text.trim(),
+        pin: _pinController.text.trim(),
+        nickname: _nicknameController.text.trim(),
+        bankName: _bankNameController.text.trim(),
+        notes: _notesController.text.trim(),
       );
+      if (widget.cardKey != null) {
+        // Update existing card
+        await CardStorage.getBox().put(widget.cardKey, newCard);
+      } else {
+        // Add new card
+        await CardStorage.addCard(newCard);
+      }
       if (!mounted) return;
       widget.onCardAdded();
       Navigator.of(context).pop();
