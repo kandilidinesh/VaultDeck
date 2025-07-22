@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:local_auth/local_auth.dart';
 import 'pin_lock.dart';
 
 class SecuritySection extends StatefulWidget {
@@ -12,12 +13,57 @@ class _SecuritySectionState extends State<SecuritySection> {
   bool _biometricEnabled = false;
   bool _pinEnabled = false;
   String? _pin;
+  final LocalAuthentication _localAuth = LocalAuthentication();
+  bool _isAuthenticating = false;
+  String _authStatus = '';
 
-  void _toggleBiometric(bool value) {
-    setState(() {
-      _biometricEnabled = value;
-    });
-    // TODO: Integrate with device biometrics
+  Future<void> _toggleBiometric(bool value) async {
+    if (value) {
+      bool canCheck = await _localAuth.canCheckBiometrics;
+      bool isAvailable = await _localAuth.isDeviceSupported();
+      if (!canCheck || !isAvailable) {
+        setState(() {
+          _authStatus = 'Biometric authentication not available.';
+        });
+        return;
+      }
+      bool authenticated = false;
+      try {
+        setState(() {
+          _isAuthenticating = true;
+        });
+        authenticated = await _localAuth.authenticate(
+          localizedReason: 'Authenticate to enable biometric lock',
+          options: const AuthenticationOptions(
+            biometricOnly: true,
+            stickyAuth: true,
+          ),
+        );
+      } catch (e) {
+        setState(() {
+          _authStatus = 'Error: ${e.toString()}';
+        });
+      } finally {
+        setState(() {
+          _isAuthenticating = false;
+        });
+      }
+      if (authenticated) {
+        setState(() {
+          _biometricEnabled = true;
+          _authStatus = 'Biometric authentication enabled.';
+        });
+      } else {
+        setState(() {
+          _authStatus = 'Authentication failed.';
+        });
+      }
+    } else {
+      setState(() {
+        _biometricEnabled = false;
+        _authStatus = 'Biometric authentication disabled.';
+      });
+    }
   }
 
   void _togglePin(bool value) async {
@@ -67,13 +113,49 @@ class _SecuritySectionState extends State<SecuritySection> {
           SwitchListTile(
             title: const Text('Enable Biometric Authentication'),
             value: _biometricEnabled,
-            onChanged: _toggleBiometric,
+            onChanged: (val) => _toggleBiometric(val),
             secondary: const Icon(Icons.fingerprint_rounded),
             tileColor: tileBg,
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.zero,
             ),
           ),
+          if (_isAuthenticating)
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 4,
+                bottom: 8,
+              ),
+              child: Row(
+                children: [
+                  const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Authenticating...',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
+            ),
+          if (_authStatus.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 4,
+                bottom: 8,
+              ),
+              child: Text(
+                _authStatus,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
           const Divider(height: 1),
           SwitchListTile(
             title: const Text('Enable PIN Lock'),
