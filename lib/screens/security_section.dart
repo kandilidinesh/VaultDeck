@@ -81,24 +81,27 @@ class _SecuritySectionState extends State<SecuritySection> {
 
   void _togglePin(bool value) async {
     if (value) {
-      // Show full-screen PIN setup
-      await Navigator.of(context).push(
+      // Show full-screen PIN setup and await result
+      final pin = await Navigator.of(context).push<String>(
         MaterialPageRoute(
           fullscreenDialog: true,
           builder: (ctx) => SetPinScreen(
             onPinSet: (pin) {
-              if (pin.isNotEmpty) {
-                widget.onPinToggle(true, pin);
-              } else {
-                widget.onPinToggle(false);
-              }
+              Navigator.of(ctx).pop(pin); // Return pin to parent
             },
             onCancel: () {
-              widget.onPinToggle(false);
+              Navigator.of(ctx).pop(); // Just close
             },
           ),
         ),
       );
+      setState(() {
+        if (pin != null && pin.isNotEmpty) {
+          widget.onPinToggle(true, pin);
+        } else {
+          widget.onPinToggle(false);
+        }
+      });
     } else {
       widget.onPinToggle(false);
     }

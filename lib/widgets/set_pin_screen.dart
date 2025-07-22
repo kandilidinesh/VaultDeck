@@ -26,8 +26,7 @@ class _SetPinScreenState extends State<SetPinScreen> {
         if (confirmPin.length < 4) confirmPin += value;
         if (confirmPin.length == 4) {
           if (pin == confirmPin) {
-            widget.onPinSet?.call(pin);
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(pin); // Return pin to parent
           } else {
             error = 'PINs do not match';
             confirmPin = '';
@@ -185,8 +184,9 @@ class _SetPinScreenState extends State<SetPinScreen> {
                       ),
                       onPressed: () {
                         if (pin == confirmPin) {
-                          widget.onPinSet?.call(pin);
-                          Navigator.of(context).pop();
+                          Navigator.of(
+                            context,
+                          ).pop(pin); // Return pin to parent
                         } else {
                           setState(() {
                             error = 'PINs do not match';
