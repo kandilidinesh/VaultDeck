@@ -3,16 +3,16 @@ import 'security_section.dart';
 import 'cloud_sync_section.dart';
 
 class SettingsPage extends StatelessWidget {
+  final ValueNotifier<bool> isDarkModeNotifier;
   final VoidCallback? toggleTheme;
-  final bool? isDarkMode;
   final bool pinEnabled;
   final String? pin;
   final void Function(bool, [String?]) setPinEnabled;
 
   const SettingsPage({
     super.key,
+    required this.isDarkModeNotifier,
     this.toggleTheme,
-    this.isDarkMode,
     required this.pinEnabled,
     required this.pin,
     required this.setPinEnabled,
@@ -75,16 +75,19 @@ class SettingsPage extends StatelessWidget {
                       color: tileBg,
                       borderRadius: BorderRadius.all(Radius.circular(16)),
                     ),
-                    child: ListTile(
-                      title: const Text('Toggle light/dark mode'),
-                      trailing: Switch(
-                        value: isDarkMode ?? false,
-                        onChanged: (_) {
-                          if (toggleTheme != null) toggleTheme!();
-                        },
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
+                    child: ValueListenableBuilder<bool>(
+                      valueListenable: isDarkModeNotifier,
+                      builder: (context, isDark, _) => ListTile(
+                        title: const Text('Toggle light/dark mode'),
+                        trailing: Switch(
+                          value: isDark,
+                          onChanged: (_) {
+                            if (toggleTheme != null) toggleTheme!();
+                          },
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                        ),
                       ),
                     ),
                   ),

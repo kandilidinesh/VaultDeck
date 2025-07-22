@@ -11,9 +11,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../widgets/add_card_dialog.dart';
 
 class HomePage extends StatefulWidget {
-  final String title;
   final VoidCallback? toggleTheme;
-  final bool? isDarkMode;
+  final String title;
+  final ValueNotifier<bool> isDarkModeNotifier;
   final bool pinEnabled;
   final String? pin;
   final void Function(bool, [String?]) setPinEnabled;
@@ -21,8 +21,8 @@ class HomePage extends StatefulWidget {
   const HomePage({
     super.key,
     required this.title,
+    required this.isDarkModeNotifier,
     this.toggleTheme,
-    this.isDarkMode,
     required this.pinEnabled,
     required this.pin,
     required this.setPinEnabled,
@@ -74,8 +74,8 @@ class _HomePageState extends State<HomePage> {
       extendBodyBehindAppBar: true,
       backgroundColor: isDark ? const Color(0xFF181A20) : Colors.transparent,
       appBar: VaultDeckAppBar(
+        isDarkModeNotifier: widget.isDarkModeNotifier,
         toggleTheme: widget.toggleTheme,
-        isDarkMode: widget.isDarkMode,
         pinEnabled: widget.pinEnabled,
         pin: widget.pin,
         setPinEnabled: widget.setPinEnabled,

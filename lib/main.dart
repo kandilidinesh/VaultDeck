@@ -22,6 +22,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   ThemeMode _themeMode = ThemeMode.system;
+  final ValueNotifier<bool> isDarkModeNotifier = ValueNotifier<bool>(false);
   bool _pinEnabled = false;
   String? _pin;
   final PinLockService _pinLockService = PinLockService();
@@ -112,12 +113,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       switch (modeStr) {
         case 'light':
           _themeMode = ThemeMode.light;
+          isDarkModeNotifier.value = false;
           break;
         case 'dark':
           _themeMode = ThemeMode.dark;
+          isDarkModeNotifier.value = true;
           break;
         default:
           _themeMode = ThemeMode.system;
+          isDarkModeNotifier.value =
+              WidgetsBinding.instance.window.platformBrightness ==
+              Brightness.dark;
       }
     });
   }
@@ -127,6 +133,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       _themeMode = _themeMode == ThemeMode.light
           ? ThemeMode.dark
           : ThemeMode.light;
+      isDarkModeNotifier.value = _themeMode == ThemeMode.dark;
     });
     final box = await Hive.openBox('settingsBox');
     box.put(
@@ -200,7 +207,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       home: HomePage(
         title: AppConstants.appName,
         toggleTheme: toggleTheme,
-        isDarkMode: _themeMode == ThemeMode.dark,
+        isDarkModeNotifier: isDarkModeNotifier,
         pinEnabled: _pinEnabled,
         pin: _pin,
         setPinEnabled: setPinEnabled,

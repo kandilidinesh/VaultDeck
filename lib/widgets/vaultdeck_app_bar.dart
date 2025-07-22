@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import '../constants/app_constants.dart';
 
 class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final ValueNotifier<bool> isDarkModeNotifier;
   final VoidCallback? toggleTheme;
-  final bool? isDarkMode;
   final bool pinEnabled;
   final String? pin;
   final void Function(bool, [String?]) setPinEnabled;
 
   const VaultDeckAppBar({
     super.key,
+    required this.isDarkModeNotifier,
     this.toggleTheme,
-    this.isDarkMode,
     required this.pinEnabled,
     required this.pin,
     required this.setPinEnabled,
@@ -23,7 +23,7 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = isDarkModeNotifier.value;
 
     return AppBar(
       elevation: 0,
@@ -67,8 +67,8 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (_) => SettingsPage(
+                    isDarkModeNotifier: isDarkModeNotifier,
                     toggleTheme: toggleTheme,
-                    isDarkMode: isDarkMode,
                     pinEnabled: pinEnabled,
                     pin: pin,
                     setPinEnabled: setPinEnabled,
