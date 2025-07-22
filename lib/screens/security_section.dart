@@ -110,132 +110,151 @@ class _SecuritySectionState extends State<SecuritySection> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final tileBg = isDark ? const Color(0xFF23262F) : Colors.white;
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        color: tileBg,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.security_rounded),
-            title: const Text('Security'),
-            titleTextStyle: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          const Divider(height: 1),
-          SwitchListTile(
-            title: const Text('Enable Biometric Authentication'),
-            value: _biometricEnabled,
-            onChanged: (val) => _toggleBiometric(val),
-            secondary: const Icon(Icons.fingerprint_rounded),
-            tileColor: tileBg,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.zero,
-            ),
-          ),
-          if (_isAuthenticating)
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 16,
-                right: 16,
-                top: 4,
-                bottom: 8,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 0),
+          child: Row(
+            children: [
+              const Icon(Icons.security_rounded, size: 22),
+              const SizedBox(width: 8),
+              Text(
+                'Security',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
-              child: Row(
-                children: [
-                  const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 8),
+          decoration: BoxDecoration(
+            color: tileBg,
+            borderRadius: BorderRadius.all(Radius.circular(16)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SwitchListTile(
+                title: const Text('Enable Biometric Authentication'),
+                value: _biometricEnabled,
+                onChanged: (val) => _toggleBiometric(val),
+                secondary: const Icon(Icons.fingerprint_rounded),
+                tileColor: tileBg,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+              ),
+              if (_isAuthenticating)
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    top: 4,
+                    bottom: 8,
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Authenticating...',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-              ),
-            ),
-          if (_authStatus.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 16,
-                right: 16,
-                top: 4,
-                bottom: 8,
-              ),
-              child: Text(
-                _authStatus,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ),
-          const Divider(height: 1),
-          SwitchListTile(
-            title: const Text('Enable PIN Lock'),
-            value: widget.pinEnabled,
-            onChanged: _togglePin,
-            secondary: const Icon(Icons.lock_rounded),
-            tileColor: tileBg,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.zero,
-            ),
-          ),
-          if (widget.pinEnabled)
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 16,
-                right: 16,
-                top: 4,
-                bottom: 8,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+                  child: Row(
                     children: [
-                      const Icon(Icons.timer_rounded, size: 18),
-                      const SizedBox(width: 8),
-                      Text(
-                        'PIN Prompt Timer:',
-                        style: Theme.of(context).textTheme.bodySmall,
+                      const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
                       ),
                       const SizedBox(width: 8),
-                      DropdownButton<int>(
-                        value: _selectedTimer,
-                        items: const [
-                          DropdownMenuItem(
-                            value: 0,
-                            child: Text('Immediately'),
-                          ),
-                          DropdownMenuItem(value: 1, child: Text('1 min')),
-                          DropdownMenuItem(value: 2, child: Text('2 min')),
-                          DropdownMenuItem(value: 5, child: Text('5 min')),
-                          DropdownMenuItem(value: 10, child: Text('10 min')),
-                        ],
-                        onChanged: (val) async {
-                          if (val != null) {
-                            setState(() => _selectedTimer = val);
-                            // Persist timer value
-                            if (!mounted) return;
-                            final pinLockService = PinLockService();
-                            await pinLockService.setPinLockTimerMinutes(val);
-                            if (widget.onPinLockTimerChanged != null) {
-                              widget.onPinLockTimerChanged!(val);
-                            }
-                          }
-                        },
+                      Text(
+                        'Authenticating...',
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
                   ),
-                ],
+                ),
+              if (_authStatus.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    top: 4,
+                    bottom: 8,
+                  ),
+                  child: Text(
+                    _authStatus,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              SwitchListTile(
+                title: const Text('Enable PIN Lock'),
+                value: widget.pinEnabled,
+                onChanged: _togglePin,
+                secondary: const Icon(Icons.lock_rounded),
+                tileColor: tileBg,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
               ),
-            ),
-        ],
-      ),
+              if (widget.pinEnabled)
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    top: 4,
+                    bottom: 8,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.timer_rounded, size: 18),
+                          const SizedBox(width: 8),
+                          Text(
+                            'PIN Prompt Timer:',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          const SizedBox(width: 8),
+                          DropdownButton<int>(
+                            value: _selectedTimer,
+                            items: const [
+                              DropdownMenuItem(
+                                value: 0,
+                                child: Text('Immediately'),
+                              ),
+                              DropdownMenuItem(value: 1, child: Text('1 min')),
+                              DropdownMenuItem(value: 2, child: Text('2 min')),
+                              DropdownMenuItem(value: 5, child: Text('5 min')),
+                              DropdownMenuItem(
+                                value: 10,
+                                child: Text('10 min'),
+                              ),
+                            ],
+                            onChanged: (val) async {
+                              if (val != null) {
+                                setState(() => _selectedTimer = val);
+                                // Persist timer value
+                                if (!mounted) return;
+                                final pinLockService = PinLockService();
+                                await pinLockService.setPinLockTimerMinutes(
+                                  val,
+                                );
+                                if (widget.onPinLockTimerChanged != null) {
+                                  widget.onPinLockTimerChanged!(val);
+                                }
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

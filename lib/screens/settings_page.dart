@@ -49,53 +49,53 @@ class SettingsPage extends StatelessWidget {
                 padding: const EdgeInsets.all(24),
                 children: [
                   // Theme group
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: tileBg,
-                      borderRadius: BorderRadius.circular(16),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 8,
+                      right: 8,
+                      top: 8,
+                      bottom: 0,
                     ),
-                    child: Column(
+                    child: Row(
                       children: [
-                        InkWell(
-                          borderRadius: BorderRadius.circular(16),
-                          highlightColor: Colors.transparent,
-                          splashColor: Colors.transparent,
-                          child: ListTile(
-                            leading: Icon(
-                              Icons.dark_mode_rounded,
-                              color: isDark ? Colors.white : Colors.black54,
-                            ),
-                            title: Text(
-                              'Theme',
-                              style: TextStyle(
-                                color: isDark ? Colors.white : Colors.black87,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            subtitle: Text(
-                              'Toggle light/dark mode',
-                              style: TextStyle(
-                                color: isDark ? Colors.white70 : Colors.black54,
-                              ),
-                            ),
-                            trailing: Switch(
-                              value: isDarkMode ?? false,
-                              onChanged: (_) {
-                                if (toggleTheme != null) toggleTheme!();
-                              },
-                            ),
-                          ),
+                        const Icon(Icons.dark_mode_rounded, size: 22),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Theme',
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
                   ),
+                  const SizedBox(height: 12),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: tileBg,
+                      borderRadius: BorderRadius.all(Radius.circular(16)),
+                    ),
+                    child: ListTile(
+                      title: const Text('Toggle light/dark mode'),
+                      trailing: Switch(
+                        value: isDarkMode ?? false,
+                        onChanged: (_) {
+                          if (toggleTheme != null) toggleTheme!();
+                        },
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                   // Security group
                   SecuritySection(
                     pinEnabled: pinEnabled,
                     pin: pin,
                     onPinToggle: setPinEnabled,
                   ),
+                  const SizedBox(height: 24),
                   // iCloud sync group
                   const ICloudSyncSection(),
                 ],
