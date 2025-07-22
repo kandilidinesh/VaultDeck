@@ -19,9 +19,7 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
       if (value) {
         _syncWithCloud();
       } else {
-        _status = Platform.isIOS
-            ? 'iCloud sync disabled'
-            : 'Google Drive sync disabled';
+        _status = Platform.isIOS ? 'iCloud sync disabled' : 'Google Drive sync disabled';
       }
     });
   }
@@ -43,9 +41,7 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final tileBg = isDark ? const Color(0xFF23262F) : Colors.white;
     final isIOS = Platform.isIOS;
-    final switchTitle = isIOS
-        ? 'Enable iCloud Sync'
-        : 'Enable Google Drive Sync';
+    final switchTitle = isIOS ? 'Enable iCloud Sync' : 'Enable Google Drive Sync';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -57,9 +53,7 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
               const SizedBox(width: 8),
               Text(
                 'Cloud Sync',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
             ],
           ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'security_section.dart';
-import 'icloud_sync_section.dart';
+import 'cloud_sync_section.dart';
 
 class SettingsPage extends StatelessWidget {
   final VoidCallback? toggleTheme;
@@ -97,7 +97,7 @@ class SettingsPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   // iCloud sync group
-                  const ICloudSyncSection(),
+                  const CloudSyncSection(),
                 ],
               ),
             ),
