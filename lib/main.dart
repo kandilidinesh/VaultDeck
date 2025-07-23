@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'models/card_model.dart';
 import 'screens/home_page.dart';
+import 'widgets/set_pin_screen.dart';
+import 'widgets/unlock_pin_screen.dart';
 import 'constants/app_constants.dart';
 import 'services/pin_lock_service.dart';
 
@@ -47,23 +49,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             if (navContext != null) {
               _isPinDialogShowing = true;
               Navigator.of(navContext).push(
-                PageRouteBuilder(
-                  opaque: true,
-                  barrierDismissible: false,
-                  pageBuilder: (context, anim1, anim2) {
-                    return PinLockScreen(
-                      onUnlock: () {
-                        if (mounted) {
-                          Navigator.of(context).pop();
-                        }
-                        _lastPausedTime = null;
-                        _isPinDialogShowing = false;
-                      },
-                    );
-                  },
-                  transitionsBuilder: (context, anim1, anim2, child) {
-                    return FadeTransition(opacity: anim1, child: child);
-                  },
+                MaterialPageRoute(
+                  fullscreenDialog: true,
+                  builder: (context) => UnlockPinScreen(
+                    onCancel: () {
+                      if (mounted) {
+                        Navigator.of(context).pop();
+                      }
+                      _isPinDialogShowing = false;
+                    },
+                  ),
                 ),
               );
             }
