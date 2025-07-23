@@ -158,56 +158,7 @@ class _UnlockPinScreenState extends State<UnlockPinScreen> {
               ],
             ),
             _buildKeypad(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      if (widget.onCancel != null) widget.onCancel!();
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color(0xFF23262F),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      elevation: 0,
-                    ),
-                    onPressed: (pin.length == 4 && !isLoading)
-                        ? _onSubmit
-                        : null,
-                    child: isLoading
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 8,
-                            ),
-                            child: Text(
-                              'Unlock',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                  ),
-                ],
-              ),
-            ),
+            const SizedBox(height: 48), // Spacer to keep layout similar
           ],
         ),
       ),
