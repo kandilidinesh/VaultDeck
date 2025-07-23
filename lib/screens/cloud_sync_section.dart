@@ -141,6 +141,7 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
     final switchTitle = isIOS
         ? 'Enable iCloud Sync'
         : 'Enable Google Drive Sync';
+    final screenWidth = MediaQuery.of(context).size.width;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -160,53 +161,70 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
           ),
         ),
         const SizedBox(height: 12),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 8),
-          decoration: BoxDecoration(
-            color: tileBg,
-            borderRadius: BorderRadius.all(Radius.circular(16)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SwitchListTile(
-                title: Text(switchTitle),
-                value: _cloudEnabled,
-                onChanged: _toggleCloud,
-                secondary: const Icon(Icons.sync_rounded),
-                tileColor: tileBg,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(16)),
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  top: 4,
-                  bottom: 8,
-                ),
-                child: Row(
-                  children: [
-                    if (_syncing)
-                      const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    if (_syncing) const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        _status,
-                        style: Theme.of(context).textTheme.bodySmall,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+        Center(
+          child: Container(
+            width: screenWidth > 500 ? 500 : screenWidth * 0.98,
+            margin: const EdgeInsets.symmetric(horizontal: 0),
+            decoration: BoxDecoration(
+              color: tileBg,
+              borderRadius: const BorderRadius.all(Radius.circular(16)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SwitchListTile(
+                  title: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      switchTitle,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ],
+                  ),
+                  value: _cloudEnabled,
+                  onChanged: _toggleCloud,
+                  secondary: const Icon(Icons.sync_rounded),
+                  tileColor: tileBg,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(16)),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    top: 4,
+                    bottom: 8,
+                  ),
+                  child: Row(
+                    children: [
+                      if (_syncing)
+                        const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      if (_syncing) const SizedBox(width: 8),
+                      Expanded(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            _status,
+                            style: Theme.of(context).textTheme.bodySmall,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],

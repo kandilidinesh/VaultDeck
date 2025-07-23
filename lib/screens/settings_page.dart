@@ -69,24 +69,40 @@ class SettingsPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    decoration: BoxDecoration(
-                      color: tileBg,
-                      borderRadius: BorderRadius.all(Radius.circular(16)),
-                    ),
-                    child: ValueListenableBuilder<bool>(
-                      valueListenable: isDarkModeNotifier,
-                      builder: (context, isDark, _) => ListTile(
-                        title: const Text('Toggle light/dark mode'),
-                        trailing: Switch(
-                          value: isDark,
-                          onChanged: (_) {
-                            if (toggleTheme != null) toggleTheme!();
-                          },
+                  Center(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width > 500
+                          ? 500
+                          : MediaQuery.of(context).size.width * 0.98,
+                      margin: const EdgeInsets.symmetric(horizontal: 0),
+                      decoration: BoxDecoration(
+                        color: tileBg,
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(16),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
+                      ),
+                      child: ValueListenableBuilder<bool>(
+                        valueListenable: isDarkModeNotifier,
+                        builder: (context, isDark, _) => ListTile(
+                          title: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Toggle light/dark mode',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          trailing: Switch(
+                            value: isDark,
+                            onChanged: (_) {
+                              if (toggleTheme != null) toggleTheme!();
+                            },
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                          ),
                         ),
                       ),
                     ),
