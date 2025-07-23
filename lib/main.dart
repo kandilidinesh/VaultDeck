@@ -23,6 +23,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  bool _isUnlocked = false;
   ThemeMode _themeMode = ThemeMode.system;
   final ValueNotifier<bool> isDarkModeNotifier = ValueNotifier<bool>(false);
   final ValueNotifier<bool> pinEnabledNotifier = ValueNotifier<bool>(false);
@@ -54,10 +55,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   Future<void> _promptAuthIfNeeded({bool force = false}) async {
     debugPrint(
-      '[AUTH] _promptAuthIfNeeded called. force=$force, _isPinDialogShowing=$_isPinDialogShowing',
+      '[AUTH] _promptAuthIfNeeded called. force=$force, _isPinDialogShowing=$_isPinDialogShowing, _isUnlocked=$_isUnlocked',
     );
     if (_isPinDialogShowing) {
       debugPrint('[AUTH] PIN dialog already showing, returning.');
+      return;
+    }
+    if (_isUnlocked && !force) {
+      debugPrint('[AUTH] App already unlocked, not prompting again.');
       return;
     }
     final navContext = _navigatorKey.currentState?.context;
@@ -94,6 +99,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         }
         if (authenticated) {
           debugPrint('[AUTH] Biometric unlock successful.');
+          _isUnlocked = true;
           return;
         }
         debugPrint(
@@ -123,6 +129,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       );
       debugPrint('[AUTH] PIN unlock screen closed.');
       _isPinDialogShowing = false;
+      _isUnlocked = true;
     } else {
       debugPrint(
         '[AUTH] PIN not enabled and not forced, not showing PIN screen.',
@@ -135,6 +142,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive) {
       _lastPausedTime = DateTime.now();
+      _isUnlocked = false;
     } else if (state == AppLifecycleState.resumed) {
       if (_lastPausedTime != null) {
         final timerMinutes = await _pinLockService.getPinLockTimerMinutes();

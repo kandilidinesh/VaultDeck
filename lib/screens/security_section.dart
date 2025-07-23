@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:hive/hive.dart';
 import '../widgets/set_pin_screen.dart';
 import '../services/pin_lock_service.dart';
 
@@ -27,14 +28,17 @@ class _SecuritySectionState extends State<SecuritySection> {
   int _selectedTimer = 0;
 
   final LocalAuthentication _localAuth = LocalAuthentication();
-  bool _isAuthenticating = false;
+  final bool _isAuthenticating = false;
   String _authStatus = '';
 
   Future<void> _toggleBiometric(bool value) async {
+    final box = await Hive.openBox('settingsBox');
     if (value) {
       bool canCheck = await _localAuth.canCheckBiometrics;
       bool isAvailable = await _localAuth.isDeviceSupported();
-      debugPrint('[BIOMETRIC] canCheckBiometrics: $canCheck, isDeviceSupported: $isAvailable');
+      debugPrint(
+        '[BIOMETRIC] canCheckBiometrics: $canCheck, isDeviceSupported: $isAvailable',
+      );
       if (!canCheck || !isAvailable) {
         debugPrint('[BIOMETRIC] Biometric authentication not available.');
         setState(() {
@@ -42,43 +46,18 @@ class _SecuritySectionState extends State<SecuritySection> {
         });
         return;
       }
-      bool authenticated = false;
-      try {
-        setState(() {
-          _isAuthenticating = true;
-        });
-        authenticated = await _localAuth.authenticate(
-          localizedReason: 'Authenticate to enable biometric lock',
-          options: const AuthenticationOptions(
-            biometricOnly: true,
-            stickyAuth: true,
-          ),
-        );
-        debugPrint('[BIOMETRIC] Authentication result: $authenticated');
-      } catch (e) {
-        debugPrint('[BIOMETRIC] Error during authentication: $e');
-        setState(() {
-          _authStatus = 'Error: ${e.toString()}';
-        });
-      } finally {
-        setState(() {
-          _isAuthenticating = false;
-        });
-      }
-      if (authenticated) {
-        debugPrint('[BIOMETRIC] Authentication succeeded.');
-        setState(() {
-          _biometricEnabled = true;
-          _authStatus = 'Biometric authentication enabled.';
-        });
-      } else {
-        debugPrint('[BIOMETRIC] Authentication failed.');
-        setState(() {
-          _authStatus = 'Authentication failed.';
-        });
-      }
+      // Only persist and update UI, do not trigger unlock flow here
+      await box.put('biometricEnabled', true);
+      setState(() {
+        _biometricEnabled = true;
+        _authStatus = 'Biometric authentication enabled.';
+      });
+      debugPrint(
+        '[BIOMETRIC] Biometric enabled and persisted, will prompt on next app start/resume.',
+      );
     } else {
       debugPrint('[BIOMETRIC] Biometric authentication disabled by user.');
+      await box.put('biometricEnabled', false);
       setState(() {
         _biometricEnabled = false;
         _authStatus = 'Biometric authentication disabled.';
@@ -119,6 +98,15 @@ class _SecuritySectionState extends State<SecuritySection> {
   void initState() {
     super.initState();
     _selectedTimer = widget.pinLockTimerMinutes;
+    _loadBiometricEnabled();
+  }
+
+  Future<void> _loadBiometricEnabled() async {
+    final box = await Hive.openBox('settingsBox');
+    final enabled = box.get('biometricEnabled', defaultValue: false);
+    setState(() {
+      _biometricEnabled = enabled;
+    });
   }
 
   @override
