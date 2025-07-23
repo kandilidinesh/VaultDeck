@@ -8,6 +8,7 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool pinEnabled;
   final String? pin;
   final void Function(bool, [String?]) setPinEnabled;
+  final ValueNotifier<bool> pinEnabledNotifier;
 
   const VaultDeckAppBar({
     super.key,
@@ -16,6 +17,7 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.pinEnabled,
     required this.pin,
     required this.setPinEnabled,
+    required this.pinEnabledNotifier,
   });
 
   @override
@@ -66,13 +68,20 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => SettingsPage(
-                    isDarkModeNotifier: isDarkModeNotifier,
-                    toggleTheme: toggleTheme,
-                    pinEnabled: pinEnabled,
-                    pin: pin,
-                    setPinEnabled: setPinEnabled,
-                  ),
+                  builder: (context) {
+                    return ValueListenableBuilder<bool>(
+                      valueListenable: pinEnabledNotifier,
+                      builder: (context, pinEnabledValue, _) {
+                        return SettingsPage(
+                          isDarkModeNotifier: isDarkModeNotifier,
+                          toggleTheme: toggleTheme,
+                          pinEnabled: pinEnabledValue,
+                          pin: pin,
+                          setPinEnabled: setPinEnabled,
+                        );
+                      },
+                    );
+                  },
                 ),
               );
             },

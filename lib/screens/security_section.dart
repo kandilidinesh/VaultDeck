@@ -81,6 +81,8 @@ class _SecuritySectionState extends State<SecuritySection> {
 
   void _togglePin(bool value) async {
     if (value) {
+      // Optimistically enable PIN lock so switch updates instantly
+      widget.onPinToggle(true);
       // Show full-screen PIN setup and await result
       final pin = await Navigator.of(context).push<String>(
         MaterialPageRoute(
@@ -95,13 +97,12 @@ class _SecuritySectionState extends State<SecuritySection> {
           ),
         ),
       );
-      setState(() {
-        if (pin != null && pin.isNotEmpty) {
-          widget.onPinToggle(true, pin);
-        } else {
-          widget.onPinToggle(false);
-        }
-      });
+      if (pin != null && pin.isNotEmpty) {
+        widget.onPinToggle(true, pin);
+      } else {
+        // User cancelled or didn't set a PIN, revert toggle
+        widget.onPinToggle(false);
+      }
     } else {
       widget.onPinToggle(false);
     }
@@ -202,6 +203,7 @@ class _SecuritySectionState extends State<SecuritySection> {
                   borderRadius: BorderRadius.all(Radius.circular(16)),
                 ),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                // Debug log for pinEnabled value
               ),
               if (widget.pinEnabled)
                 Padding(

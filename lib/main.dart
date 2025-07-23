@@ -23,7 +23,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   ThemeMode _themeMode = ThemeMode.system;
   final ValueNotifier<bool> isDarkModeNotifier = ValueNotifier<bool>(false);
-  bool _pinEnabled = false;
+  final ValueNotifier<bool> pinEnabledNotifier = ValueNotifier<bool>(false);
   String? _pin;
   final PinLockService _pinLockService = PinLockService();
   DateTime? _lastPausedTime;
@@ -37,7 +37,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         state == AppLifecycleState.inactive) {
       _lastPausedTime = DateTime.now();
     } else if (state == AppLifecycleState.resumed) {
-      if (_pinEnabled && _lastPausedTime != null) {
+      if (pinEnabledNotifier.value && _lastPausedTime != null) {
         final timerMinutes = await _pinLockService.getPinLockTimerMinutes();
         final elapsed = DateTime.now().difference(_lastPausedTime!).inMinutes;
         if (timerMinutes == 0 || elapsed >= timerMinutes) {
@@ -84,23 +84,34 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Future<void> _loadPinState() async {
     final enabled = await _pinLockService.isPinEnabled();
     final pin = await _pinLockService.getPin();
+    pinEnabledNotifier.value = enabled;
     setState(() {
-      _pinEnabled = enabled;
       _pin = pin;
     });
   }
 
   Future<void> setPinEnabled(bool enabled, [String? pin]) async {
     if (enabled && pin != null && pin.isNotEmpty) {
-      await _pinLockService.setPin(pin);
-      setState(() {
-        _pinEnabled = true;
-        _pin = pin;
-      });
+      try {
+        await _pinLockService.setPin(pin);
+        pinEnabledNotifier.value = true;
+        setState(() {
+          _pin = pin;
+        });
+      } catch (e) {
+        pinEnabledNotifier.value = false;
+        setState(() {
+          _pin = null;
+        });
+      }
     } else {
-      await _pinLockService.disablePin();
+      try {
+        await _pinLockService.disablePin();
+        pinEnabledNotifier.value = false;
+      } catch (e) {
+        pinEnabledNotifier.value = true;
+      }
       setState(() {
-        _pinEnabled = false;
         _pin = null;
       });
     }
@@ -148,70 +159,76 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: _navigatorKey,
-      title: AppConstants.appName,
-      themeMode: _themeMode,
-      theme: ThemeData(
-        brightness: Brightness.light,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.indigo,
-          brightness: Brightness.light,
-        ),
-        scaffoldBackgroundColor: Colors.grey[50],
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.indigoAccent,
-          foregroundColor: Colors.white,
-          elevation: 0,
-        ),
-        cardTheme: CardThemeData(
-          color: Colors.indigo.shade700,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+    return ValueListenableBuilder<bool>(
+      valueListenable: pinEnabledNotifier,
+      builder: (context, pinEnabled, _) {
+        return MaterialApp(
+          navigatorKey: _navigatorKey,
+          title: AppConstants.appName,
+          themeMode: _themeMode,
+          theme: ThemeData(
+            brightness: Brightness.light,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.indigo,
+              brightness: Brightness.light,
+            ),
+            scaffoldBackgroundColor: Colors.grey[50],
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.indigoAccent,
+              foregroundColor: Colors.white,
+              elevation: 0,
+            ),
+            cardTheme: CardThemeData(
+              color: Colors.indigo.shade700,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              elevation: 4,
+            ),
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              backgroundColor: Colors.indigoAccent,
+            ),
+            splashFactory: NoSplash.splashFactory,
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
           ),
-          elevation: 4,
-        ),
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Colors.indigoAccent,
-        ),
-        splashFactory: NoSplash.splashFactory,
-        highlightColor: Colors.transparent,
-        splashColor: Colors.transparent,
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.indigo,
-          brightness: Brightness.dark,
-        ),
-        scaffoldBackgroundColor: Colors.grey[900],
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.black,
-          foregroundColor: Colors.white,
-          elevation: 0,
-        ),
-        cardTheme: CardThemeData(
-          color: Colors.indigo.shade900,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.indigo,
+              brightness: Brightness.dark,
+            ),
+            scaffoldBackgroundColor: Colors.grey[900],
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+              elevation: 0,
+            ),
+            cardTheme: CardThemeData(
+              color: Colors.indigo.shade900,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              elevation: 4,
+            ),
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              backgroundColor: Colors.indigo,
+            ),
+            splashFactory: NoSplash.splashFactory,
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
           ),
-          elevation: 4,
-        ),
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Colors.indigo,
-        ),
-        splashFactory: NoSplash.splashFactory,
-        highlightColor: Colors.transparent,
-        splashColor: Colors.transparent,
-      ),
-      home: HomePage(
-        title: AppConstants.appName,
-        toggleTheme: toggleTheme,
-        isDarkModeNotifier: isDarkModeNotifier,
-        pinEnabled: _pinEnabled,
-        pin: _pin,
-        setPinEnabled: setPinEnabled,
-      ),
+          home: HomePage(
+            title: AppConstants.appName,
+            toggleTheme: toggleTheme,
+            isDarkModeNotifier: isDarkModeNotifier,
+            pinEnabled: pinEnabled,
+            pin: _pin,
+            setPinEnabled: setPinEnabled,
+            pinEnabledNotifier: pinEnabledNotifier,
+          ),
+        );
+      },
     );
   }
 }

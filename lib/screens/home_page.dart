@@ -15,6 +15,7 @@ class HomePage extends StatefulWidget {
   final String title;
   final ValueNotifier<bool> isDarkModeNotifier;
   final bool pinEnabled;
+  final ValueNotifier<bool> pinEnabledNotifier;
   final String? pin;
   final void Function(bool, [String?]) setPinEnabled;
 
@@ -24,6 +25,7 @@ class HomePage extends StatefulWidget {
     required this.isDarkModeNotifier,
     this.toggleTheme,
     required this.pinEnabled,
+    required this.pinEnabledNotifier,
     required this.pin,
     required this.setPinEnabled,
   });
@@ -79,6 +81,7 @@ class _HomePageState extends State<HomePage> {
         pinEnabled: widget.pinEnabled,
         pin: widget.pin,
         setPinEnabled: widget.setPinEnabled,
+        pinEnabledNotifier: widget.pinEnabledNotifier,
       ),
       body: cards.isEmpty
           ? EmptyVaultView(isDark: isDark)

@@ -93,10 +93,14 @@ class SettingsPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   // Security group
-                  SecuritySection(
-                    pinEnabled: pinEnabled,
-                    pin: pin,
-                    onPinToggle: setPinEnabled,
+                  Builder(
+                    builder: (context) {
+                      return SecuritySection(
+                        pinEnabled: pinEnabled,
+                        pin: pin,
+                        onPinToggle: setPinEnabled,
+                      );
+                    },
                   ),
                   const SizedBox(height: 24),
                   // iCloud sync group
