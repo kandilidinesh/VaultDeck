@@ -34,7 +34,9 @@ class _SecuritySectionState extends State<SecuritySection> {
     if (value) {
       bool canCheck = await _localAuth.canCheckBiometrics;
       bool isAvailable = await _localAuth.isDeviceSupported();
+      debugPrint('[BIOMETRIC] canCheckBiometrics: $canCheck, isDeviceSupported: $isAvailable');
       if (!canCheck || !isAvailable) {
+        debugPrint('[BIOMETRIC] Biometric authentication not available.');
         setState(() {
           _authStatus = 'Biometric authentication not available.';
         });
@@ -52,7 +54,9 @@ class _SecuritySectionState extends State<SecuritySection> {
             stickyAuth: true,
           ),
         );
+        debugPrint('[BIOMETRIC] Authentication result: $authenticated');
       } catch (e) {
+        debugPrint('[BIOMETRIC] Error during authentication: $e');
         setState(() {
           _authStatus = 'Error: ${e.toString()}';
         });
@@ -62,16 +66,19 @@ class _SecuritySectionState extends State<SecuritySection> {
         });
       }
       if (authenticated) {
+        debugPrint('[BIOMETRIC] Authentication succeeded.');
         setState(() {
           _biometricEnabled = true;
           _authStatus = 'Biometric authentication enabled.';
         });
       } else {
+        debugPrint('[BIOMETRIC] Authentication failed.');
         setState(() {
           _authStatus = 'Authentication failed.';
         });
       }
     } else {
+      debugPrint('[BIOMETRIC] Biometric authentication disabled by user.');
       setState(() {
         _biometricEnabled = false;
         _authStatus = 'Biometric authentication disabled.';
