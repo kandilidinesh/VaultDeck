@@ -1,4 +1,4 @@
-package com.example.card_storage_app
+package com.hyper.vaultdeck
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 
