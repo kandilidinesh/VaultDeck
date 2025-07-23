@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:local_auth/local_auth.dart';
 import 'models/card_model.dart';
 import 'screens/home_page.dart';
-import 'widgets/set_pin_screen.dart';
 import 'widgets/unlock_pin_screen.dart';
 import 'constants/app_constants.dart';
 import 'services/pin_lock_service.dart';
@@ -30,8 +30,105 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   final PinLockService _pinLockService = PinLockService();
   DateTime? _lastPausedTime;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
-
   bool _isPinDialogShowing = false;
+  bool _biometricEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadThemeMode();
+    _loadPinState();
+    _loadBiometricState();
+    WidgetsBinding.instance.addObserver(this);
+    // Prompt for auth on app start
+    WidgetsBinding.instance.addPostFrameCallback((_) => _promptAuthIfNeeded());
+  }
+
+  Future<void> _loadBiometricState() async {
+    final box = await Hive.openBox('settingsBox');
+    final enabled = box.get('biometricEnabled', defaultValue: false);
+    setState(() {
+      _biometricEnabled = enabled;
+    });
+  }
+
+  Future<void> _promptAuthIfNeeded({bool force = false}) async {
+    debugPrint(
+      '[AUTH] _promptAuthIfNeeded called. force=$force, _isPinDialogShowing=$_isPinDialogShowing',
+    );
+    if (_isPinDialogShowing) {
+      debugPrint('[AUTH] PIN dialog already showing, returning.');
+      return;
+    }
+    final navContext = _navigatorKey.currentState?.context;
+    if (navContext == null) {
+      debugPrint('[AUTH] navContext is null, returning.');
+      return;
+    }
+    await _loadBiometricState();
+    await _loadPinState();
+    debugPrint(
+      '[AUTH] Biometric enabled: $_biometricEnabled, PIN enabled: ${pinEnabledNotifier.value}',
+    );
+    if (_biometricEnabled) {
+      final localAuth = LocalAuthentication();
+      bool canCheck = await localAuth.canCheckBiometrics;
+      bool isAvailable = await localAuth.isDeviceSupported();
+      debugPrint(
+        '[AUTH] canCheckBiometrics: $canCheck, isDeviceSupported: $isAvailable',
+      );
+      if (canCheck && isAvailable) {
+        bool authenticated = false;
+        try {
+          debugPrint('[AUTH] Prompting for biometric authentication...');
+          authenticated = await localAuth.authenticate(
+            localizedReason: 'Authenticate to unlock the app',
+            options: const AuthenticationOptions(
+              biometricOnly: true,
+              stickyAuth: true,
+            ),
+          );
+          debugPrint('[AUTH] Biometric authentication result: $authenticated');
+        } catch (e) {
+          debugPrint('[AUTH] Biometric authentication error: $e');
+        }
+        if (authenticated) {
+          debugPrint('[AUTH] Biometric unlock successful.');
+          return;
+        }
+        debugPrint(
+          '[AUTH] Biometric unlock failed or cancelled, falling back to PIN.',
+        );
+      } else {
+        debugPrint('[AUTH] Biometrics not available, falling back to PIN.');
+      }
+    }
+    // If PIN is enabled, show PIN screen
+    if (pinEnabledNotifier.value || force) {
+      debugPrint('[AUTH] Showing PIN unlock screen...');
+      _isPinDialogShowing = true;
+      await Navigator.of(navContext).push(
+        MaterialPageRoute(
+          fullscreenDialog: true,
+          builder: (context) => UnlockPinScreen(
+            onCancel: () {
+              debugPrint('[AUTH] PIN unlock cancelled.');
+              if (mounted) {
+                Navigator.of(context).pop();
+              }
+              _isPinDialogShowing = false;
+            },
+          ),
+        ),
+      );
+      debugPrint('[AUTH] PIN unlock screen closed.');
+      _isPinDialogShowing = false;
+    } else {
+      debugPrint(
+        '[AUTH] PIN not enabled and not forced, not showing PIN screen.',
+      );
+    }
+  }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
@@ -39,41 +136,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         state == AppLifecycleState.inactive) {
       _lastPausedTime = DateTime.now();
     } else if (state == AppLifecycleState.resumed) {
-      if (pinEnabledNotifier.value && _lastPausedTime != null) {
+      if (_lastPausedTime != null) {
         final timerMinutes = await _pinLockService.getPinLockTimerMinutes();
         final elapsed = DateTime.now().difference(_lastPausedTime!).inMinutes;
         if (timerMinutes == 0 || elapsed >= timerMinutes) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (!mounted || _isPinDialogShowing) return;
-            final navContext = _navigatorKey.currentState?.context;
-            if (navContext != null) {
-              _isPinDialogShowing = true;
-              Navigator.of(navContext).push(
-                MaterialPageRoute(
-                  fullscreenDialog: true,
-                  builder: (context) => UnlockPinScreen(
-                    onCancel: () {
-                      if (mounted) {
-                        Navigator.of(context).pop();
-                      }
-                      _isPinDialogShowing = false;
-                    },
-                  ),
-                ),
-              );
-            }
-          });
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) => _promptAuthIfNeeded(),
+          );
         }
       }
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadThemeMode();
-    _loadPinState();
-    WidgetsBinding.instance.addObserver(this);
   }
 
   Future<void> _loadPinState() async {
@@ -88,12 +160,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Future<void> setPinEnabled(bool enabled, [String? pin]) async {
     if (enabled && pin != null && pin.isNotEmpty) {
       try {
+        debugPrint('[PIN] Setting PIN: $pin');
         await _pinLockService.setPin(pin);
         pinEnabledNotifier.value = true;
         setState(() {
           _pin = pin;
         });
+        debugPrint('[PIN] PIN set successfully');
       } catch (e) {
+        debugPrint('[PIN] Error setting PIN: $e');
         pinEnabledNotifier.value = false;
         setState(() {
           _pin = null;
@@ -101,9 +176,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       }
     } else {
       try {
+        debugPrint('[PIN] Disabling PIN');
         await _pinLockService.disablePin();
         pinEnabledNotifier.value = false;
+        debugPrint('[PIN] PIN disabled');
       } catch (e) {
+        debugPrint('[PIN] Error disabling PIN: $e');
         pinEnabledNotifier.value = true;
       }
       setState(() {
@@ -245,7 +323,11 @@ class _PinLockScreenState extends State<PinLockScreen> {
   Future<void> _checkPin() async {
     final box = await Hive.openBox('settingsBox');
     final savedPin = box.get('pin');
-    if (_pinController.text == savedPin) {
+    debugPrint(
+      '[PIN] Attempt unlock. Entered: \'${_pinController.text}\', Saved: \'${savedPin?.toString() ?? ''}\'',
+    );
+    if (_pinController.text == (savedPin?.toString() ?? '')) {
+      debugPrint('[PIN] PIN unlock successful');
       if (mounted) {
         _pinFocusNode.unfocus();
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -253,6 +335,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
         });
       }
     } else {
+      debugPrint('[PIN] PIN unlock failed');
       if (mounted) {
         setState(() {
           _error = 'Incorrect PIN';

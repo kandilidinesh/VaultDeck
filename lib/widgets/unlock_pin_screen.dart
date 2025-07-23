@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 
 class UnlockPinScreen extends StatefulWidget {
   final VoidCallback? onCancel;
-  const UnlockPinScreen({Key? key, this.onCancel}) : super(key: key);
+  const UnlockPinScreen({super.key, this.onCancel});
 
   @override
   State<UnlockPinScreen> createState() => _UnlockPinScreenState();
@@ -109,7 +109,7 @@ class _UnlockPinScreenState extends State<UnlockPinScreen> {
     });
     final box = await Hive.openBox('settingsBox');
     final savedPin = box.get('pin');
-    if (pin == savedPin) {
+    if (pin == (savedPin?.toString() ?? '')) {
       if (mounted) Navigator.of(context).pop();
     } else {
       setState(() {

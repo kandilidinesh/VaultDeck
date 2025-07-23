@@ -170,7 +170,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
           borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.12),
+              color: Colors.black.withValues(alpha: 0.12),
               blurRadius: 32,
               offset: const Offset(0, -8),
             ),

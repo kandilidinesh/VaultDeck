@@ -4,8 +4,7 @@ class SetPinScreen extends StatefulWidget {
   final void Function(String pin)? onPinSet;
   final VoidCallback? onCancel;
 
-  const SetPinScreen({Key? key, this.onPinSet, this.onCancel})
-    : super(key: key);
+  const SetPinScreen({super.key, this.onPinSet, this.onCancel});
 
   @override
   State<SetPinScreen> createState() => _SetPinScreenState();
@@ -41,8 +40,9 @@ class _SetPinScreenState extends State<SetPinScreen> {
       if (!isConfirming) {
         if (pin.isNotEmpty) pin = pin.substring(0, pin.length - 1);
       } else {
-        if (confirmPin.isNotEmpty)
+        if (confirmPin.isNotEmpty) {
           confirmPin = confirmPin.substring(0, confirmPin.length - 1);
+        }
       }
       error = '';
     });
