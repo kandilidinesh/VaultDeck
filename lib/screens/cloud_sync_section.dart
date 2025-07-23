@@ -24,8 +24,14 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
     });
     if (value) {
       if (Platform.isAndroid) {
-        await _signInWithGoogle();
-        await _syncWithGoogleDrive();
+        final signedIn = await _signInWithGoogle();
+        if (signedIn && _driveApi != null) {
+          await _syncWithGoogleDrive();
+        } else {
+          setState(() {
+            _status = 'Google sign-in failed or cancelled.';
+          });
+        }
       } else if (Platform.isIOS) {
         await _syncWithICloud();
       }
@@ -38,7 +44,7 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
     }
   }
 
-  Future<void> _signInWithGoogle() async {
+  Future<bool> _signInWithGoogle() async {
     final googleSignIn = GoogleSignIn.standard(
       scopes: [drive.DriveApi.driveFileScope],
     );
@@ -48,7 +54,7 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
         setState(() {
           _status = 'Google sign-in cancelled';
         });
-        return;
+        return false;
       }
       final authHeaders = await account.authHeaders;
       final client = GoogleAuthClient(authHeaders);
@@ -56,10 +62,12 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
         _driveApi = drive.DriveApi(client);
         _status = 'Signed in as ${account.email}';
       });
+      return true;
     } catch (e) {
       setState(() {
         _status = 'Google sign-in failed: $e';
       });
+      return false;
     }
   }
 
@@ -72,7 +80,7 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
       // Example: create a file in Google Drive
       if (_driveApi != null) {
         var file = drive.File();
-        file.name = 'card_storage_backup.txt';
+        file.name = 'vault_deck.txt';
         file.mimeType = 'text/plain';
         await _driveApi!.files.create(
           file,
@@ -108,7 +116,7 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
     try {
       // Example file content and name
       final result = await platform.invokeMethod('saveToICloud', {
-        'fileName': 'card_storage_backup.txt',
+        'fileName': 'vault_deck.txt',
         'content': 'hello', // Replace with your actual data
       });
       setState(() {
