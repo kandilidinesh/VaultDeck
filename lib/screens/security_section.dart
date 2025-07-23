@@ -32,15 +32,22 @@ class _SecuritySectionState extends State<SecuritySection> {
   @override
   void initState() {
     super.initState();
-    _selectedTimer = widget.pinLockTimerMinutes;
-    _loadBiometricEnabled();
+    _loadSettings();
   }
 
-  Future<void> _loadBiometricEnabled() async {
+  Future<void> _loadSettings() async {
     final box = await Hive.openBox('settingsBox');
     final enabled = box.get('biometricEnabled', defaultValue: false);
+    int timer;
+    if (box.containsKey('pinPromptTimer')) {
+      timer = box.get('pinPromptTimer');
+    } else {
+      timer = widget.pinLockTimerMinutes;
+      await box.put('pinPromptTimer', timer);
+    }
     setState(() {
       _biometricEnabled = enabled;
+      _selectedTimer = timer;
     });
   }
 
@@ -100,6 +107,17 @@ class _SecuritySectionState extends State<SecuritySection> {
       }
     } else {
       widget.onPinToggle(false);
+    }
+  }
+
+  Future<void> _setPinPromptTimer(int val) async {
+    final box = await Hive.openBox('settingsBox');
+    await box.put('pinPromptTimer', val);
+    setState(() => _selectedTimer = val);
+    final pinLockService = PinLockService();
+    await pinLockService.setPinLockTimerMinutes(val);
+    if (widget.onPinLockTimerChanged != null) {
+      widget.onPinLockTimerChanged!(val);
     }
   }
 
@@ -237,15 +255,7 @@ class _SecuritySectionState extends State<SecuritySection> {
                               ],
                               onChanged: (val) async {
                                 if (val != null) {
-                                  setState(() => _selectedTimer = val);
-                                  if (!mounted) return;
-                                  final pinLockService = PinLockService();
-                                  await pinLockService.setPinLockTimerMinutes(
-                                    val,
-                                  );
-                                  if (widget.onPinLockTimerChanged != null) {
-                                    widget.onPinLockTimerChanged!(val);
-                                  }
+                                  await _setPinPromptTimer(val);
                                 }
                               },
                             ),
