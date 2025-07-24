@@ -154,32 +154,39 @@ class _HomePageState extends State<HomePage> {
                 padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom,
                 ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF181A20) : Colors.white,
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(32),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.15),
-                        blurRadius: 24,
-                        offset: Offset(0, -8),
+                child: DraggableScrollableSheet(
+                  initialChildSize: 0.45,
+                  minChildSize: 0.35,
+                  maxChildSize: 0.7,
+                  expand: false,
+                  builder: (_, controller) => Container(
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF181A20) : Colors.white,
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(32),
                       ),
-                    ],
-                  ),
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 32.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CardDetailView(
-                            card: card,
-                            cardLogoAsset: getCardLogoAsset(detectedType),
-                          ),
-                          const SizedBox(height: 24),
-                        ],
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.15),
+                          blurRadius: 24,
+                          offset: Offset(0, -8),
+                        ),
+                      ],
+                    ),
+                    child: SingleChildScrollView(
+                      controller: controller,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 32.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CardDetailView(
+                              card: card,
+                              cardLogoAsset: getCardLogoAsset(detectedType),
+                            ),
+                            const SizedBox(height: 24),
+                          ],
+                        ),
                       ),
                     ),
                   ),
