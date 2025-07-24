@@ -1,16 +1,22 @@
-# card_storage_app
 
-A new Flutter project.
+# VaultDeck
 
-## Getting Started
+VaultDeck is a secure, cross-platform Flutter app for storing and managing your card details safely. It supports cloud sync, biometric authentication, and a beautiful, modern UI.
 
-This project is a starting point for a Flutter application.
+## Features
+- Securely store credit/debit card details
+- Biometric authentication (Face ID, Touch ID, etc.)
+- Cloud sync (Google Drive/iCloud)
+- Modern, responsive UI
+- Cross-platform: Android, iOS, Web, Desktop
 
-A few resources to get you started if this is your first Flutter project:
+## Setup
+1. Clone this repository.
+2. Run `flutter pub get` to install dependencies.
+3. Run the app with `flutter run`.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Contributing
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## License
+MIT
