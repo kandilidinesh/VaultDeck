@@ -19,34 +19,25 @@ class CardDetailView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: card.nickname?.isNotEmpty == true
-                    ? Padding(
-                        padding: const EdgeInsets.only(
-                          left: 24.0,
-                          top: 16.0,
-                          bottom: 16.0,
-                        ),
-                        child: Text(
-                          card.nickname!,
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white : Colors.black87,
-                            letterSpacing: 0.5,
-                          ),
-                          textAlign: TextAlign.left,
-                        ),
-                      )
-                    : SizedBox(height: 40),
-              ),
-              // ...existing code...
-            ],
-          ),
+          card.nickname?.isNotEmpty == true
+              ? Padding(
+                  padding: const EdgeInsets.only(
+                    left: 24.0,
+                    top: 16.0,
+                    bottom: 16.0,
+                  ),
+                  child: Text(
+                    card.nickname!,
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black87,
+                      letterSpacing: 0.5,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                )
+              : SizedBox(height: 40),
           Container(
             width: MediaQuery.of(context).size.width * 0.92,
             constraints: BoxConstraints(minHeight: 180, maxHeight: 280),
@@ -62,7 +53,7 @@ class CardDetailView extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.25),
+                  color: Colors.black.withOpacity(0.25),
                   blurRadius: 24,
                   offset: Offset(0, 12),
                 ),
@@ -74,7 +65,6 @@ class CardDetailView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Removed extra card icon for cleaner look
-                    // ...existing code...
                     if (card.bankName?.isNotEmpty == true)
                       Padding(
                         padding: const EdgeInsets.only(
@@ -117,30 +107,37 @@ class CardDetailView extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          Text(
-                            'Exp: ${card.expiryDate}',
-                            style: TextStyle(
-                              fontSize: 17,
-                              color: isDark ? Colors.white70 : Colors.black54,
-                              fontWeight: FontWeight.w500,
+                          Expanded(
+                            child: Text(
+                              'Exp: ${card.expiryDate}',
+                              style: TextStyle(
+                                fontSize: 17,
+                                color: isDark ? Colors.white70 : Colors.black54,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          const SizedBox(width: 32),
-                          Text(
-                            'CVV: ${card.cvv ?? '--'}',
-                            style: TextStyle(
-                              fontSize: 17,
-                              color: isDark ? Colors.white70 : Colors.black54,
-                              fontWeight: FontWeight.w500,
+                          Expanded(
+                            child: Text(
+                              'CVV: ${card.cvv ?? '--'}',
+                              style: TextStyle(
+                                fontSize: 17,
+                                color: isDark ? Colors.white70 : Colors.black54,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          const SizedBox(width: 32),
-                          Text(
-                            'PIN: ${card.pin?.isNotEmpty == true ? card.pin : '--'}',
-                            style: TextStyle(
-                              fontSize: 17,
-                              color: isDark ? Colors.white70 : Colors.black54,
-                              fontWeight: FontWeight.w500,
+                          Expanded(
+                            child: Text(
+                              'PIN: ${card.pin?.isNotEmpty == true ? card.pin : '--'}',
+                              style: TextStyle(
+                                fontSize: 17,
+                                color: isDark ? Colors.white70 : Colors.black54,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
@@ -216,17 +213,18 @@ class CardDetailView extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.notes,
-                      color: isDark ? Colors.white54 : Colors.black38,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.notes,
+                        color: isDark ? Colors.white54 : Colors.black38,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
                         card.notes!,
                         style: TextStyle(
                           fontSize: 15,
@@ -234,8 +232,8 @@ class CardDetailView extends StatelessWidget {
                           fontStyle: FontStyle.italic,
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
