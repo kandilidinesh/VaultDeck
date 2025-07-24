@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vaultdeck/services/card_storage.dart';
 import 'package:vaultdeck/models/card_model.dart';
 import 'package:vaultdeck/constants/app_constants.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 void main() {
