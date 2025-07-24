@@ -56,11 +56,8 @@ class _SecuritySectionState extends State<SecuritySection> {
     if (value) {
       bool canCheck = await _localAuth.canCheckBiometrics;
       bool isAvailable = await _localAuth.isDeviceSupported();
-      debugPrint(
-        '[BIOMETRIC] canCheckBiometrics: $canCheck, isDeviceSupported: $isAvailable',
-      );
+
       if (!canCheck || !isAvailable) {
-        debugPrint('[BIOMETRIC] Biometric authentication not available.');
         setState(() {
           _authStatus = 'Biometric authentication not available.';
         });
@@ -71,11 +68,7 @@ class _SecuritySectionState extends State<SecuritySection> {
         _biometricEnabled = true;
         _authStatus = 'Biometric authentication enabled.';
       });
-      debugPrint(
-        '[BIOMETRIC] Biometric enabled and persisted, will prompt on next app start/resume.',
-      );
     } else {
-      debugPrint('[BIOMETRIC] Biometric authentication disabled by user.');
       await box.put('biometricEnabled', false);
       setState(() {
         _biometricEnabled = false;
