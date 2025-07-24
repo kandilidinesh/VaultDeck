@@ -2,21 +2,36 @@ import 'package:hive/hive.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 
+typedef BoxOpener =
+    Future<Box> Function(String boxName, {HiveAesCipher? encryptionCipher});
+
 class PinLockService {
   static const String _settingsBox = 'settingsBox';
   static const String _pinEnabledKey = 'pinEnabled';
   static const String _pinKey = 'pin';
   static const String _pinLockTimerKey = 'pinLockTimerMinutes';
   static const String _encryptionKeyName = 'settingsBoxEncryptionKey';
-  static final FlutterSecureStorage _secureStorage =
-      const FlutterSecureStorage();
+
+  final FlutterSecureStorage secureStorage;
+  final BoxOpener boxOpener;
+
+  PinLockService({FlutterSecureStorage? secureStorage, BoxOpener? boxOpener})
+    : secureStorage = secureStorage ?? const FlutterSecureStorage(),
+      boxOpener = boxOpener ?? _defaultBoxOpener;
+
+  static Future<Box> _defaultBoxOpener(
+    String boxName, {
+    HiveAesCipher? encryptionCipher,
+  }) {
+    return Hive.openBox(boxName, encryptionCipher: encryptionCipher);
+  }
 
   Future<List<int>> _getEncryptionKey() async {
-    String? encodedKey = await _secureStorage.read(key: _encryptionKeyName);
+    String? encodedKey = await secureStorage.read(key: _encryptionKeyName);
     if (encodedKey == null) {
       final key = Hive.generateSecureKey();
       encodedKey = base64UrlEncode(key);
-      await _secureStorage.write(key: _encryptionKeyName, value: encodedKey);
+      await secureStorage.write(key: _encryptionKeyName, value: encodedKey);
       return key;
     }
     return base64Url.decode(encodedKey);
@@ -24,10 +39,7 @@ class PinLockService {
 
   Future<Box> _openEncryptedBox() async {
     final key = await _getEncryptionKey();
-    return await Hive.openBox(
-      _settingsBox,
-      encryptionCipher: HiveAesCipher(key),
-    );
+    return await boxOpener(_settingsBox, encryptionCipher: HiveAesCipher(key));
   }
 
   Future<bool> isPinEnabled() async {
