@@ -29,10 +29,11 @@ class CardDetailView extends StatelessWidget {
                   child: Text(
                     card.nickname!,
                     style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : Colors.black87,
-                      letterSpacing: 0.5,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      fontStyle: FontStyle.normal,
+                      color: isDark ? Colors.white70 : Colors.black54,
+                      letterSpacing: 1.0,
                     ),
                     textAlign: TextAlign.left,
                   ),
