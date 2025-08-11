@@ -110,7 +110,7 @@ class _UnlockPinScreenState extends State<UnlockPinScreen> {
     final box = await Hive.openBox('settingsBox');
     final savedPin = box.get('pin');
     if (pin == (savedPin?.toString() ?? '')) {
-      if (mounted) Navigator.of(context).pop();
+      if (mounted) Navigator.of(context).pop(true);
     } else {
       setState(() {
         error = 'Incorrect PIN';
