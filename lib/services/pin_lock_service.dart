@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
+import 'package:flutter/services.dart';
 
 typedef BoxOpener =
     Future<Box> Function(String boxName, {HiveAesCipher? encryptionCipher});
@@ -31,8 +32,20 @@ class PinLockService {
     if (encodedKey == null) {
       final key = Hive.generateSecureKey();
       encodedKey = base64UrlEncode(key);
-      await secureStorage.write(key: _encryptionKeyName, value: encodedKey);
-      return key;
+      try {
+        await secureStorage.write(key: _encryptionKeyName, value: encodedKey);
+      } catch (e) {
+        // Handle duplicate key error gracefully
+        if (e is PlatformException &&
+            e.code == 'Unexpected security result code' &&
+            e.message?.contains('already exists') == true) {
+          // Key already exists, read it again
+          encodedKey = await secureStorage.read(key: _encryptionKeyName);
+        } else {
+          rethrow;
+        }
+      }
+      return base64Url.decode(encodedKey!);
     }
     return base64Url.decode(encodedKey);
   }
