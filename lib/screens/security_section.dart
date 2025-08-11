@@ -28,7 +28,6 @@ class _SecuritySectionState extends State<SecuritySection> {
   bool _biometricEnabled = false;
   int _selectedTimer = 0;
   final LocalAuthentication _localAuth = LocalAuthentication();
-  String _authStatus = '';
 
   @override
   void initState() {

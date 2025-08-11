@@ -80,7 +80,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               stickyAuth: true,
             ),
           );
-        } catch (e) {}
+        } catch (e) {
+          // Ignore biometric errors
+        }
         if (authenticated) {
           _isUnlocked = true;
           return;
