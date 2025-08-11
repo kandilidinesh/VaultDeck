@@ -180,9 +180,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           break;
         default:
           _themeMode = ThemeMode.system;
-          isDarkModeNotifier.value =
-              WidgetsBinding.instance.window.platformBrightness ==
-              Brightness.dark;
+          // Use platformDispatcher instead of deprecated window
+          final brightness = View.of(
+            context,
+          ).platformDispatcher.platformBrightness;
+          isDarkModeNotifier.value = brightness == Brightness.dark;
       }
     });
   }
