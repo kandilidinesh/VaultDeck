@@ -59,21 +59,16 @@ class _SecuritySectionState extends State<SecuritySection> {
       bool isAvailable = await _localAuth.isDeviceSupported();
 
       if (!canCheck || !isAvailable) {
-        setState(() {
-          _authStatus = 'Biometric authentication not available.';
-        });
         return;
       }
       await box.put('biometricEnabled', true);
       setState(() {
         _biometricEnabled = true;
-        _authStatus = '';
       });
     } else {
       await box.put('biometricEnabled', false);
       setState(() {
         _biometricEnabled = false;
-        _authStatus = '';
       });
     }
   }
@@ -180,19 +175,7 @@ class _SecuritySectionState extends State<SecuritySection> {
                   ),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                 ),
-                if (_authStatus.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      top: 4,
-                      bottom: 8,
-                    ),
-                    child: Text(
-                      _authStatus,
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ),
+                // No biometric status messages
                 SwitchListTile(
                   title: FittedBox(
                     fit: BoxFit.scaleDown,
