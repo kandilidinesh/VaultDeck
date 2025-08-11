@@ -66,13 +66,13 @@ class _SecuritySectionState extends State<SecuritySection> {
       await box.put('biometricEnabled', true);
       setState(() {
         _biometricEnabled = true;
-        _authStatus = 'Biometric authentication enabled.';
+        _authStatus = '';
       });
     } else {
       await box.put('biometricEnabled', false);
       setState(() {
         _biometricEnabled = false;
-        _authStatus = 'Biometric authentication disabled.';
+        _authStatus = '';
       });
     }
   }
@@ -202,61 +202,66 @@ class _SecuritySectionState extends State<SecuritySection> {
                   ),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                 ),
-                if (widget.pinEnabled)
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      top: 4,
-                      bottom: 8,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.timer_rounded, size: 18),
-                            const SizedBox(width: 8),
-                            Text(
-                              'PIN Prompt Timer:',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                            const SizedBox(width: 8),
-                            DropdownButton<int>(
-                              value: _selectedTimer,
-                              items: const [
-                                DropdownMenuItem(
-                                  value: 0,
-                                  child: Text('Immediately'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 1,
-                                  child: Text('1 min'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 2,
-                                  child: Text('2 min'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 5,
-                                  child: Text('5 min'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 10,
-                                  child: Text('10 min'),
-                                ),
-                              ],
-                              onChanged: (val) async {
-                                if (val != null) {
-                                  await _setPinPromptTimer(val);
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    top: 4,
+                    bottom: 8,
                   ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.timer_rounded, size: 18),
+                          const SizedBox(width: 8),
+                          Text(
+                            'PIN Prompt Timer:',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          const SizedBox(width: 8),
+                          DropdownButton<int>(
+                            value: _selectedTimer,
+                            items: const [
+                              DropdownMenuItem(
+                                value: 0,
+                                child: Text('Immediately'),
+                              ),
+                              DropdownMenuItem(value: 1, child: Text('1 min')),
+                              DropdownMenuItem(value: 2, child: Text('2 min')),
+                              DropdownMenuItem(value: 5, child: Text('5 min')),
+                              DropdownMenuItem(
+                                value: 10,
+                                child: Text('10 min'),
+                              ),
+                            ],
+                            onChanged: widget.pinEnabled
+                                ? (val) async {
+                                    if (val != null) {
+                                      await _setPinPromptTimer(val);
+                                    }
+                                  }
+                                : null,
+                            disabledHint: Text(
+                              _selectedTimer == 0
+                                  ? 'Immediately'
+                                  : _selectedTimer == 1
+                                  ? '1 min'
+                                  : _selectedTimer == 2
+                                  ? '2 min'
+                                  : _selectedTimer == 5
+                                  ? '5 min'
+                                  : _selectedTimer == 10
+                                  ? '10 min'
+                                  : '',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
