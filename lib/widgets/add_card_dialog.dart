@@ -162,9 +162,15 @@ class _AddCardDialogState extends State<AddCardDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final availableHeight =
+        screenHeight - keyboardHeight - 100; // Account for top bar and padding
+
     return Material(
       color: Colors.transparent,
       child: Container(
+        constraints: BoxConstraints(maxHeight: availableHeight),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
@@ -179,186 +185,47 @@ class _AddCardDialogState extends State<AddCardDialog> {
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
         child: Form(
           key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // iOS-style top bar with Back and Done
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: Text(
-                        'Back',
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // iOS-style top bar with Back and Done
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(
+                      'Back',
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    TextButton(
-                      onPressed: _addCard,
-                      child: Text(
-                        'Done',
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                  ),
+                  TextButton(
+                    onPressed: _addCard,
+                    child: Text(
+                      'Done',
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                // Removed 'Card Details' section header for cleaner look
-                TextFormField(
-                  controller: _nicknameController,
-                  decoration: InputDecoration(
-                    labelText: 'Card Nickname',
-                    prefixIcon: const Icon(Icons.label),
-                    filled: true,
-                    fillColor: theme.colorScheme.surfaceContainerHighest,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
-                    floatingLabelBehavior: FloatingLabelBehavior.never,
                   ),
-                  validator: (value) {
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 14),
-                TextFormField(
-                  controller: _bankNameController,
-                  decoration: InputDecoration(
-                    labelText: 'Bank Name',
-                    prefixIcon: const Icon(Icons.account_balance),
-                    filled: true,
-                    fillColor: theme.colorScheme.surfaceContainerHighest,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
-                    floatingLabelBehavior: FloatingLabelBehavior.never,
-                  ),
-                  validator: (value) {
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 14),
-                TextFormField(
-                  controller: _holderController,
-                  decoration: InputDecoration(
-                    labelText: 'Card Holder Name',
-                    prefixIcon: const Icon(Icons.person),
-                    filled: true,
-                    fillColor: theme.colorScheme.surfaceContainerHighest,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
-                    floatingLabelBehavior: FloatingLabelBehavior.never,
-                  ),
-                  validator: (value) {
-                    if (value?.trim().isEmpty ?? true) {
-                      return 'Please enter name';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 14),
-                TextFormField(
-                  controller: _numberController,
-                  decoration: InputDecoration(
-                    labelText: 'Card Number',
-                    hintText: 'XXXX-XXXX-XXXX-XXXX',
-                    prefixIcon: const Icon(CupertinoIcons.creditcard),
-                    suffixIcon: Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: SvgPicture.asset(
-                        _getCardLogoAsset(_liveCardType),
-                        width: 32,
-                        height: 32,
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: theme.colorScheme.surfaceContainerHighest,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide.none,
-                    ),
-                    alignLabelWithHint: true,
-                    contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
-                    floatingLabelBehavior: FloatingLabelBehavior.never,
-                  ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'[0-9-]')),
-                    LengthLimitingTextInputFormatter(19),
-                    CardNumberInputFormatter(),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      _liveCardType = _detectCardType(
-                        value.replaceAll('-', ''),
-                      );
-                    });
-                  },
-                  validator: (value) {
-                    final cardNumberPattern = RegExp(r'^(\d{4}-){3}\d{4}$');
-                    if (value?.trim().isEmpty ?? true) {
-                      return 'Please enter card number';
-                    }
-                    if (!cardNumberPattern.hasMatch(value!.trim())) {
-                      return 'Enter as 1234-5678-9012-3456';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 14),
-                TextFormField(
-                  controller: _expiryController,
-                  decoration: InputDecoration(
-                    labelText: 'Expiry Date (MM/YY)',
-                    hintText: 'MM/YY',
-                    prefixIcon: const Icon(CupertinoIcons.calendar),
-                    filled: true,
-                    fillColor: theme.colorScheme.surfaceContainerHighest,
-                    alignLabelWithHint: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
-                    floatingLabelBehavior: FloatingLabelBehavior.never,
-                  ),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'[0-9/]')),
-                    LengthLimitingTextInputFormatter(5),
-                    ExpiryDateInputFormatter(),
-                  ],
-                  validator: (value) {
-                    final regex = RegExp(r'^(0[1-9]|1[0-2])/\d{2}$');
-                    if (value?.trim().isEmpty ?? true) {
-                      return 'Please enter expiry date';
-                    }
-                    if (!regex.hasMatch(value!.trim())) {
-                      return 'Please use MM/YY format';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 14),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: _cvvController,
+                ],
+              ),
+              const SizedBox(height: 12),
+              // Scrollable form content
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Removed 'Card Details' section header for cleaner look
+                      TextFormField(
+                        controller: _nicknameController,
                         decoration: InputDecoration(
-                          labelText: 'CVV',
-                          prefixIcon: const Icon(Icons.lock_outline),
+                          labelText: 'Card Nickname',
+                          prefixIcon: const Icon(Icons.label),
                           filled: true,
                           fillColor: theme.colorScheme.surfaceContainerHighest,
                           border: OutlineInputBorder(
@@ -373,29 +240,243 @@ class _AddCardDialogState extends State<AddCardDialog> {
                           ),
                           floatingLabelBehavior: FloatingLabelBehavior.never,
                         ),
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(4),
-                        ],
+                        validator: (value) {
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 14),
+                      TextFormField(
+                        controller: _bankNameController,
+                        decoration: InputDecoration(
+                          labelText: 'Bank Name',
+                          prefixIcon: const Icon(Icons.account_balance),
+                          filled: true,
+                          fillColor: theme.colorScheme.surfaceContainerHighest,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.fromLTRB(
+                            20,
+                            22,
+                            16,
+                            12,
+                          ),
+                          floatingLabelBehavior: FloatingLabelBehavior.never,
+                        ),
+                        validator: (value) {
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 14),
+                      TextFormField(
+                        controller: _holderController,
+                        decoration: InputDecoration(
+                          labelText: 'Card Holder Name',
+                          prefixIcon: const Icon(Icons.person),
+                          filled: true,
+                          fillColor: theme.colorScheme.surfaceContainerHighest,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.fromLTRB(
+                            20,
+                            22,
+                            16,
+                            12,
+                          ),
+                          floatingLabelBehavior: FloatingLabelBehavior.never,
+                        ),
                         validator: (value) {
                           if (value?.trim().isEmpty ?? true) {
-                            return 'Please enter CVV';
-                          }
-                          if (!(value!.length == 3 || value.length == 4)) {
-                            return 'CVV must be 3 or 4 digits';
+                            return 'Please enter name';
                           }
                           return null;
                         },
                       ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: TextFormField(
-                        controller: _pinController,
+                      const SizedBox(height: 14),
+                      TextFormField(
+                        controller: _numberController,
                         decoration: InputDecoration(
-                          labelText: 'PIN',
-                          prefixIcon: const Icon(Icons.password),
+                          labelText: 'Card Number',
+                          hintText: 'XXXX-XXXX-XXXX-XXXX',
+                          prefixIcon: const Icon(CupertinoIcons.creditcard),
+                          suffixIcon: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: SvgPicture.asset(
+                              _getCardLogoAsset(_liveCardType),
+                              width: 32,
+                              height: 32,
+                            ),
+                          ),
+                          filled: true,
+                          fillColor: theme.colorScheme.surfaceContainerHighest,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide.none,
+                          ),
+                          alignLabelWithHint: true,
+                          contentPadding: const EdgeInsets.fromLTRB(
+                            20,
+                            22,
+                            16,
+                            12,
+                          ),
+                          floatingLabelBehavior: FloatingLabelBehavior.never,
+                        ),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9-]')),
+                          LengthLimitingTextInputFormatter(19),
+                          CardNumberInputFormatter(),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _liveCardType = _detectCardType(
+                              value.replaceAll('-', ''),
+                            );
+                          });
+                        },
+                        validator: (value) {
+                          final cardNumberPattern = RegExp(
+                            r'^(\d{4}-){3}\d{4}$',
+                          );
+                          if (value?.trim().isEmpty ?? true) {
+                            return 'Please enter card number';
+                          }
+                          if (!cardNumberPattern.hasMatch(value!.trim())) {
+                            return 'Enter as 1234-5678-9012-3456';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 14),
+                      TextFormField(
+                        controller: _expiryController,
+                        decoration: InputDecoration(
+                          labelText: 'Expiry Date (MM/YY)',
+                          hintText: 'MM/YY',
+                          prefixIcon: const Icon(CupertinoIcons.calendar),
+                          filled: true,
+                          fillColor: theme.colorScheme.surfaceContainerHighest,
+                          alignLabelWithHint: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.fromLTRB(
+                            20,
+                            22,
+                            16,
+                            12,
+                          ),
+                          floatingLabelBehavior: FloatingLabelBehavior.never,
+                        ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9/]')),
+                          LengthLimitingTextInputFormatter(5),
+                          ExpiryDateInputFormatter(),
+                        ],
+                        validator: (value) {
+                          final regex = RegExp(r'^(0[1-9]|1[0-2])/\d{2}$');
+                          if (value?.trim().isEmpty ?? true) {
+                            return 'Please enter expiry date';
+                          }
+                          if (!regex.hasMatch(value!.trim())) {
+                            return 'Please use MM/YY format';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 14),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _cvvController,
+                              decoration: InputDecoration(
+                                labelText: 'CVV',
+                                prefixIcon: const Icon(Icons.lock_outline),
+                                filled: true,
+                                fillColor:
+                                    theme.colorScheme.surfaceContainerHighest,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide: BorderSide.none,
+                                ),
+                                contentPadding: const EdgeInsets.fromLTRB(
+                                  20,
+                                  22,
+                                  16,
+                                  12,
+                                ),
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.never,
+                              ),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(4),
+                              ],
+                              validator: (value) {
+                                if (value?.trim().isEmpty ?? true) {
+                                  return 'Please enter CVV';
+                                }
+                                if (!(value!.length == 3 ||
+                                    value.length == 4)) {
+                                  return 'CVV must be 3 or 4 digits';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: TextFormField(
+                              controller: _pinController,
+                              decoration: InputDecoration(
+                                labelText: 'PIN',
+                                prefixIcon: const Icon(Icons.password),
+                                filled: true,
+                                fillColor:
+                                    theme.colorScheme.surfaceContainerHighest,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide: BorderSide.none,
+                                ),
+                                contentPadding: const EdgeInsets.fromLTRB(
+                                  20,
+                                  22,
+                                  16,
+                                  12,
+                                ),
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.never,
+                              ),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(6),
+                              ],
+                              validator: (value) {
+                                if (value != null &&
+                                    value.isNotEmpty &&
+                                    value.length < 4) {
+                                  return 'PIN must be at least 4 digits';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+                      TextFormField(
+                        controller: _notesController,
+                        decoration: InputDecoration(
+                          labelText: 'Notes',
+                          prefixIcon: const Icon(Icons.note_alt_outlined),
                           filled: true,
                           fillColor: theme.colorScheme.surfaceContainerHighest,
                           border: OutlineInputBorder(
@@ -410,46 +491,17 @@ class _AddCardDialogState extends State<AddCardDialog> {
                           ),
                           floatingLabelBehavior: FloatingLabelBehavior.never,
                         ),
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(6),
-                        ],
+                        maxLines: 2,
                         validator: (value) {
-                          if (value != null &&
-                              value.isNotEmpty &&
-                              value.length < 4) {
-                            return 'PIN must be at least 4 digits';
-                          }
                           return null;
                         },
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                TextFormField(
-                  controller: _notesController,
-                  decoration: InputDecoration(
-                    labelText: 'Notes',
-                    prefixIcon: const Icon(Icons.note_alt_outlined),
-                    filled: true,
-                    fillColor: theme.colorScheme.surfaceContainerHighest,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.fromLTRB(20, 22, 16, 12),
-                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                      const SizedBox(height: 20),
+                    ],
                   ),
-                  maxLines: 2,
-                  validator: (value) {
-                    return null;
-                  },
                 ),
-                const SizedBox(height: 20),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
