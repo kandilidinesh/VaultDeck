@@ -171,7 +171,9 @@ class CloudSyncService {
 
   Future<bool> _syncWithGoogleDrive() async {
     if (_driveApi == null) {
-      throw CloudSyncException('Google Drive is not available');
+      throw CloudSyncException(
+        'Google Drive authentication is required. Please try again.',
+      );
     }
 
     try {
@@ -208,6 +210,16 @@ class CloudSyncService {
       await _saveCloudSyncState();
       return true;
     } catch (e) {
+      // Check if it's an authentication error
+      if (e.toString().contains('401') ||
+          e.toString().contains('unauthorized')) {
+        // Clear the API and force re-authentication
+        _driveApi = null;
+        _currentUserEmail = null;
+        throw CloudSyncException(
+          'Authentication expired. Please try syncing again.',
+        );
+      }
       throw CloudSyncException(_getUserFriendlyErrorMessage(e));
     }
   }
@@ -261,6 +273,14 @@ class CloudSyncService {
     }
 
     if (Platform.isAndroid) {
+      // Check if we need to re-authenticate
+      if (_driveApi == null || _currentUserEmail == null) {
+        // Re-authenticate with Google
+        final signedIn = await _signInWithGoogle();
+        if (!signedIn) {
+          throw CloudSyncException('Failed to re-authenticate with Google');
+        }
+      }
       return await _syncWithGoogleDrive();
     } else if (Platform.isIOS) {
       return await _syncWithICloud();
