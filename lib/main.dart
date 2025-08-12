@@ -92,21 +92,26 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     // If PIN is enabled, show PIN screen
     if (pinEnabledNotifier.value || force) {
       _isPinDialogShowing = true;
-      await Navigator.of(navContext).push(
-        MaterialPageRoute(
-          fullscreenDialog: true,
-          builder: (context) => UnlockPinScreen(
-            onCancel: () {
-              if (mounted) {
-                Navigator.of(context).pop();
-              }
-              _isPinDialogShowing = false;
-            },
+      final context = navContext;
+      if (context.mounted) {
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            fullscreenDialog: true,
+            builder: (context) => UnlockPinScreen(
+              onCancel: () {
+                if (mounted) {
+                  Navigator.of(context).pop();
+                }
+                _isPinDialogShowing = false;
+              },
+            ),
           ),
-        ),
-      );
-      _isPinDialogShowing = false;
-      _isUnlocked = true;
+        );
+      }
+      if (mounted) {
+        _isPinDialogShowing = false;
+        _isUnlocked = true;
+      }
     } else {}
   }
 

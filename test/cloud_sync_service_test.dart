@@ -6,7 +6,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:flutter/services.dart';
 import 'package:vaultdeck/services/cloud_sync_service.dart';
-import 'package:vaultdeck/models/card_model.dart';
 
 // Generate mocks
 @GenerateMocks([
@@ -23,14 +22,12 @@ void main() {
     late CloudSyncService cloudSyncService;
     late MockBox mockBox;
     late MockGoogleSignIn mockGoogleSignIn;
-    late MockDriveApi mockDriveApi;
     late MockMethodChannel mockMethodChannel;
 
     setUp(() {
       cloudSyncService = CloudSyncService();
       mockBox = MockBox();
       mockGoogleSignIn = MockGoogleSignIn();
-      mockDriveApi = MockDriveApi();
       mockMethodChannel = MockMethodChannel();
     });
 
@@ -115,38 +112,9 @@ void main() {
     group('Data Handling', () {
       test('should create proper sync data format', () {
         // Arrange
-        final testCards = [
-          CardModel(
-            cardHolderName: 'John Doe',
-            cardNumber: '1234567890123456',
-            expiryDate: '12/25',
-            cardType: 'Credit',
-            cvv: '123',
-            nickname: 'My Card',
-            bankName: 'Test Bank',
-            notes: 'Test notes',
-          ),
-        ];
 
         // Act
         // This would test the data serialization
-        final expectedData = {
-          'version': '1.0',
-          'lastSync': any,
-          'cards': [
-            {
-              'cardHolderName': 'John Doe',
-              'cardNumber': '1234567890123456',
-              'expiryDate': '12/25',
-              'cardType': 'Credit',
-              'cvv': '123',
-              'pin': null,
-              'nickname': 'My Card',
-              'bankName': 'Test Bank',
-              'notes': 'Test notes',
-            },
-          ],
-        };
 
         // Assert
         expect(true, isTrue); // Placeholder assertion

@@ -29,153 +29,83 @@ import 'package:mockito/src/dummies.dart' as _i6;
 // ignore_for_file: subtype_of_sealed_class
 
 class _FakeAboutResource_0 extends _i1.SmartFake implements _i2.AboutResource {
-  _FakeAboutResource_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeAboutResource_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeAppsResource_1 extends _i1.SmartFake implements _i2.AppsResource {
-  _FakeAppsResource_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeAppsResource_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeChangesResource_2 extends _i1.SmartFake
     implements _i2.ChangesResource {
-  _FakeChangesResource_2(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeChangesResource_2(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeChannelsResource_3 extends _i1.SmartFake
     implements _i2.ChannelsResource {
-  _FakeChannelsResource_3(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeChannelsResource_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeCommentsResource_4 extends _i1.SmartFake
     implements _i2.CommentsResource {
-  _FakeCommentsResource_4(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeCommentsResource_4(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeDrivesResource_5 extends _i1.SmartFake
     implements _i2.DrivesResource {
-  _FakeDrivesResource_5(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeDrivesResource_5(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeFilesResource_6 extends _i1.SmartFake implements _i2.FilesResource {
-  _FakeFilesResource_6(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeFilesResource_6(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakePermissionsResource_7 extends _i1.SmartFake
     implements _i2.PermissionsResource {
-  _FakePermissionsResource_7(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakePermissionsResource_7(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeRepliesResource_8 extends _i1.SmartFake
     implements _i2.RepliesResource {
-  _FakeRepliesResource_8(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeRepliesResource_8(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeRevisionsResource_9 extends _i1.SmartFake
     implements _i2.RevisionsResource {
-  _FakeRevisionsResource_9(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeRevisionsResource_9(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeTeamdrivesResource_10 extends _i1.SmartFake
     implements _i2.TeamdrivesResource {
-  _FakeTeamdrivesResource_10(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeTeamdrivesResource_10(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeMethodCodec_11 extends _i1.SmartFake implements _i3.MethodCodec {
-  _FakeMethodCodec_11(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeMethodCodec_11(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeBinaryMessenger_12 extends _i1.SmartFake
     implements _i3.BinaryMessenger {
-  _FakeBinaryMessenger_12(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeBinaryMessenger_12(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeGoogleSignInAuthentication_13 extends _i1.SmartFake
     implements _i4.GoogleSignInAuthentication {
-  _FakeGoogleSignInAuthentication_13(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeGoogleSignInAuthentication_13(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [Box].
@@ -187,253 +117,203 @@ class MockBox<E> extends _i1.Mock implements _i5.Box<E> {
   }
 
   @override
-  Iterable<E> get values => (super.noSuchMethod(
-        Invocation.getter(#values),
-        returnValue: <E>[],
-      ) as Iterable<E>);
+  Iterable<E> get values =>
+      (super.noSuchMethod(Invocation.getter(#values), returnValue: <E>[])
+          as Iterable<E>);
 
   @override
-  String get name => (super.noSuchMethod(
-        Invocation.getter(#name),
-        returnValue: _i6.dummyValue<String>(
-          this,
-          Invocation.getter(#name),
-        ),
-      ) as String);
-
-  @override
-  bool get isOpen => (super.noSuchMethod(
-        Invocation.getter(#isOpen),
-        returnValue: false,
-      ) as bool);
-
-  @override
-  bool get lazy => (super.noSuchMethod(
-        Invocation.getter(#lazy),
-        returnValue: false,
-      ) as bool);
-
-  @override
-  Iterable<dynamic> get keys => (super.noSuchMethod(
-        Invocation.getter(#keys),
-        returnValue: <dynamic>[],
-      ) as Iterable<dynamic>);
-
-  @override
-  int get length => (super.noSuchMethod(
-        Invocation.getter(#length),
-        returnValue: 0,
-      ) as int);
-
-  @override
-  bool get isEmpty => (super.noSuchMethod(
-        Invocation.getter(#isEmpty),
-        returnValue: false,
-      ) as bool);
-
-  @override
-  bool get isNotEmpty => (super.noSuchMethod(
-        Invocation.getter(#isNotEmpty),
-        returnValue: false,
-      ) as bool);
-
-  @override
-  Iterable<E> valuesBetween({
-    dynamic startKey,
-    dynamic endKey,
-  }) =>
+  String get name =>
       (super.noSuchMethod(
-        Invocation.method(
-          #valuesBetween,
-          [],
-          {
-            #startKey: startKey,
-            #endKey: endKey,
-          },
-        ),
-        returnValue: <E>[],
-      ) as Iterable<E>);
+            Invocation.getter(#name),
+            returnValue: _i6.dummyValue<String>(this, Invocation.getter(#name)),
+          )
+          as String);
 
   @override
-  E? getAt(int? index) => (super.noSuchMethod(Invocation.method(
-        #getAt,
-        [index],
-      )) as E?);
+  bool get isOpen =>
+      (super.noSuchMethod(Invocation.getter(#isOpen), returnValue: false)
+          as bool);
 
   @override
-  Map<dynamic, E> toMap() => (super.noSuchMethod(
-        Invocation.method(
-          #toMap,
-          [],
-        ),
-        returnValue: <dynamic, E>{},
-      ) as Map<dynamic, E>);
+  bool get lazy =>
+      (super.noSuchMethod(Invocation.getter(#lazy), returnValue: false)
+          as bool);
 
   @override
-  dynamic keyAt(int? index) => super.noSuchMethod(Invocation.method(
-        #keyAt,
-        [index],
-      ));
+  Iterable<dynamic> get keys =>
+      (super.noSuchMethod(Invocation.getter(#keys), returnValue: <dynamic>[])
+          as Iterable<dynamic>);
 
   @override
-  _i7.Stream<_i5.BoxEvent> watch({dynamic key}) => (super.noSuchMethod(
-        Invocation.method(
-          #watch,
-          [],
-          {#key: key},
-        ),
-        returnValue: _i7.Stream<_i5.BoxEvent>.empty(),
-      ) as _i7.Stream<_i5.BoxEvent>);
+  int get length =>
+      (super.noSuchMethod(Invocation.getter(#length), returnValue: 0) as int);
 
   @override
-  bool containsKey(dynamic key) => (super.noSuchMethod(
-        Invocation.method(
-          #containsKey,
-          [key],
-        ),
-        returnValue: false,
-      ) as bool);
+  bool get isEmpty =>
+      (super.noSuchMethod(Invocation.getter(#isEmpty), returnValue: false)
+          as bool);
 
   @override
-  _i7.Future<void> put(
-    dynamic key,
-    E? value,
-  ) =>
+  bool get isNotEmpty =>
+      (super.noSuchMethod(Invocation.getter(#isNotEmpty), returnValue: false)
+          as bool);
+
+  @override
+  Iterable<E> valuesBetween({dynamic startKey, dynamic endKey}) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #put,
-          [
-            key,
-            value,
-          ],
-        ),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+            Invocation.method(#valuesBetween, [], {
+              #startKey: startKey,
+              #endKey: endKey,
+            }),
+            returnValue: <E>[],
+          )
+          as Iterable<E>);
 
   @override
-  _i7.Future<void> putAt(
-    int? index,
-    E? value,
-  ) =>
+  E? getAt(int? index) =>
+      (super.noSuchMethod(Invocation.method(#getAt, [index])) as E?);
+
+  @override
+  Map<dynamic, E> toMap() =>
       (super.noSuchMethod(
-        Invocation.method(
-          #putAt,
-          [
-            index,
-            value,
-          ],
-        ),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+            Invocation.method(#toMap, []),
+            returnValue: <dynamic, E>{},
+          )
+          as Map<dynamic, E>);
 
   @override
-  _i7.Future<void> putAll(Map<dynamic, E>? entries) => (super.noSuchMethod(
-        Invocation.method(
-          #putAll,
-          [entries],
-        ),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+  dynamic keyAt(int? index) =>
+      super.noSuchMethod(Invocation.method(#keyAt, [index]));
 
   @override
-  _i7.Future<int> add(E? value) => (super.noSuchMethod(
-        Invocation.method(
-          #add,
-          [value],
-        ),
-        returnValue: _i7.Future<int>.value(0),
-      ) as _i7.Future<int>);
+  _i7.Stream<_i5.BoxEvent> watch({dynamic key}) =>
+      (super.noSuchMethod(
+            Invocation.method(#watch, [], {#key: key}),
+            returnValue: _i7.Stream<_i5.BoxEvent>.empty(),
+          )
+          as _i7.Stream<_i5.BoxEvent>);
 
   @override
-  _i7.Future<Iterable<int>> addAll(Iterable<E>? values) => (super.noSuchMethod(
-        Invocation.method(
-          #addAll,
-          [values],
-        ),
-        returnValue: _i7.Future<Iterable<int>>.value(<int>[]),
-      ) as _i7.Future<Iterable<int>>);
+  bool containsKey(dynamic key) =>
+      (super.noSuchMethod(
+            Invocation.method(#containsKey, [key]),
+            returnValue: false,
+          )
+          as bool);
 
   @override
-  _i7.Future<void> delete(dynamic key) => (super.noSuchMethod(
-        Invocation.method(
-          #delete,
-          [key],
-        ),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+  _i7.Future<void> put(dynamic key, E? value) =>
+      (super.noSuchMethod(
+            Invocation.method(#put, [key, value]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 
   @override
-  _i7.Future<void> deleteAt(int? index) => (super.noSuchMethod(
-        Invocation.method(
-          #deleteAt,
-          [index],
-        ),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+  _i7.Future<void> putAt(int? index, E? value) =>
+      (super.noSuchMethod(
+            Invocation.method(#putAt, [index, value]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 
   @override
-  _i7.Future<void> deleteAll(Iterable<dynamic>? keys) => (super.noSuchMethod(
-        Invocation.method(
-          #deleteAll,
-          [keys],
-        ),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+  _i7.Future<void> putAll(Map<dynamic, E>? entries) =>
+      (super.noSuchMethod(
+            Invocation.method(#putAll, [entries]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 
   @override
-  _i7.Future<void> compact() => (super.noSuchMethod(
-        Invocation.method(
-          #compact,
-          [],
-        ),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+  _i7.Future<int> add(E? value) =>
+      (super.noSuchMethod(
+            Invocation.method(#add, [value]),
+            returnValue: _i7.Future<int>.value(0),
+          )
+          as _i7.Future<int>);
 
   @override
-  _i7.Future<int> clear() => (super.noSuchMethod(
-        Invocation.method(
-          #clear,
-          [],
-        ),
-        returnValue: _i7.Future<int>.value(0),
-      ) as _i7.Future<int>);
+  _i7.Future<Iterable<int>> addAll(Iterable<E>? values) =>
+      (super.noSuchMethod(
+            Invocation.method(#addAll, [values]),
+            returnValue: _i7.Future<Iterable<int>>.value(<int>[]),
+          )
+          as _i7.Future<Iterable<int>>);
 
   @override
-  _i7.Future<void> close() => (super.noSuchMethod(
-        Invocation.method(
-          #close,
-          [],
-        ),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+  _i7.Future<void> delete(dynamic key) =>
+      (super.noSuchMethod(
+            Invocation.method(#delete, [key]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 
   @override
-  _i7.Future<void> deleteFromDisk() => (super.noSuchMethod(
-        Invocation.method(
-          #deleteFromDisk,
-          [],
-        ),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+  _i7.Future<void> deleteAt(int? index) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteAt, [index]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 
   @override
-  _i7.Future<void> flush() => (super.noSuchMethod(
-        Invocation.method(
-          #flush,
-          [],
-        ),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+  _i7.Future<void> deleteAll(Iterable<dynamic>? keys) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteAll, [keys]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
+
+  @override
+  _i7.Future<void> compact() =>
+      (super.noSuchMethod(
+            Invocation.method(#compact, []),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
+
+  @override
+  _i7.Future<int> clear() =>
+      (super.noSuchMethod(
+            Invocation.method(#clear, []),
+            returnValue: _i7.Future<int>.value(0),
+          )
+          as _i7.Future<int>);
+
+  @override
+  _i7.Future<void> close() =>
+      (super.noSuchMethod(
+            Invocation.method(#close, []),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
+
+  @override
+  _i7.Future<void> deleteFromDisk() =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteFromDisk, []),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
+
+  @override
+  _i7.Future<void> flush() =>
+      (super.noSuchMethod(
+            Invocation.method(#flush, []),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 }
 
 /// A class which mocks [GoogleSignIn].
@@ -445,29 +325,33 @@ class MockGoogleSignIn extends _i1.Mock implements _i4.GoogleSignIn {
   }
 
   @override
-  _i8.SignInOption get signInOption => (super.noSuchMethod(
-        Invocation.getter(#signInOption),
-        returnValue: _i8.SignInOption.standard,
-      ) as _i8.SignInOption);
+  _i8.SignInOption get signInOption =>
+      (super.noSuchMethod(
+            Invocation.getter(#signInOption),
+            returnValue: _i8.SignInOption.standard,
+          )
+          as _i8.SignInOption);
 
   @override
-  List<String> get scopes => (super.noSuchMethod(
-        Invocation.getter(#scopes),
-        returnValue: <String>[],
-      ) as List<String>);
+  List<String> get scopes =>
+      (super.noSuchMethod(Invocation.getter(#scopes), returnValue: <String>[])
+          as List<String>);
 
   @override
-  bool get forceCodeForRefreshToken => (super.noSuchMethod(
-        Invocation.getter(#forceCodeForRefreshToken),
-        returnValue: false,
-      ) as bool);
+  bool get forceCodeForRefreshToken =>
+      (super.noSuchMethod(
+            Invocation.getter(#forceCodeForRefreshToken),
+            returnValue: false,
+          )
+          as bool);
 
   @override
   _i7.Stream<_i4.GoogleSignInAccount?> get onCurrentUserChanged =>
       (super.noSuchMethod(
-        Invocation.getter(#onCurrentUserChanged),
-        returnValue: _i7.Stream<_i4.GoogleSignInAccount?>.empty(),
-      ) as _i7.Stream<_i4.GoogleSignInAccount?>);
+            Invocation.getter(#onCurrentUserChanged),
+            returnValue: _i7.Stream<_i4.GoogleSignInAccount?>.empty(),
+          )
+          as _i7.Stream<_i4.GoogleSignInAccount?>);
 
   @override
   _i7.Future<_i4.GoogleSignInAccount?> signInSilently({
@@ -475,61 +359,53 @@ class MockGoogleSignIn extends _i1.Mock implements _i4.GoogleSignIn {
     bool? reAuthenticate = false,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #signInSilently,
-          [],
-          {
-            #suppressErrors: suppressErrors,
-            #reAuthenticate: reAuthenticate,
-          },
-        ),
-        returnValue: _i7.Future<_i4.GoogleSignInAccount?>.value(),
-      ) as _i7.Future<_i4.GoogleSignInAccount?>);
+            Invocation.method(#signInSilently, [], {
+              #suppressErrors: suppressErrors,
+              #reAuthenticate: reAuthenticate,
+            }),
+            returnValue: _i7.Future<_i4.GoogleSignInAccount?>.value(),
+          )
+          as _i7.Future<_i4.GoogleSignInAccount?>);
 
   @override
-  _i7.Future<bool> isSignedIn() => (super.noSuchMethod(
-        Invocation.method(
-          #isSignedIn,
-          [],
-        ),
-        returnValue: _i7.Future<bool>.value(false),
-      ) as _i7.Future<bool>);
+  _i7.Future<bool> isSignedIn() =>
+      (super.noSuchMethod(
+            Invocation.method(#isSignedIn, []),
+            returnValue: _i7.Future<bool>.value(false),
+          )
+          as _i7.Future<bool>);
 
   @override
-  _i7.Future<_i4.GoogleSignInAccount?> signIn() => (super.noSuchMethod(
-        Invocation.method(
-          #signIn,
-          [],
-        ),
-        returnValue: _i7.Future<_i4.GoogleSignInAccount?>.value(),
-      ) as _i7.Future<_i4.GoogleSignInAccount?>);
+  _i7.Future<_i4.GoogleSignInAccount?> signIn() =>
+      (super.noSuchMethod(
+            Invocation.method(#signIn, []),
+            returnValue: _i7.Future<_i4.GoogleSignInAccount?>.value(),
+          )
+          as _i7.Future<_i4.GoogleSignInAccount?>);
 
   @override
-  _i7.Future<_i4.GoogleSignInAccount?> signOut() => (super.noSuchMethod(
-        Invocation.method(
-          #signOut,
-          [],
-        ),
-        returnValue: _i7.Future<_i4.GoogleSignInAccount?>.value(),
-      ) as _i7.Future<_i4.GoogleSignInAccount?>);
+  _i7.Future<_i4.GoogleSignInAccount?> signOut() =>
+      (super.noSuchMethod(
+            Invocation.method(#signOut, []),
+            returnValue: _i7.Future<_i4.GoogleSignInAccount?>.value(),
+          )
+          as _i7.Future<_i4.GoogleSignInAccount?>);
 
   @override
-  _i7.Future<_i4.GoogleSignInAccount?> disconnect() => (super.noSuchMethod(
-        Invocation.method(
-          #disconnect,
-          [],
-        ),
-        returnValue: _i7.Future<_i4.GoogleSignInAccount?>.value(),
-      ) as _i7.Future<_i4.GoogleSignInAccount?>);
+  _i7.Future<_i4.GoogleSignInAccount?> disconnect() =>
+      (super.noSuchMethod(
+            Invocation.method(#disconnect, []),
+            returnValue: _i7.Future<_i4.GoogleSignInAccount?>.value(),
+          )
+          as _i7.Future<_i4.GoogleSignInAccount?>);
 
   @override
-  _i7.Future<bool> requestScopes(List<String>? scopes) => (super.noSuchMethod(
-        Invocation.method(
-          #requestScopes,
-          [scopes],
-        ),
-        returnValue: _i7.Future<bool>.value(false),
-      ) as _i7.Future<bool>);
+  _i7.Future<bool> requestScopes(List<String>? scopes) =>
+      (super.noSuchMethod(
+            Invocation.method(#requestScopes, [scopes]),
+            returnValue: _i7.Future<bool>.value(false),
+          )
+          as _i7.Future<bool>);
 
   @override
   _i7.Future<bool> canAccessScopes(
@@ -537,13 +413,14 @@ class MockGoogleSignIn extends _i1.Mock implements _i4.GoogleSignIn {
     String? accessToken,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #canAccessScopes,
-          [scopes],
-          {#accessToken: accessToken},
-        ),
-        returnValue: _i7.Future<bool>.value(false),
-      ) as _i7.Future<bool>);
+            Invocation.method(
+              #canAccessScopes,
+              [scopes],
+              {#accessToken: accessToken},
+            ),
+            returnValue: _i7.Future<bool>.value(false),
+          )
+          as _i7.Future<bool>);
 }
 
 /// A class which mocks [DriveApi].
@@ -555,103 +432,116 @@ class MockDriveApi extends _i1.Mock implements _i2.DriveApi {
   }
 
   @override
-  _i2.AboutResource get about => (super.noSuchMethod(
-        Invocation.getter(#about),
-        returnValue: _FakeAboutResource_0(
-          this,
-          Invocation.getter(#about),
-        ),
-      ) as _i2.AboutResource);
+  _i2.AboutResource get about =>
+      (super.noSuchMethod(
+            Invocation.getter(#about),
+            returnValue: _FakeAboutResource_0(this, Invocation.getter(#about)),
+          )
+          as _i2.AboutResource);
 
   @override
-  _i2.AppsResource get apps => (super.noSuchMethod(
-        Invocation.getter(#apps),
-        returnValue: _FakeAppsResource_1(
-          this,
-          Invocation.getter(#apps),
-        ),
-      ) as _i2.AppsResource);
+  _i2.AppsResource get apps =>
+      (super.noSuchMethod(
+            Invocation.getter(#apps),
+            returnValue: _FakeAppsResource_1(this, Invocation.getter(#apps)),
+          )
+          as _i2.AppsResource);
 
   @override
-  _i2.ChangesResource get changes => (super.noSuchMethod(
-        Invocation.getter(#changes),
-        returnValue: _FakeChangesResource_2(
-          this,
-          Invocation.getter(#changes),
-        ),
-      ) as _i2.ChangesResource);
+  _i2.ChangesResource get changes =>
+      (super.noSuchMethod(
+            Invocation.getter(#changes),
+            returnValue: _FakeChangesResource_2(
+              this,
+              Invocation.getter(#changes),
+            ),
+          )
+          as _i2.ChangesResource);
 
   @override
-  _i2.ChannelsResource get channels => (super.noSuchMethod(
-        Invocation.getter(#channels),
-        returnValue: _FakeChannelsResource_3(
-          this,
-          Invocation.getter(#channels),
-        ),
-      ) as _i2.ChannelsResource);
+  _i2.ChannelsResource get channels =>
+      (super.noSuchMethod(
+            Invocation.getter(#channels),
+            returnValue: _FakeChannelsResource_3(
+              this,
+              Invocation.getter(#channels),
+            ),
+          )
+          as _i2.ChannelsResource);
 
   @override
-  _i2.CommentsResource get comments => (super.noSuchMethod(
-        Invocation.getter(#comments),
-        returnValue: _FakeCommentsResource_4(
-          this,
-          Invocation.getter(#comments),
-        ),
-      ) as _i2.CommentsResource);
+  _i2.CommentsResource get comments =>
+      (super.noSuchMethod(
+            Invocation.getter(#comments),
+            returnValue: _FakeCommentsResource_4(
+              this,
+              Invocation.getter(#comments),
+            ),
+          )
+          as _i2.CommentsResource);
 
   @override
-  _i2.DrivesResource get drives => (super.noSuchMethod(
-        Invocation.getter(#drives),
-        returnValue: _FakeDrivesResource_5(
-          this,
-          Invocation.getter(#drives),
-        ),
-      ) as _i2.DrivesResource);
+  _i2.DrivesResource get drives =>
+      (super.noSuchMethod(
+            Invocation.getter(#drives),
+            returnValue: _FakeDrivesResource_5(
+              this,
+              Invocation.getter(#drives),
+            ),
+          )
+          as _i2.DrivesResource);
 
   @override
-  _i2.FilesResource get files => (super.noSuchMethod(
-        Invocation.getter(#files),
-        returnValue: _FakeFilesResource_6(
-          this,
-          Invocation.getter(#files),
-        ),
-      ) as _i2.FilesResource);
+  _i2.FilesResource get files =>
+      (super.noSuchMethod(
+            Invocation.getter(#files),
+            returnValue: _FakeFilesResource_6(this, Invocation.getter(#files)),
+          )
+          as _i2.FilesResource);
 
   @override
-  _i2.PermissionsResource get permissions => (super.noSuchMethod(
-        Invocation.getter(#permissions),
-        returnValue: _FakePermissionsResource_7(
-          this,
-          Invocation.getter(#permissions),
-        ),
-      ) as _i2.PermissionsResource);
+  _i2.PermissionsResource get permissions =>
+      (super.noSuchMethod(
+            Invocation.getter(#permissions),
+            returnValue: _FakePermissionsResource_7(
+              this,
+              Invocation.getter(#permissions),
+            ),
+          )
+          as _i2.PermissionsResource);
 
   @override
-  _i2.RepliesResource get replies => (super.noSuchMethod(
-        Invocation.getter(#replies),
-        returnValue: _FakeRepliesResource_8(
-          this,
-          Invocation.getter(#replies),
-        ),
-      ) as _i2.RepliesResource);
+  _i2.RepliesResource get replies =>
+      (super.noSuchMethod(
+            Invocation.getter(#replies),
+            returnValue: _FakeRepliesResource_8(
+              this,
+              Invocation.getter(#replies),
+            ),
+          )
+          as _i2.RepliesResource);
 
   @override
-  _i2.RevisionsResource get revisions => (super.noSuchMethod(
-        Invocation.getter(#revisions),
-        returnValue: _FakeRevisionsResource_9(
-          this,
-          Invocation.getter(#revisions),
-        ),
-      ) as _i2.RevisionsResource);
+  _i2.RevisionsResource get revisions =>
+      (super.noSuchMethod(
+            Invocation.getter(#revisions),
+            returnValue: _FakeRevisionsResource_9(
+              this,
+              Invocation.getter(#revisions),
+            ),
+          )
+          as _i2.RevisionsResource);
 
   @override
-  _i2.TeamdrivesResource get teamdrives => (super.noSuchMethod(
-        Invocation.getter(#teamdrives),
-        returnValue: _FakeTeamdrivesResource_10(
-          this,
-          Invocation.getter(#teamdrives),
-        ),
-      ) as _i2.TeamdrivesResource);
+  _i2.TeamdrivesResource get teamdrives =>
+      (super.noSuchMethod(
+            Invocation.getter(#teamdrives),
+            returnValue: _FakeTeamdrivesResource_10(
+              this,
+              Invocation.getter(#teamdrives),
+            ),
+          )
+          as _i2.TeamdrivesResource);
 }
 
 /// A class which mocks [MethodChannel].
@@ -663,47 +553,39 @@ class MockMethodChannel extends _i1.Mock implements _i3.MethodChannel {
   }
 
   @override
-  String get name => (super.noSuchMethod(
-        Invocation.getter(#name),
-        returnValue: _i6.dummyValue<String>(
-          this,
-          Invocation.getter(#name),
-        ),
-      ) as String);
-
-  @override
-  _i3.MethodCodec get codec => (super.noSuchMethod(
-        Invocation.getter(#codec),
-        returnValue: _FakeMethodCodec_11(
-          this,
-          Invocation.getter(#codec),
-        ),
-      ) as _i3.MethodCodec);
-
-  @override
-  _i3.BinaryMessenger get binaryMessenger => (super.noSuchMethod(
-        Invocation.getter(#binaryMessenger),
-        returnValue: _FakeBinaryMessenger_12(
-          this,
-          Invocation.getter(#binaryMessenger),
-        ),
-      ) as _i3.BinaryMessenger);
-
-  @override
-  _i7.Future<T?> invokeMethod<T>(
-    String? method, [
-    dynamic arguments,
-  ]) =>
+  String get name =>
       (super.noSuchMethod(
-        Invocation.method(
-          #invokeMethod,
-          [
-            method,
-            arguments,
-          ],
-        ),
-        returnValue: _i7.Future<T?>.value(),
-      ) as _i7.Future<T?>);
+            Invocation.getter(#name),
+            returnValue: _i6.dummyValue<String>(this, Invocation.getter(#name)),
+          )
+          as String);
+
+  @override
+  _i3.MethodCodec get codec =>
+      (super.noSuchMethod(
+            Invocation.getter(#codec),
+            returnValue: _FakeMethodCodec_11(this, Invocation.getter(#codec)),
+          )
+          as _i3.MethodCodec);
+
+  @override
+  _i3.BinaryMessenger get binaryMessenger =>
+      (super.noSuchMethod(
+            Invocation.getter(#binaryMessenger),
+            returnValue: _FakeBinaryMessenger_12(
+              this,
+              Invocation.getter(#binaryMessenger),
+            ),
+          )
+          as _i3.BinaryMessenger);
+
+  @override
+  _i7.Future<T?> invokeMethod<T>(String? method, [dynamic arguments]) =>
+      (super.noSuchMethod(
+            Invocation.method(#invokeMethod, [method, arguments]),
+            returnValue: _i7.Future<T?>.value(),
+          )
+          as _i7.Future<T?>);
 
   @override
   _i7.Future<List<T>?> invokeListMethod<T>(
@@ -711,15 +593,10 @@ class MockMethodChannel extends _i1.Mock implements _i3.MethodChannel {
     dynamic arguments,
   ]) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #invokeListMethod,
-          [
-            method,
-            arguments,
-          ],
-        ),
-        returnValue: _i7.Future<List<T>?>.value(),
-      ) as _i7.Future<List<T>?>);
+            Invocation.method(#invokeListMethod, [method, arguments]),
+            returnValue: _i7.Future<List<T>?>.value(),
+          )
+          as _i7.Future<List<T>?>);
 
   @override
   _i7.Future<Map<K, V>?> invokeMapMethod<K, V>(
@@ -727,32 +604,23 @@ class MockMethodChannel extends _i1.Mock implements _i3.MethodChannel {
     dynamic arguments,
   ]) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #invokeMapMethod,
-          [
-            method,
-            arguments,
-          ],
-        ),
-        returnValue: _i7.Future<Map<K, V>?>.value(),
-      ) as _i7.Future<Map<K, V>?>);
+            Invocation.method(#invokeMapMethod, [method, arguments]),
+            returnValue: _i7.Future<Map<K, V>?>.value(),
+          )
+          as _i7.Future<Map<K, V>?>);
 
   @override
   void setMethodCallHandler(
-          _i7.Future<dynamic> Function(_i3.MethodCall)? handler) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #setMethodCallHandler,
-          [handler],
-        ),
-        returnValueForMissingStub: null,
-      );
+    _i7.Future<dynamic> Function(_i3.MethodCall)? handler,
+  ) => super.noSuchMethod(
+    Invocation.method(#setMethodCallHandler, [handler]),
+    returnValueForMissingStub: null,
+  );
 }
 
 /// A class which mocks [GoogleSignInAccount].
 ///
 /// See the documentation for Mockito's code generation for more information.
-// ignore: must_be_immutable
 class MockGoogleSignInAccount extends _i1.Mock
     implements _i4.GoogleSignInAccount {
   MockGoogleSignInAccount() {
@@ -760,47 +628,53 @@ class MockGoogleSignInAccount extends _i1.Mock
   }
 
   @override
-  String get email => (super.noSuchMethod(
-        Invocation.getter(#email),
-        returnValue: _i6.dummyValue<String>(
-          this,
-          Invocation.getter(#email),
-        ),
-      ) as String);
+  String get email =>
+      (super.noSuchMethod(
+            Invocation.getter(#email),
+            returnValue: _i6.dummyValue<String>(
+              this,
+              Invocation.getter(#email),
+            ),
+          )
+          as String);
 
   @override
-  String get id => (super.noSuchMethod(
-        Invocation.getter(#id),
-        returnValue: _i6.dummyValue<String>(
-          this,
-          Invocation.getter(#id),
-        ),
-      ) as String);
+  String get id =>
+      (super.noSuchMethod(
+            Invocation.getter(#id),
+            returnValue: _i6.dummyValue<String>(this, Invocation.getter(#id)),
+          )
+          as String);
 
   @override
   _i7.Future<_i4.GoogleSignInAuthentication> get authentication =>
       (super.noSuchMethod(
-        Invocation.getter(#authentication),
-        returnValue: _i7.Future<_i4.GoogleSignInAuthentication>.value(
-            _FakeGoogleSignInAuthentication_13(
-          this,
-          Invocation.getter(#authentication),
-        )),
-      ) as _i7.Future<_i4.GoogleSignInAuthentication>);
+            Invocation.getter(#authentication),
+            returnValue: _i7.Future<_i4.GoogleSignInAuthentication>.value(
+              _FakeGoogleSignInAuthentication_13(
+                this,
+                Invocation.getter(#authentication),
+              ),
+            ),
+          )
+          as _i7.Future<_i4.GoogleSignInAuthentication>);
 
   @override
-  _i7.Future<Map<String, String>> get authHeaders => (super.noSuchMethod(
-        Invocation.getter(#authHeaders),
-        returnValue: _i7.Future<Map<String, String>>.value(<String, String>{}),
-      ) as _i7.Future<Map<String, String>>);
+  _i7.Future<Map<String, String>> get authHeaders =>
+      (super.noSuchMethod(
+            Invocation.getter(#authHeaders),
+            returnValue: _i7.Future<Map<String, String>>.value(
+              <String, String>{},
+            ),
+          )
+          as _i7.Future<Map<String, String>>);
 
   @override
-  _i7.Future<void> clearAuthCache() => (super.noSuchMethod(
-        Invocation.method(
-          #clearAuthCache,
-          [],
-        ),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+  _i7.Future<void> clearAuthCache() =>
+      (super.noSuchMethod(
+            Invocation.method(#clearAuthCache, []),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 }
