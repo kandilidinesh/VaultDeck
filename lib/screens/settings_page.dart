@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'security_section.dart';
 import 'cloud_sync_section.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   final ValueNotifier<bool> isDarkModeNotifier;
   final VoidCallback? toggleTheme;
   final bool pinEnabled;
@@ -17,6 +18,57 @@ class SettingsPage extends StatelessWidget {
     required this.pin,
     required this.setPinEnabled,
   });
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  bool _biometricEnabled = false;
+  int _pinLockTimerMinutes = 0;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBiometricState();
+  }
+
+  Future<void> _loadBiometricState() async {
+    final box = await Hive.openBox('settingsBox');
+    final enabled = box.get('biometricEnabled', defaultValue: false);
+    int timer;
+    if (box.containsKey('pinPromptTimer')) {
+      timer = box.get('pinPromptTimer');
+    } else {
+      timer = 0;
+      await box.put('pinPromptTimer', timer);
+    }
+
+    if (mounted) {
+      setState(() {
+        _biometricEnabled = enabled;
+        _pinLockTimerMinutes = timer;
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _updateBiometricState(bool enabled) async {
+    final box = await Hive.openBox('settingsBox');
+    await box.put('biometricEnabled', enabled);
+    setState(() {
+      _biometricEnabled = enabled;
+    });
+  }
+
+  Future<void> _updatePinLockTimer(int minutes) async {
+    final box = await Hive.openBox('settingsBox');
+    await box.put('pinPromptTimer', minutes);
+    setState(() {
+      _pinLockTimerMinutes = minutes;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -253,7 +305,7 @@ class SettingsPage extends StatelessWidget {
         ],
       ),
       child: ValueListenableBuilder<bool>(
-        valueListenable: isDarkModeNotifier,
+        valueListenable: widget.isDarkModeNotifier,
         builder: (context, isDarkMode, _) => ListTile(
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 20,
@@ -293,7 +345,7 @@ class SettingsPage extends StatelessWidget {
           trailing: Switch(
             value: isDarkMode,
             onChanged: (_) {
-              if (toggleTheme != null) toggleTheme!();
+              if (widget.toggleTheme != null) widget.toggleTheme!();
             },
             activeColor: const Color(0xFF6366F1),
             activeTrackColor: const Color(0xFF6366F1).withValues(alpha: 0.3),
@@ -327,11 +379,68 @@ class SettingsPage extends StatelessWidget {
           ),
         ],
       ),
-      child: SecuritySection(
-        pinEnabled: pinEnabled,
-        pin: pin,
-        onPinToggle: setPinEnabled,
-      ),
+      child: _isLoading
+          ? _buildSecurityLoadingState(context, isDark)
+          : SecuritySection(
+              pinEnabled: widget.pinEnabled,
+              pin: widget.pin,
+              onPinToggle: widget.setPinEnabled,
+              pinLockTimerMinutes: _pinLockTimerMinutes,
+              onPinLockTimerChanged: _updatePinLockTimer,
+              biometricEnabled: _biometricEnabled,
+              onBiometricToggle: _updateBiometricState,
+            ),
+    );
+  }
+
+  Widget _buildSecurityLoadingState(BuildContext context, bool isDark) {
+    return Column(
+      children: [
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 8,
+          ),
+          leading: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF2D2D2D) : const Color(0xFFF3F4F6),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  isDark ? Colors.white70 : Colors.grey[700]!,
+                ),
+              ),
+            ),
+          ),
+          title: Text(
+            'Security Settings',
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black87,
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+          ),
+          subtitle: Text(
+            'Loading...',
+            style: TextStyle(
+              color: isDark ? Colors.white60 : Colors.grey[600],
+              fontSize: 14,
+            ),
+          ),
+          trailing: Switch(
+            value: false,
+            onChanged: null,
+            activeColor: const Color(0xFF10B981),
+            activeTrackColor: const Color(0xFF10B981).withValues(alpha: 0.3),
+          ),
+        ),
+      ],
     );
   }
 

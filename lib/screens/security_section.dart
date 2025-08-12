@@ -11,6 +11,8 @@ class SecuritySection extends StatefulWidget {
   final void Function(bool, [String?]) onPinToggle;
   final int pinLockTimerMinutes;
   final void Function(int)? onPinLockTimerChanged;
+  final bool biometricEnabled;
+  final void Function(bool) onBiometricToggle;
   const SecuritySection({
     super.key,
     required this.pinEnabled,
@@ -18,6 +20,8 @@ class SecuritySection extends StatefulWidget {
     required this.onPinToggle,
     this.pinLockTimerMinutes = 0,
     this.onPinLockTimerChanged,
+    required this.biometricEnabled,
+    required this.onBiometricToggle,
   });
 
   @override
@@ -25,34 +29,9 @@ class SecuritySection extends StatefulWidget {
 }
 
 class _SecuritySectionState extends State<SecuritySection> {
-  bool _biometricEnabled = false;
-  int _selectedTimer = 0;
   final LocalAuthentication _localAuth = LocalAuthentication();
 
-  @override
-  void initState() {
-    super.initState();
-    _loadSettings();
-  }
-
-  Future<void> _loadSettings() async {
-    final box = await Hive.openBox('settingsBox');
-    final enabled = box.get('biometricEnabled', defaultValue: false);
-    int timer;
-    if (box.containsKey('pinPromptTimer')) {
-      timer = box.get('pinPromptTimer');
-    } else {
-      timer = widget.pinLockTimerMinutes;
-      await box.put('pinPromptTimer', timer);
-    }
-    setState(() {
-      _biometricEnabled = enabled;
-      _selectedTimer = timer;
-    });
-  }
-
   Future<void> _toggleBiometric(bool value) async {
-    final box = await Hive.openBox('settingsBox');
     if (value) {
       bool canCheck = await _localAuth.canCheckBiometrics;
       bool isAvailable = await _localAuth.isDeviceSupported();
@@ -60,15 +39,9 @@ class _SecuritySectionState extends State<SecuritySection> {
       if (!canCheck || !isAvailable) {
         return;
       }
-      await box.put('biometricEnabled', true);
-      setState(() {
-        _biometricEnabled = true;
-      });
+      widget.onBiometricToggle(true);
     } else {
-      await box.put('biometricEnabled', false);
-      setState(() {
-        _biometricEnabled = false;
-      });
+      widget.onBiometricToggle(false);
     }
   }
 
@@ -109,11 +82,6 @@ class _SecuritySectionState extends State<SecuritySection> {
   }
 
   Future<void> _setPinPromptTimer(int val) async {
-    final box = await Hive.openBox('settingsBox');
-    await box.put('pinPromptTimer', val);
-    setState(() => _selectedTimer = val);
-    final pinLockService = PinLockService();
-    await pinLockService.setPinLockTimerMinutes(val);
     if (widget.onPinLockTimerChanged != null) {
       widget.onPinLockTimerChanged!(val);
     }
@@ -122,6 +90,7 @@ class _SecuritySectionState extends State<SecuritySection> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       children: [
         // Biometric Authentication
@@ -133,7 +102,7 @@ class _SecuritySectionState extends State<SecuritySection> {
           leading: Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: _biometricEnabled
+              color: widget.biometricEnabled
                   ? const Color(0xFF10B981).withValues(alpha: 0.1)
                   : (isDark
                         ? const Color(0xFF2D2D2D)
@@ -142,7 +111,7 @@ class _SecuritySectionState extends State<SecuritySection> {
             ),
             child: Icon(
               Icons.fingerprint_rounded,
-              color: _biometricEnabled
+              color: widget.biometricEnabled
                   ? const Color(0xFF10B981)
                   : (isDark ? Colors.white70 : Colors.grey[700]),
               size: 24,
@@ -157,7 +126,7 @@ class _SecuritySectionState extends State<SecuritySection> {
             ),
           ),
           subtitle: Text(
-            _biometricEnabled
+            widget.biometricEnabled
                 ? 'Face ID / Touch ID enabled'
                 : 'Use biometric to unlock',
             style: TextStyle(
@@ -166,7 +135,7 @@ class _SecuritySectionState extends State<SecuritySection> {
             ),
           ),
           trailing: Switch(
-            value: _biometricEnabled,
+            value: widget.biometricEnabled,
             onChanged: _toggleBiometric,
             activeColor: const Color(0xFF10B981),
             activeTrackColor: const Color(0xFF10B981).withValues(alpha: 0.3),
@@ -265,7 +234,7 @@ class _SecuritySectionState extends State<SecuritySection> {
               ),
             ),
             subtitle: Text(
-              _getTimerDescription(_selectedTimer),
+              _getTimerDescription(widget.pinLockTimerMinutes),
               style: TextStyle(
                 color: isDark ? Colors.white60 : Colors.grey[600],
                 fontSize: 14,
@@ -285,7 +254,7 @@ class _SecuritySectionState extends State<SecuritySection> {
                 ),
               ),
               child: DropdownButton<int>(
-                value: _selectedTimer,
+                value: widget.pinLockTimerMinutes,
                 underline: const SizedBox(),
                 items: const [
                   DropdownMenuItem(value: 0, child: Text('Immediately')),
