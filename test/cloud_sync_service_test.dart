@@ -9,7 +9,13 @@ import 'package:vaultdeck/services/cloud_sync_service.dart';
 import 'package:vaultdeck/models/card_model.dart';
 
 // Generate mocks
-@GenerateMocks([Box, GoogleSignIn, drive.DriveApi, MethodChannel])
+@GenerateMocks([
+  Box,
+  GoogleSignIn,
+  drive.DriveApi,
+  MethodChannel,
+  GoogleSignInAccount,
+])
 import 'cloud_sync_service_test.mocks.dart';
 
 void main() {
@@ -171,6 +177,3 @@ void main() {
     });
   });
 }
-
-// Mock classes for testing
-class MockGoogleSignInAccount extends Mock implements GoogleSignInAccount {}
