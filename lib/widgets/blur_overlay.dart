@@ -29,24 +29,6 @@ class BlurOverlay extends StatelessWidget {
                         size: 64,
                         color: Colors.white.withValues(alpha: 0.8),
                       ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'VaultDeck is locked',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white.withValues(alpha: 0.9),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Authenticate to continue',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white.withValues(alpha: 0.7),
-                        ),
-                      ),
                     ],
                   ),
                 ),
