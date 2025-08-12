@@ -76,9 +76,7 @@ class CloudSyncService {
   }
 
   String _encryptData(String data) {
-    if (_encryptionKey == null) {
-      _encryptionKey = _generateEncryptionKey();
-    }
+    _encryptionKey ??= _generateEncryptionKey();
 
     final keyBytes = utf8.encode(_encryptionKey!);
     final dataBytes = utf8.encode(data);
@@ -89,22 +87,6 @@ class CloudSyncService {
     }
 
     return base64.encode(encryptedBytes);
-  }
-
-  String _decryptData(String encryptedData) {
-    if (_encryptionKey == null) {
-      throw CloudSyncException('Encryption key not found');
-    }
-
-    final keyBytes = utf8.encode(_encryptionKey!);
-    final encryptedBytes = base64.decode(encryptedData);
-    final decryptedBytes = <int>[];
-
-    for (int i = 0; i < encryptedBytes.length; i++) {
-      decryptedBytes.add(encryptedBytes[i] ^ keyBytes[i % keyBytes.length]);
-    }
-
-    return utf8.decode(decryptedBytes);
   }
 
   Future<String?> _getOrCreateFolder() async {

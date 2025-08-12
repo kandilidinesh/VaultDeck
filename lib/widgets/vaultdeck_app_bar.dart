@@ -1,7 +1,6 @@
 import '../screens/settings_page.dart';
 import 'package:flutter/material.dart';
 import '../constants/app_constants.dart';
-import 'blur_overlay.dart';
 
 class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
   final ValueNotifier<bool> isDarkModeNotifier;

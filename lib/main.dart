@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:local_auth/local_auth.dart';
-import 'dart:ui';
 import 'models/card_model.dart';
 import 'screens/home_page.dart';
 import 'widgets/unlock_pin_screen.dart';
@@ -426,6 +425,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             splashColor: Colors.transparent,
           ),
           home: BlurOverlay(
+            shouldBlur: _shouldBlur,
             child: HomePage(
               title: AppConstants.appName,
               toggleTheme: toggleTheme,
@@ -436,7 +436,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               pinEnabledNotifier: pinEnabledNotifier,
               shouldBlur: _shouldBlur,
             ),
-            shouldBlur: _shouldBlur,
           ),
         );
       },

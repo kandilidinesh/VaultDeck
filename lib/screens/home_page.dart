@@ -120,64 +120,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildMinimalHeaderSection(int cardCount, bool isDark) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDark ? const Color(0xFF2D2D2D) : const Color(0xFFE5E7EB),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: isDark
-                ? Colors.black.withValues(alpha: 0.1)
-                : Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.credit_card_rounded,
-            color: isDark ? Colors.white70 : Colors.grey[700],
-            size: 20,
-          ),
-          const SizedBox(width: 12),
-          Text(
-            '$cardCount card${cardCount == 1 ? '' : 's'} in vault',
-            style: TextStyle(
-              color: isDark ? Colors.white70 : Colors.grey[700],
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const Spacer(),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF2D2D2D) : const Color(0xFFF3F4F6),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Text(
-              cardCount.toString(),
-              style: TextStyle(
-                color: isDark ? Colors.white : Colors.black87,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildFloatingActionButton(bool isDark) {
     return Container(
       decoration: BoxDecoration(

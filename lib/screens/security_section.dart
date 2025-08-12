@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:hive/hive.dart';
 import '../widgets/set_pin_screen.dart';
 import '../widgets/unlock_pin_screen.dart';
-import '../services/pin_lock_service.dart';
 
 class SecuritySection extends StatefulWidget {
   final bool pinEnabled;
