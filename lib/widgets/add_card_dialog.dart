@@ -162,169 +162,202 @@ class _AddCardDialogState extends State<AddCardDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     final screenHeight = MediaQuery.of(context).size.height;
-    final availableHeight =
-        screenHeight - keyboardHeight - 100; // Account for top bar and padding
+    final availableHeight = screenHeight - keyboardHeight - 100;
 
     return Material(
       color: Colors.transparent,
       child: Container(
         constraints: BoxConstraints(maxHeight: availableHeight),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
+          color: isDark ? const Color(0xFF0A0A0A) : Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.12),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 32,
               offset: const Offset(0, -8),
             ),
           ],
         ),
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
         child: Form(
           key: _formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // iOS-style top bar with Back and Done
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(
-                      'Back',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
+              // Modern header with proper dark mode design
+              Container(
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(32),
+                  ),
+                  border: Border.all(
+                    color: isDark
+                        ? const Color(0xFF2D2D2D)
+                        : const Color(0xFFE2E8F0),
+                    width: 1,
+                  ),
+                ),
+                padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+                child: Column(
+                  children: [
+                    // Handle bar
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.2)
+                              : Colors.grey[400],
+                          borderRadius: BorderRadius.circular(2),
+                        ),
                       ),
                     ),
-                  ),
-                  TextButton(
-                    onPressed: _addCard,
-                    child: Text(
-                      'Done',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                    const SizedBox(height: 16),
+                    // Title and buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Title and subtitle
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.initialCard != null
+                                    ? 'Edit Card'
+                                    : 'Add New Card',
+                                style: TextStyle(
+                                  color: isDark ? Colors.white : Colors.black87,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Secure your card information',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? Colors.white.withValues(alpha: 0.6)
+                                      : Colors.grey[600],
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Action buttons
+                        Row(
+                          children: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              style: TextButton.styleFrom(
+                                backgroundColor: isDark
+                                    ? const Color(0xFF2D2D2D)
+                                    : const Color(0xFFF1F5F9),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                              ),
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  color: isDark ? Colors.white : Colors.black87,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            ElevatedButton(
+                              onPressed: _addCard,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: isDark
+                                    ? const Color(0xFF10B981)
+                                    : const Color(0xFF10B981),
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                              ),
+                              child: Text(
+                                widget.initialCard != null ? 'Update' : 'Save',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const SizedBox(height: 12),
-              // Scrollable form content
+
+              // Form content
               Expanded(
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Removed 'Card Details' section header for cleaner look
-                      TextFormField(
+                child: ListView(
+                  physics: const ClampingScrollPhysics(),
+                  padding: const EdgeInsets.all(24),
+                  children: [
+                    // Form fields
+                    _buildFormSection('Basic Information', [
+                      _buildTextField(
                         controller: _nicknameController,
-                        decoration: InputDecoration(
-                          labelText: 'Card Nickname',
-                          prefixIcon: const Icon(Icons.label),
-                          filled: true,
-                          fillColor: theme.colorScheme.surfaceContainerHighest,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.fromLTRB(
-                            20,
-                            22,
-                            16,
-                            12,
-                          ),
-                          floatingLabelBehavior: FloatingLabelBehavior.never,
-                        ),
-                        validator: (value) {
-                          return null;
-                        },
+                        label: 'Card Nickname',
+                        hint: 'Card Nickname',
+                        icon: Icons.label_rounded,
+                        isDark: isDark,
                       ),
-                      const SizedBox(height: 14),
-                      TextFormField(
+                      const SizedBox(height: 20),
+                      _buildTextField(
                         controller: _bankNameController,
-                        decoration: InputDecoration(
-                          labelText: 'Bank Name',
-                          prefixIcon: const Icon(Icons.account_balance),
-                          filled: true,
-                          fillColor: theme.colorScheme.surfaceContainerHighest,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.fromLTRB(
-                            20,
-                            22,
-                            16,
-                            12,
-                          ),
-                          floatingLabelBehavior: FloatingLabelBehavior.never,
-                        ),
-                        validator: (value) {
-                          return null;
-                        },
+                        label: 'Bank Name',
+                        hint: 'Bank Name',
+                        icon: Icons.account_balance_rounded,
+                        isDark: isDark,
                       ),
-                      const SizedBox(height: 14),
-                      TextFormField(
+                      const SizedBox(height: 20),
+                      _buildTextField(
                         controller: _holderController,
-                        decoration: InputDecoration(
-                          labelText: 'Card Holder Name',
-                          prefixIcon: const Icon(Icons.person),
-                          filled: true,
-                          fillColor: theme.colorScheme.surfaceContainerHighest,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.fromLTRB(
-                            20,
-                            22,
-                            16,
-                            12,
-                          ),
-                          floatingLabelBehavior: FloatingLabelBehavior.never,
-                        ),
+                        label: 'Card Holder Name',
+                        hint: 'Card Holder Name',
                         validator: (value) {
                           if (value?.trim().isEmpty ?? true) {
                             return 'Please enter name';
                           }
                           return null;
                         },
+                        icon: Icons.person_rounded,
+                        isDark: isDark,
                       ),
-                      const SizedBox(height: 14),
-                      TextFormField(
+                    ]),
+
+                    const SizedBox(height: 32),
+
+                    _buildFormSection('Card Details', [
+                      _buildTextField(
                         controller: _numberController,
-                        decoration: InputDecoration(
-                          labelText: 'Card Number',
-                          hintText: 'XXXX-XXXX-XXXX-XXXX',
-                          prefixIcon: const Icon(CupertinoIcons.creditcard),
-                          suffixIcon: Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: SvgPicture.asset(
-                              _getCardLogoAsset(_liveCardType),
-                              width: 32,
-                              height: 32,
-                            ),
-                          ),
-                          filled: true,
-                          fillColor: theme.colorScheme.surfaceContainerHighest,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide.none,
-                          ),
-                          alignLabelWithHint: true,
-                          contentPadding: const EdgeInsets.fromLTRB(
-                            20,
-                            22,
-                            16,
-                            12,
-                          ),
-                          floatingLabelBehavior: FloatingLabelBehavior.never,
-                        ),
+                        label: 'Card Number',
+                        hint: 'Card Number',
+                        icon: CupertinoIcons.creditcard,
+                        isDark: isDark,
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.allow(RegExp(r'[0-9-]')),
@@ -338,6 +371,14 @@ class _AddCardDialogState extends State<AddCardDialog> {
                             );
                           });
                         },
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.only(right: 16.0),
+                          child: SvgPicture.asset(
+                            _getCardLogoAsset(_liveCardType),
+                            width: 32,
+                            height: 20,
+                          ),
+                        ),
                         validator: (value) {
                           final cardNumberPattern = RegExp(
                             r'^(\d{4}-){3}\d{4}$',
@@ -351,69 +392,46 @@ class _AddCardDialogState extends State<AddCardDialog> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 14),
-                      TextFormField(
-                        controller: _expiryController,
-                        decoration: InputDecoration(
-                          labelText: 'Expiry Date (MM/YY)',
-                          hintText: 'MM/YY',
-                          prefixIcon: const Icon(CupertinoIcons.calendar),
-                          filled: true,
-                          fillColor: theme.colorScheme.surfaceContainerHighest,
-                          alignLabelWithHint: true,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.fromLTRB(
-                            20,
-                            22,
-                            16,
-                            12,
-                          ),
-                          floatingLabelBehavior: FloatingLabelBehavior.never,
-                        ),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9/]')),
-                          LengthLimitingTextInputFormatter(5),
-                          ExpiryDateInputFormatter(),
-                        ],
-                        validator: (value) {
-                          final regex = RegExp(r'^(0[1-9]|1[0-2])/\d{2}$');
-                          if (value?.trim().isEmpty ?? true) {
-                            return 'Please enter expiry date';
-                          }
-                          if (!regex.hasMatch(value!.trim())) {
-                            return 'Please use MM/YY format';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 20),
                       Row(
                         children: [
                           Expanded(
-                            child: TextFormField(
+                            child: _buildTextField(
+                              controller: _expiryController,
+                              label: 'Expiry Date',
+                              hint: 'Expiry Date',
+                              icon: CupertinoIcons.calendar,
+                              isDark: isDark,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9/]'),
+                                ),
+                                LengthLimitingTextInputFormatter(5),
+                                ExpiryDateInputFormatter(),
+                              ],
+                              validator: (value) {
+                                final regex = RegExp(
+                                  r'^(0[1-9]|1[0-2])/\d{2}$',
+                                );
+                                if (value?.trim().isEmpty ?? true) {
+                                  return 'Please enter expiry date';
+                                }
+                                if (!regex.hasMatch(value!.trim())) {
+                                  return 'Please use MM/YY format';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: _buildTextField(
                               controller: _cvvController,
-                              decoration: InputDecoration(
-                                labelText: 'CVV',
-                                prefixIcon: const Icon(Icons.lock_outline),
-                                filled: true,
-                                fillColor:
-                                    theme.colorScheme.surfaceContainerHighest,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                  borderSide: BorderSide.none,
-                                ),
-                                contentPadding: const EdgeInsets.fromLTRB(
-                                  20,
-                                  22,
-                                  16,
-                                  12,
-                                ),
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.never,
-                              ),
+                              label: 'CVV',
+                              hint: 'CVV',
+                              icon: Icons.lock_outline_rounded,
+                              isDark: isDark,
                               keyboardType: TextInputType.number,
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
@@ -431,80 +449,157 @@ class _AddCardDialogState extends State<AddCardDialog> {
                               },
                             ),
                           ),
-                          const SizedBox(width: 14),
-                          Expanded(
-                            child: TextFormField(
-                              controller: _pinController,
-                              decoration: InputDecoration(
-                                labelText: 'PIN',
-                                prefixIcon: const Icon(Icons.password),
-                                filled: true,
-                                fillColor:
-                                    theme.colorScheme.surfaceContainerHighest,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                  borderSide: BorderSide.none,
-                                ),
-                                contentPadding: const EdgeInsets.fromLTRB(
-                                  20,
-                                  22,
-                                  16,
-                                  12,
-                                ),
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.never,
-                              ),
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(6),
-                              ],
-                              validator: (value) {
-                                if (value != null &&
-                                    value.isNotEmpty &&
-                                    value.length < 4) {
-                                  return 'PIN must be at least 4 digits';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
                         ],
                       ),
-                      const SizedBox(height: 14),
-                      TextFormField(
-                        controller: _notesController,
-                        decoration: InputDecoration(
-                          labelText: 'Notes',
-                          prefixIcon: const Icon(Icons.note_alt_outlined),
-                          filled: true,
-                          fillColor: theme.colorScheme.surfaceContainerHighest,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.fromLTRB(
-                            20,
-                            22,
-                            16,
-                            12,
-                          ),
-                          floatingLabelBehavior: FloatingLabelBehavior.never,
-                        ),
-                        maxLines: 2,
+                      const SizedBox(height: 20),
+                      _buildTextField(
+                        controller: _pinController,
+                        label: 'PIN',
+                        hint: 'PIN',
+                        icon: Icons.password_rounded,
+                        isDark: isDark,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(6),
+                        ],
                         validator: (value) {
+                          if (value != null &&
+                              value.isNotEmpty &&
+                              value.length < 4) {
+                            return 'PIN must be at least 4 digits';
+                          }
                           return null;
                         },
                       ),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
+                    ]),
+
+                    const SizedBox(height: 32),
+
+                    _buildFormSection('Additional Information', [
+                      _buildTextField(
+                        controller: _notesController,
+                        label: 'Notes',
+                        hint: 'Notes',
+                        icon: Icons.note_alt_rounded,
+                        isDark: isDark,
+                        maxLines: 3,
+                      ),
+                    ]),
+
+                    const SizedBox(height: 32),
+                  ],
                 ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildFormSection(String title, List<Widget> children) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: const Color(
+              0xFF10B981,
+            ), // Subtle green instead of bright blue
+          ),
+        ),
+        const SizedBox(height: 20),
+        ...children,
+      ],
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    required IconData icon,
+    required bool isDark,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+    Function(String)? onChanged,
+    Widget? suffixIcon,
+    String? Function(String?)? validator,
+    int maxLines = 1,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
+      onChanged: onChanged,
+      maxLines: maxLines,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+        prefixIcon: Container(
+          margin: const EdgeInsets.only(left: 16, right: 8),
+          width: 40,
+          height: 40,
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF2D2D2D) : const Color(0xFFF1F5F9),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            icon,
+            color: isDark ? Colors.white70 : Colors.grey[600],
+            size: 20,
+          ),
+        ),
+        suffixIcon: suffixIcon,
+        filled: true,
+        fillColor: isDark ? const Color(0xFF1A1A1A) : const Color(0xFFF8FAFC),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(
+            color: isDark ? const Color(0xFF3D3D3D) : const Color(0xFFE2E8F0),
+            width: 1,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(
+            color: isDark ? const Color(0xFF3D3D3D) : const Color(0xFFE2E8F0),
+            width: 1,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Color(0xFF10B981), width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1),
+        ),
+        contentPadding: const EdgeInsets.fromLTRB(16, 20, 20, 20),
+        floatingLabelBehavior: FloatingLabelBehavior.never,
+        labelStyle: TextStyle(
+          color: isDark ? Colors.white60 : Colors.grey[600],
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+        hintStyle: TextStyle(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.4)
+              : Colors.grey[400],
+          fontSize: 14,
+        ),
+      ),
+      style: TextStyle(
+        color: isDark ? Colors.white : Colors.black87,
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+      validator: validator,
     );
   }
 }
