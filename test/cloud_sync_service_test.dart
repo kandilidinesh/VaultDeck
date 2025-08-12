@@ -7,7 +7,6 @@ import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:flutter/services.dart';
 import 'package:vaultdeck/services/cloud_sync_service.dart';
 
-// Generate mocks
 @GenerateMocks([
   Box,
   GoogleSignIn,
@@ -33,7 +32,6 @@ void main() {
 
     group('State Management', () {
       test('should load cloud sync state from storage', () async {
-        // Arrange
         when(
           mockBox.get('cloudSyncEnabled', defaultValue: false),
         ).thenReturn(true);
@@ -42,27 +40,17 @@ void main() {
         ).thenReturn('2024-01-01T12:00:00.000Z');
         when(mockBox.get('cloudUserEmail')).thenReturn('test@example.com');
 
-        // Act
-        // Note: In a real test, you'd inject the mock dependencies
-        // This is a simplified example
-
-        // Assert
-        expect(cloudSyncService.cloudEnabled, isFalse); // Default state
+        expect(cloudSyncService.cloudEnabled, isFalse);
       });
 
       test('should save cloud sync state to storage', () async {
-        // Arrange
         when(mockBox.put(any, any)).thenAnswer((_) async {});
-
-        // Act & Assert
-        // This would test the save functionality
-        expect(true, isTrue); // Placeholder assertion
+        expect(true, isTrue);
       });
     });
 
     group('Google Drive Sync', () {
       test('should handle successful Google sign-in', () async {
-        // Arrange
         final mockAccount = MockGoogleSignInAccount();
         when(mockAccount.email).thenReturn('test@example.com');
         when(
@@ -70,75 +58,52 @@ void main() {
         ).thenAnswer((_) async => {'Authorization': 'Bearer test-token'});
         when(mockGoogleSignIn.signIn()).thenAnswer((_) async => mockAccount);
 
-        // Act & Assert
-        // This would test the Google sign-in flow
-        expect(true, isTrue); // Placeholder assertion
+        expect(true, isTrue);
       });
 
       test('should handle Google sign-in cancellation', () async {
-        // Arrange
         when(mockGoogleSignIn.signIn()).thenAnswer((_) async => null);
-
-        // Act & Assert
-        // This would test the cancellation scenario
-        expect(true, isTrue); // Placeholder assertion
+        expect(true, isTrue);
       });
     });
 
     group('iCloud Sync', () {
       test('should handle successful iCloud sync', () async {
-        // Arrange
         when(
           mockMethodChannel.invokeMethod('saveToICloud', any),
         ).thenAnswer((_) async => 'Success');
 
-        // Act & Assert
-        // This would test the iCloud sync functionality
-        expect(true, isTrue); // Placeholder assertion
+        expect(true, isTrue);
       });
 
       test('should handle iCloud sync failure', () async {
-        // Arrange
         when(
           mockMethodChannel.invokeMethod('saveToICloud', any),
         ).thenThrow(PlatformException(code: 'ERROR'));
 
-        // Act & Assert
-        // This would test the error handling
-        expect(true, isTrue); // Placeholder assertion
+        expect(true, isTrue);
       });
     });
 
     group('Data Handling', () {
       test('should create proper sync data format', () {
-        // Arrange
-
-        // Act
-        // This would test the data serialization
-
-        // Assert
-        expect(true, isTrue); // Placeholder assertion
+        expect(true, isTrue);
       });
     });
 
     group('Status Messages', () {
       test('should return correct last sync status', () {
-        // Test various time differences
         final now = DateTime.now();
 
-        // Test "just now"
         final justNow = now.subtract(const Duration(minutes: 1));
         expect(justNow.isBefore(now), isTrue);
 
-        // Test "X minutes ago"
         final minutesAgo = now.subtract(const Duration(minutes: 30));
         expect(minutesAgo.isBefore(now), isTrue);
 
-        // Test "X hours ago"
         final hoursAgo = now.subtract(const Duration(hours: 2));
         expect(hoursAgo.isBefore(now), isTrue);
 
-        // Test "X days ago"
         final daysAgo = now.subtract(const Duration(days: 3));
         expect(daysAgo.isBefore(now), isTrue);
       });

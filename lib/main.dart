@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:local_auth/local_auth.dart';
+import 'dart:ui';
 import 'models/card_model.dart';
 import 'screens/home_page.dart';
 import 'widgets/unlock_pin_screen.dart';
 import 'constants/app_constants.dart';
 import 'services/pin_lock_service.dart';
+import 'widgets/blur_overlay.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +25,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  // Static variable to ensure state persists across instances
+  static bool _globalIsUnlocked = false;
+  static bool _globalHasAttemptedBiometric = false;
+  static bool _globalHasAttemptedInitialAuth = false;
+  static bool _globalSessionAuthenticated = false;
+
   bool _isUnlocked = false;
   ThemeMode _themeMode = ThemeMode.system;
   final ValueNotifier<bool> isDarkModeNotifier = ValueNotifier<bool>(false);
@@ -33,6 +41,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   bool _isPinDialogShowing = false;
   bool _biometricEnabled = false;
+  bool _shouldBlur = false;
+  bool _hasAttemptedBiometric = false;
+  bool _isAuthenticating = false;
+  bool _hasAttemptedInitialAuth = false;
+  bool _sessionAuthenticated = false;
 
   @override
   void initState() {
@@ -41,8 +54,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _loadPinState();
     _loadBiometricState();
     WidgetsBinding.instance.addObserver(this);
-    // Prompt for auth on app start
-    WidgetsBinding.instance.addPostFrameCallback((_) => _promptAuthIfNeeded());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_isUnlocked &&
+          !_MyAppState._globalIsUnlocked &&
+          !_hasAttemptedInitialAuth &&
+          !_MyAppState._globalHasAttemptedInitialAuth) {
+        _hasAttemptedInitialAuth = true;
+        _MyAppState._globalHasAttemptedInitialAuth = true;
+        _promptAuthIfNeeded();
+      }
+    });
   }
 
   Future<void> _loadBiometricState() async {
@@ -53,82 +75,213 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     });
   }
 
+  void _setBlurState(bool shouldBlur) {
+    if (mounted) {
+      setState(() {
+        _shouldBlur = shouldBlur;
+      });
+    }
+  }
+
+  void _unlockApp() {
+    // Update static variables first
+    _MyAppState._globalIsUnlocked = true;
+    _MyAppState._globalHasAttemptedBiometric = true;
+    _MyAppState._globalHasAttemptedInitialAuth = true;
+    _MyAppState._globalSessionAuthenticated = true;
+
+    if (mounted) {
+      setState(() {
+        _isUnlocked = true;
+        _hasAttemptedBiometric = true;
+        _shouldBlur = false;
+        _isPinDialogShowing = false;
+        _isAuthenticating = false;
+        _hasAttemptedInitialAuth = true;
+        _sessionAuthenticated = true;
+      });
+
+      // Clear the last paused time to prevent timer accumulation
+      _lastPausedTime = null;
+    }
+  }
+
   Future<void> _promptAuthIfNeeded({bool force = false}) async {
-    if (_isPinDialogShowing) {
+    if (_isPinDialogShowing || _isAuthenticating) {
       return;
     }
-    if (_isUnlocked && !force) {
+
+    if ((_isUnlocked ||
+            _MyAppState._globalIsUnlocked ||
+            _sessionAuthenticated ||
+            _MyAppState._globalSessionAuthenticated) &&
+        !force) {
+      _setBlurState(false);
       return;
     }
-    final navContext = _navigatorKey.currentState?.context;
-    if (navContext == null) {
-      return;
-    }
-    await _loadBiometricState();
-    await _loadPinState();
-    if (_biometricEnabled) {
-      final localAuth = LocalAuthentication();
-      bool canCheck = await localAuth.canCheckBiometrics;
-      bool isAvailable = await localAuth.isDeviceSupported();
-      if (canCheck && isAvailable) {
-        bool authenticated = false;
-        try {
-          authenticated = await localAuth.authenticate(
-            localizedReason: 'Authenticate to unlock the app',
-            options: const AuthenticationOptions(
-              biometricOnly: true,
-              stickyAuth: true,
+
+    _isAuthenticating = true;
+
+    try {
+      _setBlurState(true);
+
+      final navContext = _navigatorKey.currentState?.context;
+      if (navContext == null) {
+        return;
+      }
+      await _loadBiometricState();
+      await _loadPinState();
+
+      if (_biometricEnabled &&
+          !_hasAttemptedBiometric &&
+          !_MyAppState._globalHasAttemptedBiometric) {
+        final localAuth = LocalAuthentication();
+        bool canCheck = await localAuth.canCheckBiometrics;
+        bool isAvailable = await localAuth.isDeviceSupported();
+
+        if (canCheck && isAvailable) {
+          _hasAttemptedBiometric = true;
+          _MyAppState._globalHasAttemptedBiometric = true;
+
+          try {
+            final authenticated = await localAuth.authenticate(
+              localizedReason: 'Authenticate to unlock the app',
+              options: const AuthenticationOptions(
+                biometricOnly: true,
+                stickyAuth: true,
+              ),
+            );
+
+            if (authenticated) {
+              _unlockApp();
+              return;
+            } else {
+              if (pinEnabledNotifier.value) {
+                // Continue to PIN authentication below
+              } else {
+                _unlockApp();
+                return;
+              }
+            }
+          } catch (e) {
+            if (pinEnabledNotifier.value) {
+              // Continue to PIN authentication below
+            } else {
+              _unlockApp();
+              return;
+            }
+          }
+        } else {
+          if (pinEnabledNotifier.value) {
+            // Continue to PIN authentication below
+          } else {
+            _unlockApp();
+            return;
+          }
+        }
+      }
+
+      if (pinEnabledNotifier.value || force) {
+        _isPinDialogShowing = true;
+        _setBlurState(false);
+        final context = navContext;
+        if (context.mounted) {
+          await Navigator.of(context).push(
+            MaterialPageRoute(
+              fullscreenDialog: true,
+              builder: (context) => UnlockPinScreen(
+                onCancel: () {
+                  if (mounted) {
+                    Navigator.of(context).pop();
+                  }
+                  _isPinDialogShowing = false;
+                  if (!_isUnlocked) {
+                    _setBlurState(true);
+                  }
+                },
+              ),
             ),
           );
-        } catch (e) {
-          // Ignore biometric errors
         }
-        if (authenticated) {
-          _isUnlocked = true;
-          return;
+        if (mounted) {
+          _isPinDialogShowing = false;
+          _unlockApp();
         }
-      } else {}
-    }
-    // If PIN is enabled, show PIN screen
-    if (pinEnabledNotifier.value || force) {
-      _isPinDialogShowing = true;
-      final context = navContext;
-      if (context.mounted) {
-        await Navigator.of(context).push(
-          MaterialPageRoute(
-            fullscreenDialog: true,
-            builder: (context) => UnlockPinScreen(
-              onCancel: () {
-                if (mounted) {
-                  Navigator.of(context).pop();
-                }
-                _isPinDialogShowing = false;
-              },
-            ),
-          ),
-        );
+      } else {
+        _unlockApp();
       }
+    } finally {
       if (mounted) {
-        _isPinDialogShowing = false;
-        _isUnlocked = true;
+        setState(() {
+          _isAuthenticating = false;
+        });
       }
-    } else {}
+    }
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (_isAuthenticating || _isPinDialogShowing) {
+      return;
+    }
+
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive) {
-      _lastPausedTime = DateTime.now();
-      _isUnlocked = false;
+      if (_biometricEnabled) {
+        _isUnlocked = false;
+        _hasAttemptedBiometric = false;
+        _sessionAuthenticated = false;
+        _MyAppState._globalIsUnlocked = false;
+        _MyAppState._globalHasAttemptedBiometric = false;
+        _MyAppState._globalSessionAuthenticated = false;
+        _setBlurState(true);
+      } else {
+        _lastPausedTime = DateTime.now();
+      }
     } else if (state == AppLifecycleState.resumed) {
+      if (_biometricEnabled) {
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => _promptAuthIfNeeded(),
+        );
+        return;
+      }
+
       if (_lastPausedTime != null) {
         final timerMinutes = await _pinLockService.getPinLockTimerMinutes();
         final elapsed = DateTime.now().difference(_lastPausedTime!).inMinutes;
-        if (timerMinutes == 0 || elapsed >= timerMinutes) {
+
+        if (timerMinutes == 0 && elapsed >= 1) {
+          _isUnlocked = false;
+          _hasAttemptedBiometric = false;
+          _hasAttemptedInitialAuth = false;
+          _sessionAuthenticated = false;
+          _MyAppState._globalIsUnlocked = false;
+          _MyAppState._globalHasAttemptedBiometric = false;
+          _MyAppState._globalHasAttemptedInitialAuth = false;
+          _MyAppState._globalSessionAuthenticated = false;
+
+          _setBlurState(true);
           WidgetsBinding.instance.addPostFrameCallback(
             (_) => _promptAuthIfNeeded(),
           );
+        } else if (timerMinutes > 0 && elapsed >= timerMinutes) {
+          _isUnlocked = false;
+          _hasAttemptedBiometric = false;
+          _hasAttemptedInitialAuth = false;
+          _sessionAuthenticated = false;
+          _MyAppState._globalIsUnlocked = false;
+          _MyAppState._globalHasAttemptedBiometric = false;
+          _MyAppState._globalHasAttemptedInitialAuth = false;
+          _MyAppState._globalSessionAuthenticated = false;
+
+          _setBlurState(true);
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) => _promptAuthIfNeeded(),
+          );
+        } else {
+          _isUnlocked = true;
+          _MyAppState._globalIsUnlocked = true;
+          _setBlurState(false);
         }
       }
     }
@@ -185,7 +338,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           break;
         default:
           _themeMode = ThemeMode.system;
-          // Use platformDispatcher instead of deprecated window
           final brightness = View.of(
             context,
           ).platformDispatcher.platformBrightness;
@@ -273,14 +425,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             highlightColor: Colors.transparent,
             splashColor: Colors.transparent,
           ),
-          home: HomePage(
-            title: AppConstants.appName,
-            toggleTheme: toggleTheme,
-            isDarkModeNotifier: isDarkModeNotifier,
-            pinEnabled: pinEnabled,
-            pin: _pin,
-            setPinEnabled: setPinEnabled,
-            pinEnabledNotifier: pinEnabledNotifier,
+          home: BlurOverlay(
+            child: HomePage(
+              title: AppConstants.appName,
+              toggleTheme: toggleTheme,
+              isDarkModeNotifier: isDarkModeNotifier,
+              pinEnabled: pinEnabled,
+              pin: _pin,
+              setPinEnabled: setPinEnabled,
+              pinEnabledNotifier: pinEnabledNotifier,
+              shouldBlur: _shouldBlur,
+            ),
+            shouldBlur: _shouldBlur,
           ),
         );
       },

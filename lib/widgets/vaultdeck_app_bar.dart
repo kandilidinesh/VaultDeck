@@ -1,6 +1,7 @@
 import '../screens/settings_page.dart';
 import 'package:flutter/material.dart';
 import '../constants/app_constants.dart';
+import 'blur_overlay.dart';
 
 class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
   final ValueNotifier<bool> isDarkModeNotifier;
@@ -9,6 +10,7 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? pin;
   final void Function(bool, [String?]) setPinEnabled;
   final ValueNotifier<bool> pinEnabledNotifier;
+  final bool shouldBlur;
 
   const VaultDeckAppBar({
     super.key,
@@ -18,6 +20,7 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.pin,
     required this.setPinEnabled,
     required this.pinEnabledNotifier,
+    required this.shouldBlur,
   });
 
   @override
@@ -80,6 +83,7 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
                     pinEnabled: pinEnabled,
                     pin: pin,
                     setPinEnabled: setPinEnabled,
+                    shouldBlur: shouldBlur,
                   ),
                 ),
               );

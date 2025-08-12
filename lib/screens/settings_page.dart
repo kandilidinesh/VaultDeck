@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'dart:ui';
 import 'security_section.dart';
 import 'cloud_sync_section.dart';
 
@@ -9,6 +10,7 @@ class SettingsPage extends StatefulWidget {
   final bool pinEnabled;
   final String? pin;
   final void Function(bool, [String?]) setPinEnabled;
+  final bool shouldBlur;
 
   const SettingsPage({
     super.key,
@@ -17,6 +19,7 @@ class SettingsPage extends StatefulWidget {
     required this.pinEnabled,
     required this.pin,
     required this.setPinEnabled,
+    this.shouldBlur = false,
   });
 
   @override
@@ -75,92 +78,138 @@ class _SettingsPageState extends State<SettingsPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      backgroundColor: isDark
-          ? const Color(0xFF0A0A0A)
-          : const Color(0xFFFAFAFA),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(
-          'Settings',
-          style: TextStyle(
-            color: isDark ? Colors.white : Colors.black87,
-            fontWeight: FontWeight.w700,
-            fontSize: 24,
-          ),
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: isDark ? Colors.white : Colors.black87,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 16,
-                ),
-                children: [
-                  // App Info Card
-                  _buildAppInfoCard(context, isDark),
-                  const SizedBox(height: 24),
-
-                  // Theme Section
-                  _buildSectionHeader(
-                    context,
-                    'Appearance',
-                    Icons.palette_rounded,
-                    isDark,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildThemeCard(context, isDark, screenWidth),
-                  const SizedBox(height: 24),
-
-                  // Security Section
-                  _buildSectionHeader(
-                    context,
-                    'Security',
-                    Icons.shield_rounded,
-                    isDark,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildSecurityCard(context, isDark, screenWidth),
-                  const SizedBox(height: 24),
-
-                  // Cloud Sync Section
-                  _buildSectionHeader(
-                    context,
-                    'Backup & Sync',
-                    Icons.cloud_rounded,
-                    isDark,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildCloudSyncCard(context, isDark, screenWidth),
-                  const SizedBox(height: 24),
-
-                  // About Section
-                  _buildSectionHeader(
-                    context,
-                    'About',
-                    Icons.info_rounded,
-                    isDark,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildAboutCard(context, isDark, screenWidth),
-                ],
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: isDark
+              ? const Color(0xFF0A0A0A)
+              : const Color(0xFFFAFAFA),
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            title: Text(
+              'Settings',
+              style: TextStyle(
+                color: isDark ? Colors.white : Colors.black87,
+                fontWeight: FontWeight.w700,
+                fontSize: 24,
               ),
             ),
-          ],
+            centerTitle: true,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+          body: SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 16,
+                    ),
+                    children: [
+                      // App Info Card
+                      _buildAppInfoCard(context, isDark),
+                      const SizedBox(height: 24),
+
+                      // Theme Section
+                      _buildSectionHeader(
+                        context,
+                        'Appearance',
+                        Icons.palette_rounded,
+                        isDark,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildThemeCard(context, isDark, screenWidth),
+                      const SizedBox(height: 24),
+
+                      // Security Section
+                      _buildSectionHeader(
+                        context,
+                        'Security',
+                        Icons.shield_rounded,
+                        isDark,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildSecurityCard(context, isDark, screenWidth),
+                      const SizedBox(height: 24),
+
+                      // Cloud Sync Section
+                      _buildSectionHeader(
+                        context,
+                        'Backup & Sync',
+                        Icons.cloud_rounded,
+                        isDark,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildCloudSyncCard(context, isDark, screenWidth),
+                      const SizedBox(height: 24),
+
+                      // About Section
+                      _buildSectionHeader(
+                        context,
+                        'About',
+                        Icons.info_rounded,
+                        isDark,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildAboutCard(context, isDark, screenWidth),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
+        // Blur overlay when app is locked
+        if (widget.shouldBlur)
+          Positioned.fill(
+            child: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.3),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.security_rounded,
+                          size: 64,
+                          color: Colors.white.withValues(alpha: 0.8),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'VaultDeck is locked',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white.withValues(alpha: 0.9),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Authenticate to continue',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white.withValues(alpha: 0.7),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 

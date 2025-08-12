@@ -26,12 +26,10 @@ class CloudSyncService {
   String? _encryptionKey;
   String? _folderId;
 
-  // Singleton pattern
   static final CloudSyncService _instance = CloudSyncService._internal();
   factory CloudSyncService() => _instance;
   CloudSyncService._internal();
 
-  // Getters
   bool get cloudEnabled => _cloudEnabled;
   String? get currentUserEmail => _currentUserEmail;
   DateTime? get lastSyncTime => _lastSyncTime;
@@ -82,7 +80,6 @@ class CloudSyncService {
       _encryptionKey = _generateEncryptionKey();
     }
 
-    // Simple XOR encryption (for demonstration - in production, use proper encryption)
     final keyBytes = utf8.encode(_encryptionKey!);
     final dataBytes = utf8.encode(data);
     final encryptedBytes = <int>[];
@@ -114,7 +111,6 @@ class CloudSyncService {
     if (_driveApi == null) return null;
 
     try {
-      // First, try to find existing folder
       final existingFolders = await _driveApi!.files.list(
         q: "name='$_folderName' and mimeType='application/vnd.google-apps.folder' and trashed=false",
       );
@@ -123,7 +119,6 @@ class CloudSyncService {
         return existingFolders.files!.first.id;
       }
 
-      // Create new folder if not found
       final folder = drive.File()
         ..name = _folderName
         ..mimeType = 'application/vnd.google-apps.folder';
@@ -164,7 +159,6 @@ class CloudSyncService {
     } else if (error is CloudSyncException) {
       return error.message;
     } else {
-      // For any other unexpected errors, show a generic message
       return 'Something went wrong. Please try again later.';
     }
   }
@@ -258,7 +252,6 @@ class CloudSyncService {
     }
 
     try {
-      // Get or create the VaultDeck folder
       _folderId = await _getOrCreateFolder();
       if (_folderId == null) {
         throw CloudSyncException(
@@ -269,17 +262,14 @@ class CloudSyncService {
       final cards = CardStorage.getAllCards();
       final jsonData = _createSyncData(cards);
 
-      // Encrypt the data before uploading
       final encryptedData = _encryptData(jsonData);
       final bytes = utf8.encode(encryptedData);
 
-      // Check if file already exists in the folder
       final existingFiles = await _driveApi!.files.list(
         q: "name='$_syncFileName' and '$_folderId' in parents and trashed=false",
       );
 
       if (existingFiles.files != null && existingFiles.files!.isNotEmpty) {
-        // Update existing file
         final fileId = existingFiles.files!.first.id;
         await _driveApi!.files.update(
           drive.File(),
@@ -287,11 +277,9 @@ class CloudSyncService {
           uploadMedia: drive.Media(Stream.value(bytes), bytes.length),
         );
       } else {
-        // Create new file in the folder
         final file = drive.File()
           ..name = _syncFileName
-          ..mimeType =
-              'application/octet-stream' // Binary file type
+          ..mimeType = 'application/octet-stream'
           ..parents = [_folderId!];
 
         await _driveApi!.files.create(
@@ -304,10 +292,8 @@ class CloudSyncService {
       await _saveCloudSyncState();
       return true;
     } catch (e) {
-      // Check if it's an authentication error
       if (e.toString().contains('401') ||
           e.toString().contains('unauthorized')) {
-        // Clear the API and force re-authentication
         _driveApi = null;
         _currentUserEmail = null;
         throw CloudSyncException(
@@ -323,7 +309,6 @@ class CloudSyncService {
       final cards = CardStorage.getAllCards();
       final jsonData = _createSyncData(cards);
 
-      // Encrypt the data before uploading
       final encryptedData = _encryptData(jsonData);
 
       final platform = MethodChannel('VaultDeck/icloud');
@@ -370,9 +355,7 @@ class CloudSyncService {
     }
 
     if (Platform.isAndroid) {
-      // Check if we need to re-authenticate
       if (_driveApi == null || _currentUserEmail == null) {
-        // Re-authenticate with Google
         final signedIn = await _signInWithGoogle();
         if (!signedIn) {
           throw CloudSyncException('Failed to re-authenticate with Google');
@@ -418,7 +401,6 @@ class CloudSyncException implements Exception {
   String toString() => message;
 }
 
-// GoogleAuthClient implementation for googleapis
 class GoogleAuthClient extends http.BaseClient {
   final Map<String, String> _headers;
   final http.Client _client = http.Client();

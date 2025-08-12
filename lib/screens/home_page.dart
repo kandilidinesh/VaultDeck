@@ -18,6 +18,7 @@ class HomePage extends StatefulWidget {
   final ValueNotifier<bool> pinEnabledNotifier;
   final String? pin;
   final void Function(bool, [String?]) setPinEnabled;
+  final bool shouldBlur;
 
   const HomePage({
     super.key,
@@ -28,6 +29,7 @@ class HomePage extends StatefulWidget {
     required this.pinEnabledNotifier,
     required this.pin,
     required this.setPinEnabled,
+    required this.shouldBlur,
   });
 
   @override
@@ -85,6 +87,7 @@ class _HomePageState extends State<HomePage> {
         pin: widget.pin,
         setPinEnabled: widget.setPinEnabled,
         pinEnabledNotifier: widget.pinEnabledNotifier,
+        shouldBlur: widget.shouldBlur,
       ),
       body: cards.isEmpty
           ? EmptyVaultView(isDark: isDark)
