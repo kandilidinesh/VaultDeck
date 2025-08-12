@@ -6,7 +6,9 @@ import 'screens/home_page.dart';
 import 'widgets/unlock_pin_screen.dart';
 import 'constants/app_constants.dart';
 import 'services/pin_lock_service.dart';
+import 'services/cloud_sync_service.dart';
 import 'widgets/blur_overlay.dart';
+import 'dart:async'; // Added for Timer
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,6 +38,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   final ValueNotifier<bool> pinEnabledNotifier = ValueNotifier<bool>(false);
   String? _pin;
   final PinLockService _pinLockService = PinLockService();
+  final CloudSyncService _cloudSyncService = CloudSyncService();
   DateTime? _lastPausedTime;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   bool _isPinDialogShowing = false;
@@ -54,6 +57,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _loadBiometricState();
     WidgetsBinding.instance.addObserver(this);
 
+    // Initialize cloud sync service
+    _cloudSyncService.initialize();
+
+    // Start periodic sync timer
+    _startPeriodicSync();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_isUnlocked &&
           !_MyAppState._globalIsUnlocked &&
@@ -62,6 +71,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         _hasAttemptedInitialAuth = true;
         _MyAppState._globalHasAttemptedInitialAuth = true;
         _promptAuthIfNeeded();
+      }
+    });
+  }
+
+  void _startPeriodicSync() {
+    // Sync every 5 minutes
+    Timer.periodic(const Duration(minutes: 5), (timer) {
+      if (mounted) {
+        _cloudSyncService.performPeriodicSync();
+      } else {
+        timer.cancel();
       }
     });
   }
@@ -226,6 +246,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive) {
+      // Perform background sync when app goes to background
+      _cloudSyncService.performBackgroundSync();
+
       if (_biometricEnabled) {
         _isUnlocked = false;
         _hasAttemptedBiometric = false;

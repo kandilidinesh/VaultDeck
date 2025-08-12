@@ -351,6 +351,62 @@ class CloudSyncService {
     return false;
   }
 
+  // Automatic sync when app goes to background
+  Future<void> performBackgroundSync() async {
+    if (!_cloudEnabled) return;
+
+    try {
+      await performSync();
+    } catch (e) {
+      // Silent fail for background sync - don't show errors to user
+      print('Background sync failed: ${e.toString()}');
+    }
+  }
+
+  // Automatic sync after card changes
+  Future<void> performCardChangeSync() async {
+    if (!_cloudEnabled) return;
+
+    try {
+      await performSync();
+    } catch (e) {
+      // Log error but don't throw - this is automatic sync
+      print('Card change sync failed: ${e.toString()}');
+    }
+  }
+
+  // Periodic sync (can be called every few minutes)
+  Future<void> performPeriodicSync() async {
+    if (!_cloudEnabled) return;
+
+    // Only sync if it's been more than 5 minutes since last sync
+    if (_lastSyncTime != null) {
+      final timeSinceLastSync = DateTime.now().difference(_lastSyncTime!);
+      if (timeSinceLastSync.inMinutes < 5) {
+        return; // Too soon to sync again
+      }
+    }
+
+    try {
+      await performSync();
+    } catch (e) {
+      // Silent fail for periodic sync
+      print('Periodic sync failed: ${e.toString()}');
+    }
+  }
+
+  // Force sync regardless of timing
+  Future<void> forceSync() async {
+    if (!_cloudEnabled) return;
+
+    try {
+      await performSync();
+    } catch (e) {
+      // Re-throw for force sync as user explicitly requested it
+      rethrow;
+    }
+  }
+
   String getLastSyncStatus() {
     if (_lastSyncTime == null) {
       return 'Never synced';

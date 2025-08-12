@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../models/card_model.dart';
 import '../services/card_storage.dart';
+import '../services/cloud_sync_service.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import './input_formatters.dart';
@@ -59,6 +60,7 @@ class AddCardDialog extends StatefulWidget {
 
 class _AddCardDialogState extends State<AddCardDialog> {
   String _liveCardType = 'Other';
+  final CloudSyncService _cloudSyncService = CloudSyncService();
 
   String _getCardLogoAsset(String type) {
     switch (type) {
@@ -146,16 +148,28 @@ class _AddCardDialogState extends State<AddCardDialog> {
         bankName: _bankNameController.text.trim(),
         notes: _notesController.text.trim(),
       );
-      if (widget.cardKey != null) {
-        // Update existing card
-        await CardStorage.getBox().put(widget.cardKey, newCard);
-      } else {
-        // Add new card
-        await CardStorage.addCard(newCard);
+
+      try {
+        if (widget.cardKey != null) {
+          // Update existing card
+          await CardStorage.getBox().put(widget.cardKey, newCard);
+        } else {
+          // Add new card
+          await CardStorage.addCard(newCard);
+        }
+
+        // Trigger automatic cloud sync after card change
+        _cloudSyncService.performCardChangeSync();
+
+        if (!mounted) return;
+        widget.onCardAdded();
+        Navigator.of(context).pop();
+      } catch (e) {
+        // Handle error if needed
+        if (!mounted) return;
+        widget.onCardAdded();
+        Navigator.of(context).pop();
       }
-      if (!mounted) return;
-      widget.onCardAdded();
-      Navigator.of(context).pop();
     }
   }
 

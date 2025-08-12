@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import '../models/card_model.dart';
 import '../services/card_storage.dart';
+import '../services/cloud_sync_service.dart';
 import '../widgets/vaultdeck_app_bar.dart';
 import '../widgets/card_detail_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -38,6 +39,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late Box<CardModel> cardBox;
+  final CloudSyncService _cloudSyncService = CloudSyncService();
 
   @override
   void initState() {
@@ -61,6 +63,10 @@ class _HomePageState extends State<HomePage> {
 
   void _deleteCard(int key) async {
     await CardStorage.deleteCard(key);
+
+    // Trigger automatic cloud sync after card deletion
+    _cloudSyncService.performCardChangeSync();
+
     setState(() {});
   }
 
