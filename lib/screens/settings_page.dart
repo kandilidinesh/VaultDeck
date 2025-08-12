@@ -11,6 +11,7 @@ class SettingsPage extends StatefulWidget {
   final String? pin;
   final void Function(bool, [String?]) setPinEnabled;
   final bool shouldBlur;
+  final ValueNotifier<bool> pinEnabledNotifier;
 
   const SettingsPage({
     super.key,
@@ -20,6 +21,7 @@ class SettingsPage extends StatefulWidget {
     required this.pin,
     required this.setPinEnabled,
     this.shouldBlur = false,
+    required this.pinEnabledNotifier,
   });
 
   @override
@@ -431,7 +433,7 @@ class _SettingsPageState extends State<SettingsPage> {
       child: _isLoading
           ? _buildSecurityLoadingState(context, isDark)
           : SecuritySection(
-              pinEnabled: widget.pinEnabled,
+              pinEnabled: widget.pinEnabledNotifier.value,
               pin: widget.pin,
               onPinToggle: widget.setPinEnabled,
               pinLockTimerMinutes: _pinLockTimerMinutes,

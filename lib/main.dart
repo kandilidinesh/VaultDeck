@@ -296,18 +296,39 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future<void> setPinEnabled(bool enabled, [String? pin]) async {
-    if (enabled && pin != null && pin.isNotEmpty) {
-      try {
-        await _pinLockService.setPin(pin);
-        pinEnabledNotifier.value = true;
-        setState(() {
-          _pin = pin;
-        });
-      } catch (e) {
-        pinEnabledNotifier.value = false;
-        setState(() {
-          _pin = null;
-        });
+    if (enabled) {
+      // Show the new PIN prompt UI for setting PIN
+      final navContext = _navigatorKey.currentState?.context;
+      if (navContext != null && navContext.mounted) {
+        final result = await Navigator.of(navContext).push(
+          MaterialPageRoute(
+            fullscreenDialog: true,
+            builder: (context) => UnlockPinScreen(
+              onCancel: () {
+                Navigator.of(context).pop();
+              },
+              isSettingPin: true,
+            ),
+          ),
+        );
+
+        if (result != null && result is String && result.isNotEmpty) {
+          try {
+            await _pinLockService.setPin(result);
+            pinEnabledNotifier.value = true;
+            setState(() {
+              _pin = result;
+            });
+          } catch (e) {
+            pinEnabledNotifier.value = false;
+            setState(() {
+              _pin = null;
+            });
+          }
+        } else {
+          // PIN setting was cancelled
+          pinEnabledNotifier.value = false;
+        }
       }
     } else {
       try {

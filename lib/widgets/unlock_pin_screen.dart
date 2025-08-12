@@ -4,7 +4,8 @@ import 'dart:ui';
 
 class UnlockPinScreen extends StatefulWidget {
   final VoidCallback? onCancel;
-  const UnlockPinScreen({super.key, this.onCancel});
+  final bool isSettingPin;
+  const UnlockPinScreen({super.key, this.onCancel, this.isSettingPin = false});
 
   @override
   State<UnlockPinScreen> createState() => _UnlockPinScreenState();
@@ -172,16 +173,23 @@ class _UnlockPinScreenState extends State<UnlockPinScreen> {
     // Simulate a small delay for better UX
     await Future.delayed(const Duration(milliseconds: 300));
 
-    final box = await Hive.openBox('settingsBox');
-    final savedPin = box.get('pin');
-    if (pin == (savedPin?.toString() ?? '')) {
-      if (mounted) Navigator.of(context).pop(true);
+    if (widget.isSettingPin) {
+      // PIN setting mode - return the PIN to be saved
+      if (mounted) Navigator.of(context).pop(pin);
     } else {
-      setState(() {
-        error = 'Incorrect PIN';
-        pin = '';
-      });
+      // PIN entry mode - verify against saved PIN
+      final box = await Hive.openBox('settingsBox');
+      final savedPin = box.get('pin');
+      if (pin == (savedPin?.toString() ?? '')) {
+        if (mounted) Navigator.of(context).pop(true);
+      } else {
+        setState(() {
+          error = 'Incorrect PIN';
+          pin = '';
+        });
+      }
     }
+
     setState(() {
       isLoading = false;
     });
@@ -257,7 +265,9 @@ class _UnlockPinScreenState extends State<UnlockPinScreen> {
                           ],
                         ),
                         child: Icon(
-                          Icons.lock_rounded,
+                          widget.isSettingPin
+                              ? Icons.lock_outline_rounded
+                              : Icons.lock_rounded,
                           size: 48,
                           color: Colors.white.withValues(alpha: 0.9),
                         ),
@@ -267,7 +277,7 @@ class _UnlockPinScreenState extends State<UnlockPinScreen> {
 
                       // Title
                       Text(
-                        'Enter your PIN',
+                        widget.isSettingPin ? 'Set your PIN' : 'Enter your PIN',
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.w700,
@@ -280,7 +290,9 @@ class _UnlockPinScreenState extends State<UnlockPinScreen> {
 
                       // Subtitle
                       Text(
-                        'Secure access to your vault',
+                        widget.isSettingPin
+                            ? 'Create a secure PIN for your vault'
+                            : 'Secure access to your vault',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,

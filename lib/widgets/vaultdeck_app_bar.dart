@@ -40,8 +40,8 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: isDark
-                  ? Colors.white.withValues(alpha: 0.1)
-                  : Colors.black.withValues(alpha: 0.05),
+                  ? Colors.white.withOpacity(0.1)
+                  : Colors.black.withOpacity(0.05),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -83,6 +83,8 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
                     pin: pin,
                     setPinEnabled: setPinEnabled,
                     shouldBlur: shouldBlur,
+                    pinEnabledNotifier:
+                        pinEnabledNotifier, // Required for real-time updates
                   ),
                 ),
               );

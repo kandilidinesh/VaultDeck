@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
-import '../widgets/set_pin_screen.dart';
 import '../widgets/unlock_pin_screen.dart';
 
 class SecuritySection extends StatefulWidget {
@@ -45,17 +44,14 @@ class _SecuritySectionState extends State<SecuritySection> {
 
   void _togglePin(bool value) async {
     if (value) {
-      widget.onPinToggle(true);
       final pin = await Navigator.of(context).push<String>(
         MaterialPageRoute(
           fullscreenDialog: true,
-          builder: (ctx) => SetPinScreen(
-            onPinSet: (pin) {
-              Navigator.of(ctx).pop(pin);
-            },
+          builder: (ctx) => UnlockPinScreen(
             onCancel: () {
               Navigator.of(ctx).pop();
             },
+            isSettingPin: true,
           ),
         ),
       );
