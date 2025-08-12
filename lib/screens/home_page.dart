@@ -72,9 +72,12 @@ class _HomePageState extends State<HomePage> {
         .where((e) => e['card'] != null)
         .toList();
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       extendBodyBehindAppBar: true,
-      backgroundColor: isDark ? const Color(0xFF181A20) : Colors.transparent,
+      backgroundColor: isDark
+          ? const Color(0xFF0A0A0A)
+          : const Color(0xFFFAFAFA),
       appBar: VaultDeckAppBar(
         isDarkModeNotifier: widget.isDarkModeNotifier,
         toggleTheme: widget.toggleTheme,
@@ -85,32 +88,126 @@ class _HomePageState extends State<HomePage> {
       ),
       body: cards.isEmpty
           ? EmptyVaultView(isDark: isDark)
-          : Padding(
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).padding.top + kToolbarHeight,
-              ),
-              child: CardListView(
-                cards: cards,
-                onDeleteCard: _deleteCard,
-                onCardChanged: () => setState(() {}),
-                buildCardTile: _buildCardTile,
+          : _buildCardListView(cards, isDark),
+      floatingActionButton: _buildFloatingActionButton(isDark),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+    );
+  }
+
+  Widget _buildCardListView(List<Map<String, dynamic>> cards, bool isDark) {
+    return Padding(
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + kToolbarHeight,
+      ),
+      child: Column(
+        children: [
+          // Add proper spacing from app bar
+          const SizedBox(height: 8),
+          // Cards list
+          Expanded(
+            child: CardListView(
+              cards: cards,
+              onDeleteCard: _deleteCard,
+              onCardChanged: () => setState(() {}),
+              buildCardTile: _buildCardTile,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMinimalHeaderSection(int cardCount, bool isDark) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? const Color(0xFF2D2D2D) : const Color(0xFFE5E7EB),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.1)
+                : Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.credit_card_rounded,
+            color: isDark ? Colors.white70 : Colors.grey[700],
+            size: 20,
+          ),
+          const SizedBox(width: 12),
+          Text(
+            '$cardCount card${cardCount == 1 ? '' : 's'} in vault',
+            style: TextStyle(
+              color: isDark ? Colors.white70 : Colors.grey[700],
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF2D2D2D) : const Color(0xFFF3F4F6),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              cardCount.toString(),
+              style: TextStyle(
+                color: isDark ? Colors.white : Colors.black87,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
               ),
             ),
-      floatingActionButton: FloatingActionButton(
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFloatingActionButton(bool isDark) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: const [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.3)
+                : const Color(0xFF6366F1).withValues(alpha: 0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: FloatingActionButton(
         onPressed: _showAddCardDialog,
         tooltip: 'Add Card to Vault',
-        backgroundColor: isDark
-            ? const Color(0xFF3A3F4A)
-            : Theme.of(context).colorScheme.primary,
-        child: Icon(Icons.add_card_rounded, color: Colors.white),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        child: const Icon(Icons.add_rounded, color: Colors.white, size: 28),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
   Widget _buildCardTile(CardModel card) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final detectedType = _detectCardType(card.cardNumber);
+
     String getCardLogoAsset(String type) {
       switch (type) {
         case 'Visa':
@@ -133,153 +230,240 @@ class _HomePageState extends State<HomePage> {
         ? '•••• •••• •••• ${card.cardNumber.substring(card.cardNumber.length - 4)}'
         : card.cardNumber;
 
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: isDark ? const Color(0xFF23262F) : Colors.white,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        highlightColor: Colors.transparent,
-        splashColor: Colors.transparent,
-        onTap: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (context) {
-              return AnimatedPadding(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeOut,
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom,
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF181A20) : Colors.white,
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(32),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.15),
-                        blurRadius: 24,
-                        offset: Offset(0, -8),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark ? const Color(0xFF2D2D2D) : const Color(0xFFE5E7EB),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.2)
+                : Colors.black.withValues(alpha: 0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: () => _showCardDetail(card, detectedType, getCardLogoAsset),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header row with logo and actions
+                Row(
+                  children: [
+                    // Card logo
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? const Color(0xFF2D2D2D)
+                            : const Color(0xFFF3F4F6),
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                    ],
-                  ),
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 32.0),
+                      child: SvgPicture.asset(
+                        getCardLogoAsset(detectedType),
+                        width: 32,
+                        height: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Card info
+                    Expanded(
                       child: Column(
-                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          CardDetailView(
-                            card: card,
-                            cardLogoAsset: getCardLogoAsset(detectedType),
+                          Text(
+                            card.nickname?.isNotEmpty == true
+                                ? card.nickname!
+                                : card.cardHolderName,
+                            style: TextStyle(
+                              color: isDark ? Colors.white : Colors.black87,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                          const SizedBox(height: 24),
+                          if (card.bankName?.isNotEmpty == true) ...[
+                            const SizedBox(height: 2),
+                            Text(
+                              card.bankName!,
+                              style: TextStyle(
+                                color: isDark
+                                    ? Colors.white60
+                                    : Colors.grey[600],
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
-                  ),
-                ),
-              );
-            },
-          );
-        },
-        child: ListTile(
-          leading: SizedBox(
-            width: 40,
-            height: 28,
-            child: Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: SvgPicture.asset(
-                getCardLogoAsset(detectedType),
-                width: 36,
-                height: 24,
-              ),
-            ),
-          ),
-          title: Text(
-            card.nickname?.isNotEmpty == true
-                ? card.nickname!
-                : card.cardHolderName,
-            style: TextStyle(
-              color: isDark ? Colors.white : Colors.black87,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (card.bankName?.isNotEmpty == true)
-                Text(
-                  card.bankName!,
-                  style: TextStyle(
-                    color: isDark ? Colors.white70 : Colors.black54,
-                  ),
-                ),
-              Text(
-                maskedNumber,
-                style: TextStyle(
-                  color: isDark ? Colors.white : Colors.black87,
-                  fontFeatures: [FontFeature.tabularFigures()],
-                  letterSpacing: 1.2,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              Text(
-                'Exp: ${card.expiryDate}',
-                style: TextStyle(
-                  color: isDark ? Colors.white70 : Colors.black54,
-                ),
-              ),
-            ],
-          ),
-          trailing: IconButton(
-            icon: Icon(
-              Icons.copy,
-              color: isDark ? Colors.white70 : Colors.black54,
-            ),
-            tooltip: 'Copy card number',
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: card.cardNumber));
-              final snackBar = SnackBar(
-                elevation: 8,
-                behavior: SnackBarBehavior.floating,
-                backgroundColor: isDark
-                    ? const Color(0xFF23262F)
-                    : Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                content: Row(
-                  children: [
-                    Icon(
-                      Icons.check_circle_rounded,
-                      color: isDark ? Colors.greenAccent : Colors.green,
-                      size: 22,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      'Card number copied',
-                      style: TextStyle(
-                        color: isDark ? Colors.white : Colors.black87,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 15,
+                    // Copy button
+                    Container(
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? const Color(0xFF2D2D2D)
+                            : const Color(0xFFF3F4F6),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.copy_rounded,
+                          color: isDark ? Colors.white70 : Colors.grey[700],
+                          size: 20,
+                        ),
+                        onPressed: () => _copyCardNumber(card, isDark),
+                        tooltip: 'Copy card number',
+                        padding: const EdgeInsets.all(8),
+                        constraints: const BoxConstraints(
+                          minWidth: 36,
+                          minHeight: 36,
+                        ),
                       ),
                     ),
                   ],
                 ),
-                duration: const Duration(seconds: 1),
-              );
-              ScaffoldMessenger.of(context).clearSnackBars();
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            },
+                const SizedBox(height: 16),
+                // Card number
+                Text(
+                  maskedNumber,
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black87,
+                    fontSize: 18,
+                    fontFeatures: [FontFeature.tabularFigures()],
+                    letterSpacing: 1.5,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // Expiry date
+                Row(
+                  children: [
+                    Icon(
+                      Icons.schedule_rounded,
+                      color: isDark ? Colors.white60 : Colors.grey[600],
+                      size: 16,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Expires ${card.expiryDate}',
+                      style: TextStyle(
+                        color: isDark ? Colors.white60 : Colors.grey[600],
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  void _showCardDetail(
+    CardModel card,
+    String detectedType,
+    String Function(String) getCardLogoAsset,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return AnimatedPadding(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF0A0A0A) : Colors.white,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(32),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 24,
+                  offset: const Offset(0, -8),
+                ),
+              ],
+            ),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 32.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CardDetailView(
+                      card: card,
+                      cardLogoAsset: getCardLogoAsset(detectedType),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _copyCardNumber(CardModel card, bool isDark) {
+    Clipboard.setData(ClipboardData(text: card.cardNumber));
+    final snackBar = SnackBar(
+      elevation: 8,
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      content: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: const Color(0xFF10B981).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(
+              Icons.check_rounded,
+              color: Color(0xFF10B981),
+              size: 18,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            'Card number copied to clipboard',
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black87,
+              fontWeight: FontWeight.w500,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+      duration: const Duration(seconds: 2),
+      margin: const EdgeInsets.all(16),
+    );
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

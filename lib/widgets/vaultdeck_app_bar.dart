@@ -30,15 +30,21 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       elevation: 0,
       shadowColor: Colors.transparent,
-      backgroundColor: isDark ? const Color(0xFF181A20) : Colors.grey[50],
-      foregroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
+      foregroundColor: isDark ? Colors.white : Colors.black87,
       title: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.1)
+                  : Colors.black.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(8),
+            ),
             child: Icon(
               Icons.account_balance_wallet_rounded,
-              color: isDark ? Colors.grey[50] : const Color(0xFF181A20),
+              color: isDark ? Colors.white : Colors.black87,
               size: 24,
             ),
           ),
@@ -53,7 +59,7 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.grey[50] : const Color(0xFF181A20),
+                    color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
               ],
@@ -62,29 +68,23 @@ class VaultDeckAppBar extends StatelessWidget implements PreferredSizeWidget {
           IconButton(
             icon: Icon(
               Icons.settings_rounded,
-              color: isDark ? Colors.grey[50] : const Color(0xFF181A20),
+              color: isDark ? Colors.white : Colors.black87,
+              size: 24,
             ),
-            tooltip: 'Settings',
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) {
-                    return ValueListenableBuilder<bool>(
-                      valueListenable: pinEnabledNotifier,
-                      builder: (context, pinEnabledValue, _) {
-                        return SettingsPage(
-                          isDarkModeNotifier: isDarkModeNotifier,
-                          toggleTheme: toggleTheme,
-                          pinEnabled: pinEnabledValue,
-                          pin: pin,
-                          setPinEnabled: setPinEnabled,
-                        );
-                      },
-                    );
-                  },
+                  builder: (context) => SettingsPage(
+                    toggleTheme: toggleTheme,
+                    isDarkModeNotifier: isDarkModeNotifier,
+                    pinEnabled: pinEnabled,
+                    pin: pin,
+                    setPinEnabled: setPinEnabled,
+                  ),
                 ),
               );
             },
+            tooltip: 'Settings',
           ),
         ],
       ),
