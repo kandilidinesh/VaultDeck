@@ -54,7 +54,8 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
       final success = await _cloudSyncService.enableCloudSync();
       if (success) {
         setState(() {
-          _status = 'Successfully synced ${_cloudSyncService.getCardCount()} cards!';
+          _status =
+              'Successfully synced ${_cloudSyncService.getCardCount()} cards!';
           _showRetryButton = false;
         });
       } else {
@@ -103,7 +104,8 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
       final success = await _cloudSyncService.performSync();
       if (success) {
         setState(() {
-          _status = 'Successfully synced ${_cloudSyncService.getCardCount()} cards!';
+          _status =
+              'Successfully synced ${_cloudSyncService.getCardCount()} cards!';
           _showRetryButton = false;
         });
       } else {
@@ -135,7 +137,7 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
       'check your',
       'ensure you',
     ];
-    
+
     final lowerError = errorMessage.toLowerCase();
     return retryableErrors.any((error) => lowerError.contains(error));
   }
@@ -190,128 +192,196 @@ class _CloudSyncSectionState extends State<CloudSyncSection> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final tileBg = isDark ? const Color(0xFF23262F) : Colors.white;
     final isIOS = Platform.isIOS;
-    final switchTitle = isIOS
-        ? 'Enable iCloud Sync'
-        : 'Enable Google Drive Sync';
-    final screenWidth = MediaQuery.of(context).size.width;
-    
+    final switchTitle = isIOS ? 'iCloud Sync' : 'Google Drive Sync';
+    final switchSubtitle = isIOS
+        ? 'Backup your cards to iCloud Drive'
+        : 'Backup your cards to Google Drive';
+
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 0),
-          child: Row(
-            children: [
-              const Icon(Icons.cloud_rounded, size: 22),
-              const SizedBox(width: 8),
-              Text(
-                'Cloud Sync',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-              ),
-            ],
+        // Cloud Sync Toggle
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 8,
           ),
-        ),
-        const SizedBox(height: 12),
-        Center(
-          child: Container(
-            width: screenWidth > 500 ? 500 : screenWidth * 0.98,
-            margin: const EdgeInsets.symmetric(horizontal: 0),
+          leading: Container(
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: tileBg,
-              borderRadius: const BorderRadius.all(Radius.circular(16)),
+              color: _cloudSyncService.cloudEnabled
+                  ? const Color(0xFF3B82F6).withValues(alpha: 0.1)
+                  : (isDark
+                        ? const Color(0xFF2D2D2D)
+                        : const Color(0xFFF3F4F6)),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SwitchListTile(
-                  title: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      switchTitle,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  value: _cloudSyncService.cloudEnabled,
-                  onChanged: _toggleCloud,
-                  secondary: const Icon(Icons.sync_rounded),
-                  tileColor: tileBg,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(16)),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                ),
-                if (_cloudSyncService.cloudEnabled && _cloudSyncService.currentUserEmail != null)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      'Signed in as: ${_cloudSyncService.currentUserEmail}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    top: 4,
-                    bottom: 8,
-                  ),
-                  child: Row(
-                    children: [
-                      if (_syncing)
-                        const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      if (_syncing) const SizedBox(width: 8),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: _status.contains('failed') || _status.contains('error') 
-                              ? _showErrorDetails 
-                              : null,
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              _status,
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: _status.contains('failed') || _status.contains('error')
-                                    ? Colors.red
-                                    : null,
-                                decoration: _status.contains('failed') || _status.contains('error')
-                                    ? TextDecoration.underline
-                                    : null,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                      ),
-                      if (_cloudSyncService.cloudEnabled && !_syncing)
-                        IconButton(
-                          icon: const Icon(Icons.refresh, size: 18),
-                          onPressed: _manualSync,
-                          tooltip: 'Manual sync',
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                        ),
-                    ],
-                  ),
-                ),
-              ],
+            child: Icon(
+              isIOS ? Icons.cloud_rounded : Icons.cloud_done_rounded,
+              color: _cloudSyncService.cloudEnabled
+                  ? const Color(0xFF3B82F6)
+                  : (isDark ? Colors.white70 : Colors.grey[700]),
+              size: 24,
             ),
           ),
+          title: Text(
+            switchTitle,
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black87,
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+          ),
+          subtitle: Text(
+            switchSubtitle,
+            style: TextStyle(
+              color: isDark ? Colors.white60 : Colors.grey[600],
+              fontSize: 14,
+            ),
+          ),
+          trailing: Switch(
+            value: _cloudSyncService.cloudEnabled,
+            onChanged: _toggleCloud,
+            activeColor: const Color(0xFF3B82F6),
+            activeTrackColor: const Color(0xFF3B82F6).withValues(alpha: 0.3),
+          ),
         ),
+
+        // User Email (if signed in)
+        if (_cloudSyncService.cloudEnabled &&
+            _cloudSyncService.currentUserEmail != null) ...[
+          Divider(
+            height: 1,
+            indent: 70,
+            endIndent: 20,
+            color: isDark ? const Color(0xFF2D2D2D) : const Color(0xFFE5E7EB),
+          ),
+          ListTile(
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 8,
+            ),
+            leading: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? const Color(0xFF2D2D2D)
+                    : const Color(0xFFF3F4F6),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                Icons.person_rounded,
+                color: isDark ? Colors.white70 : Colors.grey[700],
+                size: 24,
+              ),
+            ),
+            title: Text(
+              'Account',
+              style: TextStyle(
+                color: isDark ? Colors.white : Colors.black87,
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
+            ),
+            subtitle: Text(
+              _cloudSyncService.currentUserEmail!,
+              style: TextStyle(
+                color: isDark ? Colors.white60 : Colors.grey[600],
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ],
+
+        // Sync Status and Manual Sync
+        if (_cloudSyncService.cloudEnabled) ...[
+          Divider(
+            height: 1,
+            indent: 70,
+            endIndent: 20,
+            color: isDark ? const Color(0xFF2D2D2D) : const Color(0xFFE5E7EB),
+          ),
+          ListTile(
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 8,
+            ),
+            leading: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? const Color(0xFF2D2D2D)
+                    : const Color(0xFFF3F4F6),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: _syncing
+                  ? SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          isDark ? Colors.white70 : Colors.grey[700]!,
+                        ),
+                      ),
+                    )
+                  : Icon(
+                      Icons.sync_rounded,
+                      color: isDark ? Colors.white70 : Colors.grey[700],
+                      size: 24,
+                    ),
+            ),
+            title: Text(
+              'Sync Status',
+              style: TextStyle(
+                color: isDark ? Colors.white : Colors.black87,
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
+            ),
+            subtitle: GestureDetector(
+              onTap: _status.contains('failed') || _status.contains('error')
+                  ? _showErrorDetails
+                  : null,
+              child: Text(
+                _status,
+                style: TextStyle(
+                  color: _status.contains('failed') || _status.contains('error')
+                      ? const Color(0xFFEF4444)
+                      : (isDark ? Colors.white60 : Colors.grey[600]),
+                  fontSize: 14,
+                  decoration:
+                      _status.contains('failed') || _status.contains('error')
+                      ? TextDecoration.underline
+                      : null,
+                ),
+              ),
+            ),
+            trailing: !_syncing
+                ? Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.refresh_rounded,
+                        color: Color(0xFF3B82F6),
+                        size: 20,
+                      ),
+                      onPressed: _manualSync,
+                      tooltip: 'Manual sync',
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(
+                        minWidth: 24,
+                        minHeight: 24,
+                      ),
+                    ),
+                  )
+                : null,
+          ),
+        ],
       ],
     );
   }
