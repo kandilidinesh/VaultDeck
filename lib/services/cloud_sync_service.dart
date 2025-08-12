@@ -1,25 +1,30 @@
 import 'dart:io' show Platform, SocketException;
 import 'dart:convert';
-import 'dart:async' show TimeoutException;
+import 'dart:math';
 import 'package:hive/hive.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
+import 'dart:async' show TimeoutException;
 import '../models/card_model.dart';
 import 'card_storage.dart';
 
 class CloudSyncService {
-  static const String _syncFileName = 'vaultdeck_cards.json';
+  static const String _syncFileName = 'vaultdeck_cards.enc';
+  static const String _folderName = 'VaultDeck';
   static const String _settingsBox = 'settingsBox';
   static const String _cloudSyncEnabledKey = 'cloudSyncEnabled';
   static const String _lastSyncTimeKey = 'lastSyncTime';
   static const String _cloudUserEmailKey = 'cloudUserEmail';
+  static const String _encryptionKeyKey = 'encryptionKey';
 
   drive.DriveApi? _driveApi;
   String? _currentUserEmail;
   DateTime? _lastSyncTime;
   bool _cloudEnabled = false;
+  String? _encryptionKey;
+  String? _folderId;
 
   // Singleton pattern
   static final CloudSyncService _instance = CloudSyncService._internal();
@@ -43,6 +48,7 @@ class CloudSyncService {
         ? DateTime.parse(box.get(_lastSyncTimeKey))
         : null;
     _currentUserEmail = box.get(_cloudUserEmailKey);
+    _encryptionKey = box.get(_encryptionKeyKey);
   }
 
   Future<void> _saveCloudSyncState() async {
@@ -53,6 +59,81 @@ class CloudSyncService {
     }
     if (_currentUserEmail != null) {
       await box.put(_cloudUserEmailKey, _currentUserEmail);
+    }
+    if (_encryptionKey != null) {
+      await box.put(_encryptionKeyKey, _encryptionKey);
+    }
+  }
+
+  String _generateEncryptionKey() {
+    const chars =
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#\$%^&*';
+    final random = Random.secure();
+    return String.fromCharCodes(
+      Iterable.generate(
+        32,
+        (_) => chars.codeUnitAt(random.nextInt(chars.length)),
+      ),
+    );
+  }
+
+  String _encryptData(String data) {
+    if (_encryptionKey == null) {
+      _encryptionKey = _generateEncryptionKey();
+    }
+
+    // Simple XOR encryption (for demonstration - in production, use proper encryption)
+    final keyBytes = utf8.encode(_encryptionKey!);
+    final dataBytes = utf8.encode(data);
+    final encryptedBytes = <int>[];
+
+    for (int i = 0; i < dataBytes.length; i++) {
+      encryptedBytes.add(dataBytes[i] ^ keyBytes[i % keyBytes.length]);
+    }
+
+    return base64.encode(encryptedBytes);
+  }
+
+  String _decryptData(String encryptedData) {
+    if (_encryptionKey == null) {
+      throw CloudSyncException('Encryption key not found');
+    }
+
+    final keyBytes = utf8.encode(_encryptionKey!);
+    final encryptedBytes = base64.decode(encryptedData);
+    final decryptedBytes = <int>[];
+
+    for (int i = 0; i < encryptedBytes.length; i++) {
+      decryptedBytes.add(encryptedBytes[i] ^ keyBytes[i % keyBytes.length]);
+    }
+
+    return utf8.decode(decryptedBytes);
+  }
+
+  Future<String?> _getOrCreateFolder() async {
+    if (_driveApi == null) return null;
+
+    try {
+      // First, try to find existing folder
+      final existingFolders = await _driveApi!.files.list(
+        q: "name='$_folderName' and mimeType='application/vnd.google-apps.folder' and trashed=false",
+      );
+
+      if (existingFolders.files != null && existingFolders.files!.isNotEmpty) {
+        return existingFolders.files!.first.id;
+      }
+
+      // Create new folder if not found
+      final folder = drive.File()
+        ..name = _folderName
+        ..mimeType = 'application/vnd.google-apps.folder';
+
+      final createdFolder = await _driveApi!.files.create(folder);
+      return createdFolder.id;
+    } catch (e) {
+      throw CloudSyncException(
+        'Failed to create or access VaultDeck folder: ${e.toString()}',
+      );
     }
   }
 
@@ -177,13 +258,24 @@ class CloudSyncService {
     }
 
     try {
+      // Get or create the VaultDeck folder
+      _folderId = await _getOrCreateFolder();
+      if (_folderId == null) {
+        throw CloudSyncException(
+          'Failed to create secure folder for your data',
+        );
+      }
+
       final cards = CardStorage.getAllCards();
       final jsonData = _createSyncData(cards);
-      final bytes = utf8.encode(jsonData);
 
-      // Check if file already exists
+      // Encrypt the data before uploading
+      final encryptedData = _encryptData(jsonData);
+      final bytes = utf8.encode(encryptedData);
+
+      // Check if file already exists in the folder
       final existingFiles = await _driveApi!.files.list(
-        q: "name='$_syncFileName' and trashed=false",
+        q: "name='$_syncFileName' and '$_folderId' in parents and trashed=false",
       );
 
       if (existingFiles.files != null && existingFiles.files!.isNotEmpty) {
@@ -195,10 +287,12 @@ class CloudSyncService {
           uploadMedia: drive.Media(Stream.value(bytes), bytes.length),
         );
       } else {
-        // Create new file
+        // Create new file in the folder
         final file = drive.File()
           ..name = _syncFileName
-          ..mimeType = 'application/json';
+          ..mimeType =
+              'application/octet-stream' // Binary file type
+          ..parents = [_folderId!];
 
         await _driveApi!.files.create(
           file,
@@ -229,10 +323,13 @@ class CloudSyncService {
       final cards = CardStorage.getAllCards();
       final jsonData = _createSyncData(cards);
 
+      // Encrypt the data before uploading
+      final encryptedData = _encryptData(jsonData);
+
       final platform = MethodChannel('VaultDeck/icloud');
       await platform.invokeMethod('saveToICloud', {
         'fileName': _syncFileName,
-        'content': jsonData,
+        'content': encryptedData,
       });
 
       _lastSyncTime = DateTime.now();
